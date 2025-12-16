@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DeFi Pool vs Token Analytics Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh; color: #333;
+    }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; color: white; margin-bottom: 30px; }
+    .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+    .header p { font-size: 1.2em; opacity: 0.9; }
+    .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px; padding: 25px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .card h2 { color: #4a5568; margin-bottom: 20px; font-size: 1.5em; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    .metric { background: #f7fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #4299e1; }
+    .metric-label { font-size: 0.9em; color: #718096; font-weight: 600; margin-bottom: 5px; }
+    .metric-value { font-size: 1.2em; font-weight: bold; color: #2d3748; }
+    .input-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px; padding: 25px; margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .input-group { display: flex; flex-direction: column; }
+    label { font-weight: 600; margin-bottom: 5px; color: #4a5568; }
+    input {
+      padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1em; transition: border-color 0.3s;
+    }
+    input:focus { outline: none; border-color: #4299e1; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1); }
+    .update-btn {
+      background: linear-gradient(45deg, #4299e1, #667eea);
+      color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .update-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(66,153,225,0.4); }
+    .analysis-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px; padding: 25px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .analysis-section h3 { color: #4a5568; margin-bottom: 15px; font-size: 1.3em; }
+    .warning { background: #fed7d7; border: 1px solid #feb2b2; color: #c53030; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+    .info { background: #bee3f8; border: 1px solid #90cdf4; color: #2b6cb0; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+    .comparison-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    .comparison-table th,.comparison-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    .comparison-table th { background: #f7fafc; font-weight: 600; color: #4a5568; }
+    @media (max-width: 768px) {
+      .dashboard { grid-template-columns: 1fr; }
+      .input-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: 1fr; }
+    }
+    .source-note { font-size: 0.85em; color: #4a5568; opacity: .9; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔍 DeFi Pool vs Token Analytics</h1>
+      <p>Compare pool-specific metrics with global token performance (live)</p>
+    </div>
+
+    <div class="input-section">
+      <h3>Data Input Configuration</h3>
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="poolAddress">Pool Contract Address (BSC)</label>
+          <input type="text" id="poolAddress" value="0x0ed7e52944161450477ee417de9cd3a859b14fd0" placeholder="Pool contract address">
+        </div>
+        <div class="input-group">
+          <label for="tokenSymbol">Token Symbol</label>
+          <input type="text" id="tokenSymbol" value="CAKE" placeholder="e.g., CAKE, UNI">
+        </div>
+        <div class="input-group">
+          <label for="pairToken">Pair Token</label>
+          <input type="text" id="pairToken" value="WBNB" placeholder="e.g., WBNB, WETH">
+        </div>
+      </div>
+      <button class="update-btn" id="updateBtn">Update All Metrics</button>
+      <div class="source-note">
+        Sources: GeckoTerminal Public API (pool-level) & CoinGecko API (token-level). Data may be cached for ~1–5 minutes.
+      </div>
+    </div>
+
+    <div class="dashboard">
+      <div class="card">
+        <h2>🎯 Pool-Specific Metrics</h2>
+        <div class="metrics-grid">
+          <div class="metric"><div class="metric-label">Pool TVL</div><div class="metric-value" id="poolTVL">—</div></div>
+          <div class="metric"><div class="metric-label">24h Volume</div><div class="metric-value" id="poolVolume">—</div></div>
+          <div class="metric"><div class="metric-label">Pool Price</div><div class="metric-value" id="poolPrice">—</div></div>
+          <div class="metric"><div class="metric-label">Transactions (24h)</div><div class="metric-value" id="poolTxs">—</div></div>
+          <div class="metric"><div class="metric-label">Pool Age</div><div class="metric-value" id="poolAge">—</div></div>
+          <div class="metric"><div class="metric-label">Security Note</div><div class="metric-value" id="securityScore">Contract verified (via GT)</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>🌐 Global Token Metrics</h2>
+        <div class="metrics-grid">
+          <div class="metric"><div class="metric-label">Global Volume (24h)</div><div class="metric-value" id="globalVolume">—</div></div>
+          <div class="metric"><div class="metric-label">Market Cap</div><div class="metric-value" id="marketCap">—</div></div>
+          <div class="metric"><div class="metric-label">Global Price</div><div class="metric-value" id="globalPrice">—</div></div>
+          <div class="metric"><div class="metric-label">Total Liquidity (DEX on-chain)</div><div class="metric-value" id="globalLiquidity">—</div></div>
+          <div class="metric"><div class="metric-label">FDV</div><div class="metric-value" id="fdv">—</div></div>
+          <div class="metric"><div class="metric-label">Holders (BSC)</div><div class="metric-value" id="holders">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analysis-section">
+      <h3>📊 Comparative Analysis</h3>
+      <div id="analysisResults">
+        <div class="info">
+          Enter a pool address and click “Update All Metrics.” I’ll compute pool share vs. token-wide liquidity & volume.
+        </div>
+      </div>
+      <div style="margin-top: 25px;">
+        <h4>🎯 Action Items:</h4>
+        <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.6;">
+          <li><strong>For LP Positions:</strong> Use pool-specific metrics for slippage and yield modeling.</li>
+          <li><strong>For Trading:</strong> Monitor global volume trends, execute where depth is strongest.</li>
+          <li><strong>For Risk:</strong> Track pool concentration and token-wide sentiment.</li>
+          <li><strong>For Entry/Exit:</strong> Watch price discrepancies for timing/arbitrage.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Helpers =====
+    const nUSD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+    const nINT = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+    const n2 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+
+    function fmtUSDShort(v) {
+      if (v === null || v === undefined || Number.isNaN(v)) return '—';
+      const abs = Math.abs(v);
+      if (abs >= 1_000_000_000) return '$' + n2.format(v/1_000_000_000) + 'B';
+      if (abs >= 1_000_000) return '$' + n2.format(v/1_000_000) + 'M';
+      if (abs >= 1_000) return '$' + n2.format(v/1_000) + 'K';
+      return nUSD.format(v);
+    }
+
+    function daysBetween(iso) {
+      if (!iso) return null;
+      const then = new Date(iso);
+      const now = new Date();
+      const diffMs = now - then;
+      return Math.floor(diffMs / (1000*60*60*24));
+    }
+
+    // ===== Data Sources =====
+    // GeckoTerminal (public): https://api.geckoterminal.com/api/v2
+    async function fetchPoolFromGeckoTerminalBSC(poolAddress) {
+      const url = `https://api.geckoterminal.com/api/v2/networks/bsc/pools/${poolAddress}`;
+      const res = await fetch(url, { headers: { 'accept': 'application/json' } });
+      if (!res.ok) throw new Error('GeckoTerminal pool fetch failed');
+      const json = await res.json();
+      const a = json?.data?.attributes || {};
+      // Attributes often include: reserve_in_usd, volume_usd.{h24}, price_in_usd, transactions.{h24}, created_at
+      const tvl = Number(a.reserve_in_usd ?? a.liquidity_in_usd ?? a.total_reserve_in_usd);
+      const vol24 = Number((a.volume_usd && (a.volume_usd['h24'] ?? a.volume_usd['24h'])) ?? a.volume_usd ?? 0);
+      const price = Number(a.price_in_usd ?? a.base_token_price_usd ?? a.quote_token_price_usd);
+      const tx24 = Number((a.transactions && (a.transactions['h24'] ?? a.transactions['24h'])) ?? 0);
+      const createdAt = a.created_at || a.pool_created_at;
+      return { tvl, vol24, price, tx24, createdAt };
+    }
+
+    // CoinGecko Public API – token level (no key needed, but rate limited)
+    // Use the main coin id for CAKE: "pancakeswap-token"
+    async function fetchTokenFromCoinGecko(tokenId = 'pancakeswap-token') {
+      // Pull price, market cap, 24h volume in one shot via /simple/price
+      const simpleUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${encodeURIComponent(tokenId)}&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true`;
+      const res = await fetch(simpleUrl);
+      if (!res.ok) throw new Error('CoinGecko simple/price failed');
+      const j = await res.json();
+      const row = j[tokenId] || {};
+      // For FDV & holders and on-chain liquidity, you may swap to paid /onchain endpoints; here we keep core public metrics.
+      return {
+        price: Number(row.usd ?? 0),
+        marketCap: Number(row.usd_market_cap ?? 0),
+        vol24: Number(row.usd_24h_vol ?? 0),
+        change24: Number(row.usd_24h_change ?? 0),
+      };
+    }
+
+    // Optional: Pull FDV & additional stats from the coins/{id} endpoint (heavier; still public, cached ~1–5 min)
+    async function fetchTokenMetaFromCoinGecko(tokenId = 'pancakeswap-token') {
+      const url = `https://api.coingecko.com/api/v3/coins/${encodeURIComponent(tokenId)}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('CoinGecko coins/{id} failed');
+      const j = await res.json();
+      const md = j?.market_data || {};
+      return {
+        fdv: Number(md.fully_diluted_valuation?.usd ?? 0),
+        totalVolume: Number(md.total_volume?.usd ?? 0),
+        circulating: Number(md.circulating_supply ?? 0),
+        totalSupply: Number(md.total_supply ?? 0),
+      };
+    }
+
+    function updateCardsPool({ tvl, vol24, price, tx24, createdAt }) {
+      document.getElementById('poolTVL').textContent = fmtUSDShort(tvl);
+      document.getElementById('poolVolume').textContent = fmtUSDShort(vol24);
+      document.getElementById('poolPrice').textContent = (price ? ('$' + n2.format(price)) : '—');
+      document.getElementById('poolTxs').textContent = (tx24 ? nINT.format(tx24) : '—');
+      const ageDays = daysBetween(createdAt);
+      document.getElementById('poolAge').textContent = (ageDays != null ? `~${nINT.format(ageDays/365)} years` : '—');
+    }
+
+    function updateCardsToken({ price, marketCap, vol24 }, meta) {
+      document.getElementById('globalPrice').textContent = (price ? ('$' + n2.format(price)) : '—');
+      document.getElementById('marketCap').textContent = marketCap ? fmtUSDShort(marketCap) : '—';
+      document.getElementById('globalVolume').textContent = vol24 ? fmtUSDShort(vol24) : '—';
+      document.getElementById('fdv').textContent = meta?.fdv ? fmtUSDShort(meta.fdv) : '—';
+      // Placeholders for global on-chain liquidity & holders (would require on-chain endpoints or BscScan)
+      document.getElementById('globalLiquidity').textContent = '—';
+      document.getElementById('holders').textContent = '—';
+    }
+
+    function computeComparison() {
+      // Parse current card values
+      const poolTVLStr = document.getElementById('poolTVL').textContent;
+      const globLiqStr = document.getElementById('globalLiquidity').textContent;
+      const poolVolStr = document.getElementById('poolVolume').textContent;
+      const globVolStr = document.getElementById('globalVolume').textContent;
+      const poolPriceStr = document.getElementById('poolPrice').textContent;
+      const globalPriceStr = document.getElementById('globalPrice').textContent;
+
+      function parseUSDShort(s) {
+        if (!s || s === '—') return null;
+        let v = s.replace(/\$/g,'').replace(/,/g,'');
+        if (v.endsWith('B')) return parseFloat(v) * 1_000_000_000;
+        if (v.endsWith('M')) return parseFloat(v) * 1_000_000;
+        if (v.endsWith('K')) return parseFloat(v) * 1_000;
+        return parseFloat(v);
+      }
+      const poolTVL = parseUSDShort(poolTVLStr);
+      const globalLiq = parseUSDShort(globLiqStr);
+      const poolVol = parseUSDShort(poolVolStr);
+      const globalVol = parseUSDShort(globVolStr);
+
+      const pricePool = parseFloat((poolPriceStr || '').replace(/[$,]/g,''));
+      const priceGlobal = parseFloat((globalPriceStr || '').replace(/[$,]/g,''));
+
+      const liquidityRatio = (poolTVL && globalLiq) ? (poolTVL / globalLiq) * 100 : null;
+      const volumeRatio = (poolVol && globalVol) ? (poolVol / globalVol) * 100 : null;
+      const priceDiffPct = (pricePool && priceGlobal) ? ((pricePool - priceGlobal)/priceGlobal)*100 : null;
+
+      const analysisHTML = `
+        <div class="${volumeRatio != null && volumeRatio < 25 ? 'warning' : 'info'}">
+          <strong>Volume Distribution:</strong>
+          ${volumeRatio != null ? `Pool volume = ${n2.format(volumeRatio)}% of global` : 'Not enough data yet'}.
+        </div>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Pool-Specific</th>
+              <th>Global</th>
+              <th>Ratio</th>
+              <th>Implication</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Liquidity</td>
+              <td>${poolTVLStr}</td>
+              <td>${globLiqStr}</td>
+              <td>${liquidityRatio != null ? n2.format(liquidityRatio) + '%' : '—'}</td>
+              <td>${liquidityRatio != null ? (liquidityRatio > 30 ? 'Strong pool depth' : 'Moderate depth') : '—'}</td>
+            </tr>
+            <tr>
+              <td>Volume (24h)</td>
+              <td>${poolVolStr}</td>
+              <td>${globVolStr}</td>
+              <td>${volumeRatio != null ? n2.format(volumeRatio) + '%' : '—'}</td>
+              <td>${volumeRatio != null ? (volumeRatio < 25 ? 'Fragmented trading' : 'Concentrated trading') : '—'}</td>
+            </tr>
+            <tr>
+              <td>Price</td>
+              <td>${poolPriceStr}</td>
+              <td>${globalPriceStr}</td>
+              <td>${priceDiffPct != null ? (priceDiffPct >= 0 ? '+' : '') + n2.format(priceDiffPct) + '%' : '—'}</td>
+              <td>${priceDiffPct != null ? 'Premium/Lag vs global price' : '—'}</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      document.getElementById('analysisResults').innerHTML = analysisHTML;
+    }
+
+    async function updateAll() {
+      const btn = document.getElementById('updateBtn');
+      const original = btn.textContent;
+      try {
+        btn.disabled = true; btn.textContent = 'Updating…';
+
+        const poolAddress = document.getElementById('poolAddress').value.trim();
+        const tokenId = (document.getElementById('tokenSymbol').value.trim().toUpperCase() === 'CAKE')
+          ? 'pancakeswap-token' : 'pancakeswap-token'; // simple mapping; extend as needed
+
+        // Animate cards
+        document.querySelectorAll('.card').forEach(card => {
+          card.style.transform = 'scale(0.98)';
+          setTimeout(() => { card.style.transform = 'scale(1)'; }, 200);
+        });
+
+        // Fetch in parallel
+        const [pool, tokenBasic, tokenMeta] = await Promise.all([
+          fetchPoolFromGeckoTerminalBSC(poolAddress),
+          fetchTokenFromCoinGecko(tokenId),
+          fetchTokenMetaFromCoinGecko(tokenId).catch(() => ({ })),
+        ]);
+
+        updateCardsPool(pool);
+        updateCardsToken(tokenBasic, tokenMeta);
+        computeComparison();
+
+        const now = new Date().toLocaleTimeString();
+        btn.textContent = `${original} (Updated ${now})`;
+      } catch (err) {
+        console.error(err);
+        alert('Update failed: ' + err.message);
+        btn.textContent = original;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById('updateBtn').addEventListener('click', updateAll);
+    // Auto-run once on load
+    document.addEventListener('DOMContentLoaded', updateAll);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBPT Viral Lottery - Win $500 + $2,500 Grand Prize | NoblePort Systems</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Starfield Background */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Main Content */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .crown {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .viral-banner {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #ff6b6b);
+            background-size: 200% 200%;
+            color: #000;
+            padding: 20px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-top: 25px;
+            animation: gradient-shift 3s ease infinite;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .viral-banner .big-number {
+            font-size: 2.5rem;
+            display: block;
+            margin: 10px 0;
+        }
+
+        /* Main Lottery Card */
+        .main-lottery-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.2);
+        }
+
+        .how-it-works {
+            margin-bottom: 40px;
+        }
+
+        .how-it-works h2 {
+            font-size: 2rem;
+            color: #ffd700;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .step-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .step-number {
+            font-size: 2.5rem;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffed4e;
+        }
+
+        .step-description {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Prize Section */
+        .prizes-section {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .prizes-section h3 {
+            font-size: 1.8rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .prize-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .prize-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 237, 78, 0.1));
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            text-align: center;
+        }
+
+        .prize-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .prize-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .prize-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .prize-details {
+            margin-top: 15px;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Entry Section */
+        .entry-section {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .entry-price {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .entry-price .price {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .entry-price .label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .referral-requirement {
+            background: rgba(255, 107, 107, 0.2);
+            border: 2px solid rgba(255, 107, 107, 0.5);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .referral-requirement .big-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .referral-requirement .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 18px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 40px;
+        }
+
+        .stats-title {
+            font-size: 2rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .countdown-timer {
+            background: rgba(255, 107, 107, 0.2);
+            border: 2px solid rgba(255, 107, 107, 0.5);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .countdown-timer .label {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .countdown-timer .time {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        /* Referral Link Section */
+        .referral-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 40px;
+        }
+
+        .referral-section h2 {
+            font-size: 2rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .referral-link-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .referral-link-display {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .referral-link-input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        .copy-btn {
+            padding: 15px 25px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .referral-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .referral-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .referral-stat .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .referral-stat .label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* Winners Section */
+        .winners-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .winners-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #ffd700;
+        }
+
+        .winner-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .winner-item:hover {
+            border-color: rgba(255, 215, 0, 0.5);
+            transform: translateX(5px);
+        }
+
+        .winner-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .winner-rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .winner-address {
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        .winner-prize {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .nav-button {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: 5% auto;
+            padding: 40px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ffd700;
+        }
+
+        .modal h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .modal-body {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffd700;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+
+            .steps-grid,
+            .prize-grid,
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .entry-price .price {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="starfield" id="starfield"></div>
+    
+    <div class="navigation">
+        <a href="../index.html" class="nav-button">🏠 Main Dashboard</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="crown">👑</div>
+            <h1 class="title">NBPT Viral Lottery</h1>
+            <p class="subtitle">Win $500 Guaranteed + Enter $2,500 Grand Prize Drawing<br>Help Build the Future of Real Estate Tokenization</p>
+            <div class="viral-banner">
+                🎉 FIRST 100 PLAYERS GET GUARANTEED 
+                <span class="big-number">$500</span>
+                Share with 5 Friends to Unlock Your Entry! 🚀
+            </div>
+        </div>
+
+        <div class="main-lottery-card">
+            <div class="how-it-works">
+                <h2>🎯 How It Works</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1️⃣</div>
+                        <div class="step-title">Pay $5 Entry</div>
+                        <div class="step-description">Purchase your lottery token for just $5 using crypto or card</div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2️⃣</div>
+                        <div class="step-title">Get Referral Link</div>
+                        <div class="step-description">Receive your unique viral referral link instantly</div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3️⃣</div>
+                        <div class="step-title">Share with 5 People</div>
+                        <div class="step-description">Send your link to 5 friends to unlock your lottery entry</div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">4️⃣</div>
+                        <div class="step-title">Win Rewards</div>
+                        <div class="step-description">First 100 get $500 guaranteed + enter $2,500 grand prize pool</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prizes-section">
+                <h3>💰 Prize Structure</h3>
+                <div class="prize-grid">
+                    <div class="prize-box">
+                        <div class="prize-icon">🎁</div>
+                        <div class="prize-amount">$500</div>
+                        <div class="prize-label">Guaranteed Reward</div>
+                        <div class="prize-details">First 100 players who complete the referral requirement receive $500 in NBPT tokens</div>
+                    </div>
+                    <div class="prize-box">
+                        <div class="prize-icon">🏆</div>
+                        <div class="prize-amount">$2,500</div>
+                        <div class="prize-label">Grand Prize Pool</div>
+                        <div class="prize-details">All winners enter the grand prize drawing to help build the NoblePort platform</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="entry-section">
+                <div class="entry-price">
+                    <span class="price">$5</span>
+                    <span class="label">One-Time Entry Fee</span>
+                </div>
+
+                <div class="referral-requirement">
+                    <div class="big-text">⚡ Referral Required</div>
+                    <div class="description">You must share your unique link with 5 people to activate your lottery entry and become eligible for prizes</div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="enterLottery()">
+                        🎫 Enter Lottery ($5)
+                    </button>
+                    <button class="btn btn-secondary" onclick="showReferralLink()">
+                        🔗 Get My Referral Link
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h2 class="stats-title">🔥 Live Lottery Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="participantCount">47</div>
+                    <div class="stat-label">Total Participants</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="guaranteedSpots">53</div>
+                    <div class="stat-label">$500 Spots Remaining</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="qualifiedCount">28</div>
+                    <div class="stat-label">Qualified Winners</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalReferrals">235</div>
+                    <div class="stat-label">Total Referrals</div>
+                </div>
+            </div>
+            <div class="countdown-timer">
+                <div class="label">⏰ First 100 Deadline</div>
+                <div class="time" id="countdown">2d 14h 32m</div>
+            </div>
+        </div>
+
+        <div class="referral-section" id="referralSection" style="display: none;">
+            <h2>🔗 Your Viral Referral Link</h2>
+            <div class="referral-link-box">
+                <div class="referral-link-display">
+                    <input type="text" class="referral-link-input" id="referralLink" value="https://nobleport.io/lottery?ref=ABC123XYZ" readonly>
+                    <button class="copy-btn" onclick="copyReferralLink()">📋 Copy</button>
+                </div>
+                <p style="opacity: 0.8; text-align: center;">Share this link with 5 people to unlock your lottery entry!</p>
+                
+                <div class="referral-stats">
+                    <div class="referral-stat">
+                        <div class="number" id="myReferrals">0</div>
+                        <div class="label">Your Referrals</div>
+                    </div>
+                    <div class="referral-stat">
+                        <div class="number" id="referralsNeeded">5</div>
+                        <div class="label">Needed to Qualify</div>
+                    </div>
+                    <div class="referral-stat">
+                        <div class="number" id="bonusEarned">$0</div>
+                        <div class="label">Bonus Earned</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="winners-section">
+            <h2 class="winners-title">🏆 Recent Winners ($500 Guaranteed Rewards)</h2>
+            
+            <div class="winner-item">
+                <div class="winner-info">
+                    <span class="winner-rank">#1</span>
+                    <span class="winner-address">0x742d...8f3a</span>
+                </div>
+                <span class="winner-prize">$500 + Grand Prize Entry</span>
+            </div>
+            
+            <div class="winner-item">
+                <div class="winner-info">
+                    <span class="winner-rank">#2</span>
+                    <span class="winner-address">0x9a1b...2c4d</span>
+                </div>
+                <span class="winner-prize">$500 + Grand Prize Entry</span>
+            </div>
+            
+            <div class="winner-item">
+                <div class="winner-info">
+                    <span class="winner-rank">#3</span>
+                    <span class="winner-address">0x5e7f...9g8h</span>
+                </div>
+                <span class="winner-prize">$500 + Grand Prize Entry</span>
+            </div>
+            
+            <div class="winner-item">
+                <div class="winner-info">
+                    <span class="winner-rank">#4</span>
+                    <span class="winner-address">0x3c5d...1a2b</span>
+                </div>
+                <span class="winner-prize">$500 + Grand Prize Entry</span>
+            </div>
+            
+            <div class="winner-item">
+                <div class="winner-info">
+                    <span class="winner-rank">#5</span>
+                    <span class="winner-address">0x8f2e...4d6c</span>
+                </div>
+                <span class="winner-prize">$500 + Grand Prize Entry</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Entry Modal -->
+    <div id="entryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>🎫 Enter NBPT Viral Lottery</h2>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Wallet Address</label>
+                    <input type="text" id="walletAddress" placeholder="0x..." value="0xc59e66BB2b6E19699F82A72a1569821cb1711504">
+                </div>
+                <div class="form-group">
+                    <label>Email (for referral tracking)</label>
+                    <input type="email" id="email" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; color: white; font-size: 1rem;">
+                        <option>USDC (Multi-chain)</option>
+                        <option>ETH</option>
+                        <option>Credit Card</option>
+                    </select>
+                </div>
+                <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin-bottom: 10px;"><strong>Entry Fee:</strong> $5.00</p>
+                    <p style="margin-bottom: 10px;"><strong>Potential Reward:</strong> $500 (if in first 100)</p>
+                    <p><strong>Grand Prize Entry:</strong> $2,500 pool</p>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="processEntry()">
+                    💳 Pay $5 & Get Referral Link
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create starfield
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            const numStars = 200;
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starfield.appendChild(star);
+            }
+        }
+
+        // Generate unique referral code
+        function generateReferralCode() {
+            return 'NBPT' + Math.random().toString(36).substring(2, 9).toUpperCase();
+        }
+
+        // Enter lottery
+        function enterLottery() {
+            document.getElementById('entryModal').style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('entryModal').style.display = 'none';
+        }
+
+        // Process entry
+        function processEntry() {
+            const walletAddress = document.getElementById('walletAddress').value;
+            const email = document.getElementById('email').value;
+            
+            if (!walletAddress || !email) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Generate unique referral code
+            const refCode = generateReferralCode();
+            const referralLink = `https://nobleport.io/lottery?ref=${refCode}`;
+            
+            // Store in localStorage (in production, this would be backend)
+            localStorage.setItem('nbpt_lottery_ref', refCode);
+            localStorage.setItem('nbpt_lottery_wallet', walletAddress);
+            localStorage.setItem('nbpt_lottery_email', email);
+            
+            // Close modal
+            closeModal();
+            
+            // Show success message
+            setTimeout(() => {
+                alert(`🎉 Success! Entry Confirmed!\n\n💳 Payment: $5.00 processed\n🔗 Your Referral Code: ${refCode}\n\n📋 Your unique referral link is ready!\n\n⚡ Share with 5 people to unlock your lottery entry and win $500!`);
+                
+                // Update referral link display
+                document.getElementById('referralLink').value = referralLink;
+                document.getElementById('referralSection').style.display = 'block';
+                
+                // Scroll to referral section
+                document.getElementById('referralSection').scrollIntoView({ behavior: 'smooth' });
+                
+                // Update stats
+                updateStats();
+            }, 1500);
+        }
+
+        // Show referral link
+        function showReferralLink() {
+            const refCode = localStorage.getItem('nbpt_lottery_ref');
+            
+            if (!refCode) {
+                alert('⚠️ Please enter the lottery first to get your referral link!');
+                enterLottery();
+                return;
+            }
+            
+            const referralLink = `https://nobleport.io/lottery?ref=${refCode}`;
+            document.getElementById('referralLink').value = referralLink;
+            document.getElementById('referralSection').style.display = 'block';
+            document.getElementById('referralSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Copy referral link
+        function copyReferralLink() {
+            const linkInput = document.getElementById('referralLink');
+            linkInput.select();
+            document.execCommand('copy');
+            
+            alert('✅ Referral link copied to clipboard!\n\nShare it with 5 friends to unlock your lottery entry!');
+        }
+
+        // Update stats
+        function updateStats() {
+            const participantCount = parseInt(document.getElementById('participantCount').textContent);
+            document.getElementById('participantCount').textContent = participantCount + 1;
+            
+            const guaranteedSpots = parseInt(document.getElementById('guaranteedSpots').textContent);
+            if (guaranteedSpots > 0) {
+                document.getElementById('guaranteedSpots').textContent = guaranteedSpots - 1;
+            }
+        }
+
+        // Update countdown
+        function updateCountdown() {
+            // In production, calculate from actual end time
+            const countdownElement = document.getElementById('countdown');
+            // Placeholder - would calculate real time remaining
+        }
+
+        // Simulate live stats updates
+        function simulateLiveUpdates() {
+            setInterval(() => {
+                const participantCount = parseInt(document.getElementById('participantCount').textContent);
+                const guaranteedSpots = parseInt(document.getElementById('guaranteedSpots').textContent);
+                
+                if (participantCount < 100 && Math.random() < 0.2) {
+                    document.getElementById('participantCount').textContent = participantCount + 1;
+                    if (guaranteedSpots > 0) {
+                        document.getElementById('guaranteedSpots').textContent = guaranteedSpots - 1;
+                    }
+                    
+                    const qualifiedCount = parseInt(document.getElementById('qualifiedCount').textContent);
+                    if (Math.random() < 0.5) {
+                        document.getElementById('qualifiedCount').textContent = qualifiedCount + 1;
+                    }
+                    
+                    const totalReferrals = parseInt(document.getElementById('totalReferrals').textContent);
+                    document.getElementById('totalReferrals').textContent = totalReferrals + Math.floor(Math.random() * 3) + 1;
+                }
+            }, 15000); // Update every 15 seconds
+        }
+
+        // Check for referral parameter in URL
+        function checkReferralParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            
+            if (refCode) {
+                // Track referral (in production, send to backend)
+                console.log('Referred by:', refCode);
+                
+                // Show welcome message
+                setTimeout(() => {
+                    alert(`🎉 Welcome! You were referred by: ${refCode}\n\nEnter the lottery for just $5 and get your own referral link to win $500!`);
+                }, 1000);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createStarfield();
+            checkReferralParam();
+            simulateLiveUpdates();
+            
+            // Check if user already has referral code
+            const existingRef = localStorage.getItem('nbpt_lottery_ref');
+            if (existingRef) {
+                const referralLink = `https://nobleport.io/lottery?ref=${existingRef}`;
+                document.getElementById('referralLink').value = referralLink;
+                document.getElementById('referralSection').style.display = 'block';
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('entryModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
