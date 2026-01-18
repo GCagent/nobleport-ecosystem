@@ -1,0 +1,45 @@
+# NoblePort Live Auction Platform - Replit Configuration
+# Deploy command: Click "Run" to start the server
+
+run = "python3 server.py"
+language = "python3"
+entrypoint = "index.html"
+
+[env]
+PORT = "8080"
+
+[nix]
+channel = "stable-23_11"
+
+[deployment]
+run = ["python3", "server.py"]
+deploymentTarget = "static"
+publicDir = "."
+
+[[ports]]
+localPort = 8080
+externalPort = 80
+
+[languages]
+[languages.html]
+pattern = "**/*.html"
+
+[languages.css]
+pattern = "**/*.css"
+
+[languages.javascript]
+pattern = "**/*.js"
+
+[unitTest]
+language = "python3"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix", "index.html"]
+
+[packager]
+language = "python3"
+
+[packager.features]
+enabledForHosting = false
+packageSearch = true
+guessImports = true

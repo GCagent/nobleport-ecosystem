@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Auction Platform - NoblePort Real Estate | Stephanie.ai CEO</title>
+    <meta name="description" content="Real-time property auctions on the NoblePort blockchain ecosystem. Bid on premium real estate with NBPT tokens.">
+    <meta name="keywords" content="NoblePort, auction, real estate, blockchain, NBPT, property, bidding">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f3460 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Starfield Background */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        .star.small { width: 1px; height: 1px; }
+        .star.medium { width: 2px; height: 2px; box-shadow: 0 0 6px rgba(255,255,255,0.8); }
+        .star.large { width: 3px; height: 3px; box-shadow: 0 0 10px rgba(255,255,255,0.9); }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Main Content */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .nav-button {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 60px;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            color: #ff4444;
+        }
+
+        .live-dot {
+            width: 12px;
+            height: 12px;
+            background: #ff4444;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* Auction Filters */
+        .filters-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filters-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .filter-select, .filter-input {
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 0.95rem;
+            min-width: 150px;
+        }
+
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-btn {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: auto;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Auction Grid */
+        .auction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .auction-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .auction-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .auction-card.featured {
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .auction-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .auction-image-placeholder {
+            font-size: 4rem;
+        }
+
+        .auction-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-live {
+            background: #ff4444;
+            color: white;
+        }
+
+        .badge-ending {
+            background: #ffd700;
+            color: black;
+        }
+
+        .badge-featured {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .auction-content {
+            padding: 25px;
+        }
+
+        .auction-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .auction-location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .auction-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .auction-bid-section {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .current-bid-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .current-bid-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .current-bid-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .bid-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .bid-input {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .bid-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .bid-btn {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .bid-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .bid-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .min-bid-info {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .auction-timer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            border-radius: 10px;
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .timer-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ff4444;
+            font-family: monospace;
+        }
+
+        .auction-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bid-count {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .view-details-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-details-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Featured Auction Section */
+        .featured-auction {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.15);
+        }
+
+        .featured-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .featured-badge {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .featured-title {
+            font-size: 1.5rem;
+            color: #ffd700;
+        }
+
+        .featured-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .featured-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .featured-image-container {
+            border-radius: 15px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .featured-image-placeholder {
+            font-size: 6rem;
+        }
+
+        .featured-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .featured-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .featured-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .featured-stat {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .featured-stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .featured-stat-label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .featured-bid-section {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        .featured-current-bid {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .featured-bid-label {
+            font-size: 1rem;
+        }
+
+        .featured-bid-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .featured-bid-input-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .featured-bid-input {
+            flex: 1;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .featured-bid-input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+
+        .featured-bid-btn {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .featured-bid-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .featured-timer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            border-radius: 10px;
+        }
+
+        .featured-timer-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff4444;
+            font-family: monospace;
+        }
+
+        /* Bid History Section */
+        .bid-history-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #667eea;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .bid-history-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .bid-history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .bid-history-item:hover {
+            background: rgba(0, 0, 0, 0.4);
+            transform: translateX(5px);
+        }
+
+        .bid-history-item.winning {
+            border-left-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .bid-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bidder-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .bidder-address {
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+
+        .bid-time {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .bid-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        /* Wallet Connection */
+        .wallet-section {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .wallet-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .wallet-connected {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid rgba(0, 255, 136, 0.5);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: 5% auto;
+            padding: 40px;
+            border: 2px solid rgba(102, 126, 234, 0.5);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #667eea;
+        }
+
+        .modal h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .modal-property-details {
+            display: grid;
+            gap: 20px;
+        }
+
+        .modal-property-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+        }
+
+        .modal-property-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-property-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .modal-stat {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .modal-stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .modal-stat-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .modal-description {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .auction-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters-grid {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-select, .filter-input {
+                width: 100%;
+            }
+
+            .wallet-section {
+                top: auto;
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .navigation {
+                top: auto;
+                bottom: 20px;
+                left: 20px;
+            }
+
+            .header {
+                margin-top: 20px;
+            }
+
+            .featured-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-bid-input-row {
+                flex-direction: column;
+            }
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #000;
+        }
+
+        .toast.error {
+            background: linear-gradient(45deg, #ff4444, #cc0000);
+        }
+    </style>
+</head>
+<body>
+    <div class="starfield" id="starfield"></div>
+
+    <div class="navigation">
+        <a href="../index.html" class="nav-button">&#127968; Main Dashboard</a>
+    </div>
+
+    <div class="wallet-section">
+        <button class="wallet-btn" id="walletBtn" onclick="connectWallet()">
+            &#128279; Connect Wallet
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo-icon">&#128200;</div>
+            <h1 class="title">Live Auction Platform</h1>
+            <p class="subtitle">Real-Time Property Auctions | Bid with NBPT Tokens | Stephanie.ai Verified</p>
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                <span>LIVE AUCTIONS</span>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="activeAuctions">12</div>
+                <div class="stat-label">Active Auctions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalBids">847</div>
+                <div class="stat-label">Total Bids Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalVolume">$24.7M</div>
+                <div class="stat-label">Auction Volume</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="registeredBidders">2,341</div>
+                <div class="stat-label">Registered Bidders</div>
+            </div>
+        </div>
+
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <span class="filter-label">Property Type</span>
+                    <select class="filter-select" id="filterType">
+                        <option value="all">All Types</option>
+                        <option value="residential">Residential</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="land">Land</option>
+                        <option value="industrial">Industrial</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Location</span>
+                    <select class="filter-select" id="filterLocation">
+                        <option value="all">All Locations</option>
+                        <option value="essex">Essex County, MA</option>
+                        <option value="boston">Boston, MA</option>
+                        <option value="cambridge">Cambridge, MA</option>
+                        <option value="salem">Salem, MA</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Price Range</span>
+                    <select class="filter-select" id="filterPrice">
+                        <option value="all">All Prices</option>
+                        <option value="0-500000">Under $500K</option>
+                        <option value="500000-1000000">$500K - $1M</option>
+                        <option value="1000000-5000000">$1M - $5M</option>
+                        <option value="5000000+">$5M+</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Status</span>
+                    <select class="filter-select" id="filterStatus">
+                        <option value="all">All Auctions</option>
+                        <option value="live">Live Now</option>
+                        <option value="ending">Ending Soon</option>
+                        <option value="upcoming">Upcoming</option>
+                    </select>
+                </div>
+                <button class="filter-btn" onclick="applyFilters()">Apply Filters</button>
+            </div>
+        </div>
+
+        <!-- Featured Auction -->
+        <div class="featured-auction">
+            <div class="featured-header">
+                <span class="featured-badge">&#11088; FEATURED AUCTION</span>
+                <span class="featured-title">Premium Property - Ending Soon!</span>
+            </div>
+            <div class="featured-content">
+                <div class="featured-image-container">
+                    <div class="featured-image-placeholder">&#127960;</div>
+                </div>
+                <div class="featured-info">
+                    <h3>236 High Street - Essex County Masterpiece</h3>
+                    <div class="featured-location">
+                        &#128205; Essex County, Massachusetts
+                    </div>
+                    <div class="featured-stats">
+                        <div class="featured-stat">
+                            <div class="featured-stat-value">5,400</div>
+                            <div class="featured-stat-label">Sq Ft</div>
+                        </div>
+                        <div class="featured-stat">
+                            <div class="featured-stat-value">6</div>
+                            <div class="featured-stat-label">Bedrooms</div>
+                        </div>
+                        <div class="featured-stat">
+                            <div class="featured-stat-value">4.5</div>
+                            <div class="featured-stat-label">Bathrooms</div>
+                        </div>
+                        <div class="featured-stat">
+                            <div class="featured-stat-value">1.2</div>
+                            <div class="featured-stat-label">Acres</div>
+                        </div>
+                    </div>
+                    <div class="featured-bid-section">
+                        <div class="featured-current-bid">
+                            <span class="featured-bid-label">Current Bid</span>
+                            <span class="featured-bid-value" id="featuredCurrentBid">$2,450,000</span>
+                        </div>
+                        <div class="featured-bid-input-row">
+                            <input type="text" class="featured-bid-input" id="featuredBidInput" placeholder="Enter your bid...">
+                            <button class="featured-bid-btn" onclick="placeFeaturedBid()">Place Bid</button>
+                        </div>
+                        <div class="featured-timer">
+                            <span class="timer-label">&#9200; Auction Ends In:</span>
+                            <span class="featured-timer-value" id="featuredTimer">02:45:32</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auction Grid -->
+        <div class="auction-grid" id="auctionGrid">
+            <!-- Auction cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Bid History -->
+        <div class="bid-history-section">
+            <h2 class="section-title">&#128202; Recent Bid Activity</h2>
+            <div class="bid-history-list" id="bidHistoryList">
+                <!-- Bid history items will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Property Details Modal -->
+    <div id="propertyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Property Details</h2>
+            <div class="modal-property-details" id="modalContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Auction Data
+        const auctionData = [
+            {
+                id: 1,
+                title: "Modern Colonial Estate",
+                location: "Salem, MA",
+                type: "Residential",
+                sqft: 4200,
+                beds: 5,
+                baths: 3.5,
+                currentBid: 1850000,
+                minIncrement: 25000,
+                bids: 47,
+                timeLeft: 14520,
+                featured: false,
+                badge: "live",
+                description: "Stunning modern colonial with updated kitchen, hardwood floors throughout, and a beautiful backyard perfect for entertaining."
+            },
+            {
+                id: 2,
+                title: "Downtown Boston Condo",
+                location: "Boston, MA",
+                type: "Residential",
+                sqft: 1800,
+                beds: 2,
+                baths: 2,
+                currentBid: 925000,
+                minIncrement: 10000,
+                bids: 32,
+                timeLeft: 7200,
+                featured: false,
+                badge: "ending",
+                description: "Luxury condo in the heart of Boston with stunning city views, modern amenities, and walking distance to everything."
+            },
+            {
+                id: 3,
+                title: "Commercial Office Space",
+                location: "Cambridge, MA",
+                type: "Commercial",
+                sqft: 8500,
+                beds: 0,
+                baths: 4,
+                currentBid: 3200000,
+                minIncrement: 50000,
+                bids: 18,
+                timeLeft: 86400,
+                featured: false,
+                badge: "live",
+                description: "Prime commercial space near MIT with excellent foot traffic, modern infrastructure, and room for expansion."
+            },
+            {
+                id: 4,
+                title: "Waterfront Property",
+                location: "Essex County, MA",
+                type: "Residential",
+                sqft: 3600,
+                beds: 4,
+                baths: 3,
+                currentBid: 2100000,
+                minIncrement: 25000,
+                bids: 56,
+                timeLeft: 3600,
+                featured: false,
+                badge: "ending",
+                description: "Beautiful waterfront home with private dock, panoramic ocean views, and luxurious finishes throughout."
+            },
+            {
+                id: 5,
+                title: "Development Land Parcel",
+                location: "Essex County, MA",
+                type: "Land",
+                sqft: 87120,
+                beds: 0,
+                baths: 0,
+                currentBid: 750000,
+                minIncrement: 15000,
+                bids: 24,
+                timeLeft: 172800,
+                featured: false,
+                badge: "featured",
+                description: "2-acre development parcel with approved permits for 12-unit residential complex. Utilities at street."
+            },
+            {
+                id: 6,
+                title: "Historic Victorian Home",
+                location: "Salem, MA",
+                type: "Residential",
+                sqft: 3200,
+                beds: 4,
+                baths: 2.5,
+                currentBid: 1450000,
+                minIncrement: 20000,
+                bids: 39,
+                timeLeft: 43200,
+                featured: false,
+                badge: "live",
+                description: "Beautifully restored Victorian with original details, updated systems, and a charming wraparound porch."
+            }
+        ];
+
+        // Bid History Data
+        const bidHistory = [
+            { bidder: "0x742d...8f3a", amount: 2450000, property: "236 High Street", time: "2 mins ago", winning: true },
+            { bidder: "0x9a1b...2c4d", amount: 2100000, property: "Waterfront Property", time: "5 mins ago", winning: true },
+            { bidder: "0x5e7f...9g8h", amount: 1850000, property: "Modern Colonial Estate", time: "8 mins ago", winning: true },
+            { bidder: "0x3c5d...1a2b", amount: 925000, property: "Downtown Boston Condo", time: "12 mins ago", winning: true },
+            { bidder: "0x8f2e...4d6c", amount: 3200000, property: "Commercial Office Space", time: "15 mins ago", winning: true },
+            { bidder: "0xd4a9...7e2f", amount: 1425000, property: "Historic Victorian Home", time: "18 mins ago", winning: false },
+            { bidder: "0x1b3c...5d8e", amount: 900000, property: "Downtown Boston Condo", time: "22 mins ago", winning: false },
+            { bidder: "0x6e9f...2a4c", amount: 1825000, property: "Modern Colonial Estate", time: "25 mins ago", winning: false }
+        ];
+
+        // Wallet State
+        let walletConnected = false;
+        let walletAddress = "";
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createStarfield();
+            renderAuctions();
+            renderBidHistory();
+            startTimers();
+            simulateLiveActivity();
+        });
+
+        // Create Starfield
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            const numStars = 150;
+
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                const size = ['small', 'medium', 'large'][Math.floor(Math.random() * 3)];
+                star.className = `star ${size}`;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starfield.appendChild(star);
+            }
+        }
+
+        // Render Auction Cards
+        function renderAuctions() {
+            const grid = document.getElementById('auctionGrid');
+            grid.innerHTML = '';
+
+            auctionData.forEach(auction => {
+                const card = createAuctionCard(auction);
+                grid.appendChild(card);
+            });
+        }
+
+        // Create Auction Card
+        function createAuctionCard(auction) {
+            const card = document.createElement('div');
+            card.className = `auction-card ${auction.badge === 'featured' ? 'featured' : ''}`;
+
+            const badgeClass = auction.badge === 'live' ? 'badge-live' :
+                              auction.badge === 'ending' ? 'badge-ending' : 'badge-featured';
+            const badgeText = auction.badge === 'live' ? 'LIVE' :
+                             auction.badge === 'ending' ? 'ENDING SOON' : 'FEATURED';
+
+            const propertyEmoji = auction.type === 'Commercial' ? '&#127970;' :
+                                 auction.type === 'Land' ? '&#127965;' : '&#127968;';
+
+            card.innerHTML = `
+                <div class="auction-image">
+                    <div class="auction-image-placeholder">${propertyEmoji}</div>
+                    <span class="auction-badge ${badgeClass}">${badgeText}</span>
+                </div>
+                <div class="auction-content">
+                    <h3 class="auction-title">${auction.title}</h3>
+                    <div class="auction-location">&#128205; ${auction.location}</div>
+                    <div class="auction-details">
+                        <div class="detail-item">
+                            <div class="detail-value">${auction.sqft.toLocaleString()}</div>
+                            <div class="detail-label">Sq Ft</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value">${auction.beds || 'N/A'}</div>
+                            <div class="detail-label">Beds</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value">${auction.baths || 'N/A'}</div>
+                            <div class="detail-label">Baths</div>
+                        </div>
+                    </div>
+                    <div class="auction-bid-section">
+                        <div class="current-bid-row">
+                            <span class="current-bid-label">Current Bid</span>
+                            <span class="current-bid-value">$${auction.currentBid.toLocaleString()}</span>
+                        </div>
+                        <div class="bid-input-row">
+                            <input type="text" class="bid-input" id="bid-${auction.id}"
+                                   placeholder="$${(auction.currentBid + auction.minIncrement).toLocaleString()}">
+                            <button class="bid-btn" onclick="placeBid(${auction.id})">Bid</button>
+                        </div>
+                        <div class="min-bid-info">Min increment: $${auction.minIncrement.toLocaleString()}</div>
+                    </div>
+                    <div class="auction-timer">
+                        <span class="timer-label">&#9200; Ends in:</span>
+                        <span class="timer-value" id="timer-${auction.id}">${formatTime(auction.timeLeft)}</span>
+                    </div>
+                    <div class="auction-footer">
+                        <span class="bid-count">${auction.bids} bids</span>
+                        <button class="view-details-btn" onclick="viewDetails(${auction.id})">View Details</button>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Render Bid History
+        function renderBidHistory() {
+            const list = document.getElementById('bidHistoryList');
+            list.innerHTML = '';
+
+            bidHistory.forEach(bid => {
+                const item = document.createElement('div');
+                item.className = `bid-history-item ${bid.winning ? 'winning' : ''}`;
+
+                item.innerHTML = `
+                    <div class="bid-info">
+                        <div class="bidder-avatar">${bid.bidder.charAt(2).toUpperCase()}</div>
+                        <div>
+                            <div class="bidder-address">${bid.bidder}</div>
+                            <div class="bid-time">${bid.property} - ${bid.time}</div>
+                        </div>
+                    </div>
+                    <div class="bid-amount">$${bid.amount.toLocaleString()}</div>
+                `;
+
+                list.appendChild(item);
+            });
+        }
+
+        // Format Time
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Start Timers
+        function startTimers() {
+            setInterval(() => {
+                auctionData.forEach(auction => {
+                    if (auction.timeLeft > 0) {
+                        auction.timeLeft--;
+                        const timerElement = document.getElementById(`timer-${auction.id}`);
+                        if (timerElement) {
+                            timerElement.textContent = formatTime(auction.timeLeft);
+                        }
+                    }
+                });
+
+                // Featured auction timer
+                const featuredTimer = document.getElementById('featuredTimer');
+                const currentTime = featuredTimer.textContent.split(':');
+                let totalSeconds = parseInt(currentTime[0]) * 3600 + parseInt(currentTime[1]) * 60 + parseInt(currentTime[2]);
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    featuredTimer.textContent = formatTime(totalSeconds);
+                }
+            }, 1000);
+        }
+
+        // Place Bid
+        function placeBid(auctionId) {
+            if (!walletConnected) {
+                showToast('Please connect your wallet first!', 'error');
+                return;
+            }
+
+            const auction = auctionData.find(a => a.id === auctionId);
+            const input = document.getElementById(`bid-${auctionId}`);
+            const bidAmount = parseInt(input.value.replace(/[$,]/g, ''));
+
+            if (!bidAmount || bidAmount < auction.currentBid + auction.minIncrement) {
+                showToast(`Minimum bid is $${(auction.currentBid + auction.minIncrement).toLocaleString()}`, 'error');
+                return;
+            }
+
+            // Update auction
+            auction.currentBid = bidAmount;
+            auction.bids++;
+
+            // Add to bid history
+            bidHistory.unshift({
+                bidder: walletAddress,
+                amount: bidAmount,
+                property: auction.title,
+                time: "Just now",
+                winning: true
+            });
+
+            // Re-render
+            renderAuctions();
+            renderBidHistory();
+
+            showToast(`Bid of $${bidAmount.toLocaleString()} placed successfully!`, 'success');
+            input.value = '';
+        }
+
+        // Place Featured Bid
+        function placeFeaturedBid() {
+            if (!walletConnected) {
+                showToast('Please connect your wallet first!', 'error');
+                return;
+            }
+
+            const input = document.getElementById('featuredBidInput');
+            const currentBid = parseInt(document.getElementById('featuredCurrentBid').textContent.replace(/[$,]/g, ''));
+            const bidAmount = parseInt(input.value.replace(/[$,]/g, ''));
+            const minBid = currentBid + 50000;
+
+            if (!bidAmount || bidAmount < minBid) {
+                showToast(`Minimum bid is $${minBid.toLocaleString()}`, 'error');
+                return;
+            }
+
+            // Update featured bid
+            document.getElementById('featuredCurrentBid').textContent = `$${bidAmount.toLocaleString()}`;
+
+            // Add to bid history
+            bidHistory.unshift({
+                bidder: walletAddress,
+                amount: bidAmount,
+                property: "236 High Street",
+                time: "Just now",
+                winning: true
+            });
+
+            renderBidHistory();
+            showToast(`Bid of $${bidAmount.toLocaleString()} placed on featured property!`, 'success');
+            input.value = '';
+        }
+
+        // View Details
+        function viewDetails(auctionId) {
+            const auction = auctionData.find(a => a.id === auctionId);
+            const modal = document.getElementById('propertyModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+
+            const propertyEmoji = auction.type === 'Commercial' ? '&#127970;' :
+                                 auction.type === 'Land' ? '&#127965;' : '&#127968;';
+
+            modalTitle.textContent = auction.title;
+            modalContent.innerHTML = `
+                <div class="modal-property-image">${propertyEmoji}</div>
+                <div class="modal-property-info">
+                    <div class="featured-location">&#128205; ${auction.location}</div>
+                    <div class="modal-property-stats">
+                        <div class="modal-stat">
+                            <div class="modal-stat-value">${auction.sqft.toLocaleString()}</div>
+                            <div class="modal-stat-label">Square Feet</div>
+                        </div>
+                        <div class="modal-stat">
+                            <div class="modal-stat-value">${auction.beds || 'N/A'}</div>
+                            <div class="modal-stat-label">Bedrooms</div>
+                        </div>
+                        <div class="modal-stat">
+                            <div class="modal-stat-value">${auction.baths || 'N/A'}</div>
+                            <div class="modal-stat-label">Bathrooms</div>
+                        </div>
+                    </div>
+                    <div class="modal-description">
+                        <h4 style="margin-bottom: 10px; color: #667eea;">Property Description</h4>
+                        <p>${auction.description}</p>
+                    </div>
+                    <div style="margin-top: 20px; padding: 20px; background: rgba(0,255,136,0.1); border-radius: 10px; border: 1px solid rgba(0,255,136,0.3);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Current Bid:</span>
+                            <span style="font-size: 1.5rem; font-weight: bold; color: #00ff88;">$${auction.currentBid.toLocaleString()}</span>
+                        </div>
+                        <div style="margin-top: 10px; opacity: 0.8;">${auction.bids} bids - Ends in ${formatTime(auction.timeLeft)}</div>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        // Close Modal
+        function closeModal() {
+            document.getElementById('propertyModal').style.display = 'none';
+        }
+
+        // Connect Wallet
+        function connectWallet() {
+            if (walletConnected) {
+                walletConnected = false;
+                walletAddress = "";
+                document.getElementById('walletBtn').innerHTML = '&#128279; Connect Wallet';
+                document.getElementById('walletBtn').classList.remove('wallet-connected');
+                showToast('Wallet disconnected', 'error');
+            } else {
+                // Simulate wallet connection
+                walletAddress = "0x" + Math.random().toString(16).substring(2, 6) + "..." + Math.random().toString(16).substring(2, 6);
+                walletConnected = true;
+                document.getElementById('walletBtn').innerHTML = `&#9989; ${walletAddress}`;
+                document.getElementById('walletBtn').classList.add('wallet-connected');
+                showToast('Wallet connected successfully!', 'success');
+            }
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            showToast('Filters applied!', 'success');
+            // In production, this would filter the auctionData array and re-render
+        }
+
+        // Show Toast
+        function showToast(message, type = '') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Simulate Live Activity
+        function simulateLiveActivity() {
+            setInterval(() => {
+                // Update total bids
+                const totalBids = document.getElementById('totalBids');
+                const currentBids = parseInt(totalBids.textContent);
+                if (Math.random() < 0.3) {
+                    totalBids.textContent = currentBids + Math.floor(Math.random() * 3) + 1;
+                }
+
+                // Randomly increase a bid
+                if (Math.random() < 0.2) {
+                    const randomAuction = auctionData[Math.floor(Math.random() * auctionData.length)];
+                    randomAuction.currentBid += randomAuction.minIncrement;
+                    randomAuction.bids++;
+
+                    // Add to history
+                    const newBid = {
+                        bidder: "0x" + Math.random().toString(16).substring(2, 6) + "..." + Math.random().toString(16).substring(2, 6),
+                        amount: randomAuction.currentBid,
+                        property: randomAuction.title,
+                        time: "Just now",
+                        winning: true
+                    };
+
+                    // Mark old winning bids
+                    bidHistory.forEach(b => {
+                        if (b.property === randomAuction.title) b.winning = false;
+                    });
+
+                    bidHistory.unshift(newBid);
+                    if (bidHistory.length > 20) bidHistory.pop();
+
+                    renderAuctions();
+                    renderBidHistory();
+                }
+            }, 10000);
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('propertyModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
