@@ -3,8 +3,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 from agents import get_all_agents, get_system_metrics, DIVISIONS
+from control_plane import router as control_plane_router
 
 app = FastAPI(title="Nobleport Command Center", version="1.0.0")
+app.include_router(control_plane_router)
 
 STATIC_DIR = Path(__file__).parent / "static"
 TEMPLATE_DIR = Path(__file__).parent / "templates"
