@@ -2,15 +2,27 @@
   "name": "nobleport-production-ecosystem",
   "version": "3.0.0",
   "description": "Complete NoblePort Systems - Stephanie.ai CEO, Ultra-Scarce NBPT Token, Advanced DeFi Dashboard",
-  "main": "index.html",
+  "main": "server.js",
   "scripts": {
-    "start": "python3 -m http.server 8000",
-    "dev": "python3 -m http.server 3000",
+    "start": "node server.js",
+    "dev": "node server.js",
+    "static": "python3 -m http.server 8000",
+    "command-center": "cd command-center && uvicorn main:app --host 0.0.0.0 --port 8888",
+    "telegram-bot": "node nobleport-revenue/telegram_intake_bot.js",
     "deploy": "echo 'NoblePort Production Ready'"
   },
   "keywords": [
-    "nobleport", "stephanie.ai", "defi", "real-estate", "blockchain", 
-    "ai", "tokenomics", "ultra-scarce", "nbpt", "construction", "rwa"
+    "nobleport",
+    "stephanie.ai",
+    "defi",
+    "real-estate",
+    "blockchain",
+    "ai",
+    "tokenomics",
+    "ultra-scarce",
+    "nbpt",
+    "construction",
+    "rwa"
   ],
   "author": "Stephanie.ai - AI CEO of NoblePort Systems",
   "license": "MIT",
@@ -22,5 +34,10 @@
     "type": "git",
     "url": "https://github.com/nobleport/ecosystem"
   },
-  "homepage": "https://nobleport.eth"
+  "homepage": "https://nobleport.eth",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "stripe": "^22.1.1"
+  }
 }
