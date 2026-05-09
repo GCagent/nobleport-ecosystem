@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nobleport Command Center — Stephanie.ai | 112 Agent Mesh</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080b12;--surface:#0f1520;--surface2:#141c2b;--border:rgba(255,255,255,.08);
+  --text:#e2e8f0;--muted:#8892a4;--accent:#667eea;--accent2:#764ba2;
+  --green:#00ff88;--yellow:#ffd700;--red:#ff4757;--cyan:#4fd1c5;
+  --div1:#667eea;--div2:#f6ad55;--div3:#48bb78;--div4:#ed64a6;--div5:#9f7aea;--div6:#4fd1c5;
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}
+
+/* Starfield */
+.starfield{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.star{position:absolute;background:#fff;border-radius:50%;opacity:.6}
+.star.s{width:1px;height:1px}.star.m{width:2px;height:2px;box-shadow:0 0 4px rgba(255,255,255,.5)}
+@keyframes twinkle{0%,100%{opacity:.7}50%{opacity:.2}}
+
+/* Layout */
+.app{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-left h1{font-size:1.2rem;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-left .tag{font-size:.65rem;background:rgba(0,255,136,.15);color:var(--green);padding:3px 8px;border-radius:4px;font-weight:600;letter-spacing:.5px}
+.topbar-right{display:flex;align-items:center;gap:16px;font-size:.8rem;color:var(--muted)}
+.topbar-right .pulse{width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,.5)}50%{box-shadow:0 0 0 6px rgba(0,255,136,0)}}
+
+.main{flex:1;padding:20px 24px;max-width:1600px;margin:0 auto;width:100%}
+
+/* Metrics Row */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;transition:transform .2s,border-color .3s}
+.metric-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.15)}
+.metric-card .value{font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.metric-card .label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+
+/* Revenue Engine */
+.revenue-engine{background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(237,100,166,.1));border:1px solid rgba(102,126,234,.25);border-radius:16px;padding:20px;margin-bottom:24px}
+.revenue-engine h2{font-size:1rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.revenue-engine h2 .badge{font-size:.6rem;background:linear-gradient(135deg,var(--accent),var(--div4));padding:3px 10px;border-radius:20px;color:#fff}
+.re-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.re-card{background:var(--surface2);border:1px solid rgba(102,126,234,.2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;transition:transform .2s}
+.re-card:hover{transform:translateY(-2px)}
+.re-card .icon-box{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.re-card .info h4{font-size:.85rem;margin-bottom:2px}.re-card .info p{font-size:.7rem;color:var(--muted)}
+.re-card .re-status{margin-left:auto;font-size:.65rem;padding:3px 8px;border-radius:4px;font-weight:600;white-space:nowrap}
+
+/* Controls */
+.controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.search-box{flex:1;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:.85rem;outline:none;transition:border-color .2s}
+.search-box:focus{border-color:var(--accent)}
+.filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--muted);font-size:.75rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+.filter-btn:hover,.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.filter-btn.active[data-status="online"]{background:var(--green);border-color:var(--green);color:#000}
+.filter-btn.active[data-status="idle"]{background:var(--yellow);border-color:var(--yellow);color:#000}
+.filter-btn.active[data-status="maintenance"]{background:var(--red);border-color:var(--red);color:#fff}
+
+/* Division Tabs */
+.div-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.div-tab{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:.72rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;color:var(--muted)}
+.div-tab:hover{border-color:rgba(255,255,255,.2);color:var(--text)}
+.div-tab.active{color:#fff;font-weight:600}
+.div-tab .count{background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px;font-size:.65rem}
+
+/* Agent Grid */
+.agent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.agent-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;transition:all .25s;cursor:default;position:relative;overflow:hidden}
+.agent-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.15);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.agent-card .card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.agent-card .agent-id{font-size:.6rem;color:var(--muted);background:rgba(255,255,255,.05);padding:2px 6px;border-radius:4px;font-family:monospace}
+.agent-card .agent-name{font-size:.82rem;font-weight:600;flex:1}
+.agent-card .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.agent-card .status-dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
+.agent-card .status-dot.idle{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+.agent-card .status-dot.maintenance{background:var(--red);box-shadow:0 0 6px var(--red)}
+.agent-card .desc{font-size:.72rem;color:var(--muted);margin-bottom:10px;line-height:1.4}
+.agent-card .card-stats{display:flex;gap:12px;font-size:.65rem;color:var(--muted)}
+.agent-card .card-stats span{display:flex;align-items:center;gap:4px}
+.agent-card .card-stats i{font-size:.6rem}
+.agent-card .div-stripe{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px}
+.agent-card.revenue-engine-card{border-color:rgba(102,126,234,.3);background:linear-gradient(135deg,rgba(102,126,234,.05),var(--surface))}
+
+/* Footer */
+.footer{text-align:center;padding:16px;font-size:.65rem;color:var(--muted);border-top:1px solid var(--border)}
+
+/* Agent Detail Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:100;backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:500px;width:90%;position:relative}
+.modal .close-btn{position:absolute;top:12px;right:16px;font-size:1.2rem;color:var(--muted);cursor:pointer;background:none;border:none}
+.modal h3{font-size:1.1rem;margin-bottom:4px}
+.modal .modal-div{font-size:.72rem;color:var(--muted);margin-bottom:16px}
+.modal .modal-desc{font-size:.85rem;margin-bottom:16px;line-height:1.5}
+.modal .modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal .modal-stat{background:var(--surface2);border-radius:8px;padding:12px;text-align:center}
+.modal .modal-stat .val{font-size:1.3rem;font-weight:700;color:var(--accent)}
+.modal .modal-stat .lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;margin-top:2px}
+
+/* Responsive */
+@media(max-width:768px){
+  .topbar{padding:10px 16px}.main{padding:14px 16px}
+  .metrics{grid-template-columns:repeat(2,1fr)}.metric-card .value{font-size:1.3rem}
+  .re-grid{grid-template-columns:1fr}
+  .agent-grid{grid-template-columns:1fr}
+  .div-tabs{gap:4px}.div-tab{padding:5px 10px;font-size:.65rem}
+}
+</style>
+</head>
+<body>
+<div class="starfield" id="starfield"></div>
+<div class="app">
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>NOBLEPORT COMMAND CENTER</h1>
+      <span class="tag">STEPHANIE.AI</span>
+    </div>
+    <div class="topbar-right">
+      <span><span class="pulse"></span> LIVE</span>
+      <span id="clock"></span>
+      <span>v1.0.0</span>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- System Metrics -->
+    <div class="metrics" id="metrics"></div>
+
+    <!-- Revenue Engine 5 -->
+    <div class="revenue-engine">
+      <h2><i class="fas fa-fire"></i> Revenue Engine <span class="badge">TOP 5 CRITICAL</span></h2>
+      <div class="re-grid" id="revenue-engine"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <input class="search-box" type="text" id="search" placeholder="Search 112 agents...">
+      <button class="filter-btn active" data-status="all" onclick="setStatusFilter('all')">All</button>
+      <button class="filter-btn" data-status="online" onclick="setStatusFilter('online')">Online</button>
+      <button class="filter-btn" data-status="idle" onclick="setStatusFilter('idle')">Idle</button>
+      <button class="filter-btn" data-status="maintenance" onclick="setStatusFilter('maintenance')">Maintenance</button>
+    </div>
+
+    <!-- Division Tabs -->
+    <div class="div-tabs" id="div-tabs"></div>
+
+    <!-- Agent Grid -->
+    <div class="agent-grid" id="agent-grid"></div>
+  </div>
+
+  <div class="footer">
+    Nobleport.eth &middot; Stephanie.ai AI Council &middot; 112 Agent Mesh &middot; $289.6M TVL
+  </div>
+</div>
+
+<!-- Agent Detail Modal -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+const DIV_COLORS = {1:'#667eea',2:'#f6ad55',3:'#48bb78',4:'#ed64a6',5:'#9f7aea',6:'#4fd1c5'};
+const DIV_ICONS = {1:'fa-brain',2:'fa-scale-balanced',3:'fa-building',4:'fa-coins',5:'fa-microphone',6:'fa-shield-halved'};
+const RE_ICONS = {49:{icon:'fa-bolt',bg:'rgba(237,100,166,.15)',color:'#ed64a6'},29:{icon:'fa-helmet-safety',bg:'rgba(72,187,120,.15)',color:'#48bb78'},30:{icon:'fa-file-contract',bg:'rgba(246,173,85,.15)',color:'#f6ad55'},64:{icon:'fa-credit-card',bg:'rgba(102,126,234,.15)',color:'#667eea'},63:{icon:'fa-chart-line',bg:'rgba(79,209,197,.15)',color:'#4fd1c5'}};
+const RE_ORDER = [49,29,30,64,63];
+const RE_LABELS = {49:'Money Entry',29:'Job Execution',30:'Compliance Leverage',64:'Cash Collection',63:'Visibility'};
+
+let allAgents = [];
+let divisions = {};
+let currentDiv = 0;
+let currentStatus = 'all';
+
+// Stars
+(function(){const sf=document.getElementById('starfield');for(let i=0;i<120;i++){const s=document.createElement('div');s.className='star '+(Math.random()<.6?'s':'m');s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';if(Math.random()<.3)s.style.animation=`twinkle ${2+Math.random()*4}s infinite ${Math.random()*3}s`;sf.appendChild(s)}})();
+
+// Clock
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' UTC'}
+setInterval(updateClock,1000);updateClock();
+
+async function fetchData(){
+  const [agRes,mRes,dRes]=await Promise.all([fetch('/api/agents'),fetch('/api/metrics'),fetch('/api/divisions')]);
+  const agData=await agRes.json();const mData=await mRes.json();const dData=await dRes.json();
+  allAgents=agData.agents;divisions=dData.divisions;
+  renderMetrics(mData);renderRevenueEngine();renderDivTabs();renderAgents();
+}
+
+function renderMetrics(m){
+  const el=document.getElementById('metrics');
+  el.innerHTML=`
+    <div class="metric-card"><div class="value">${m.total_agents}</div><div class="label">Total Agents</div></div>
+    <div class="metric-card"><div class="value" style="background:linear-gradient(135deg,var(--green),#38a169);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${m.online}</div><div class="label">Online</div></div>
+    <div class="metric-card"><div class="value" style="background:linear-gradient(135deg,var(--yellow),#d69e2e);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${m.idle}</div><div class="label">Idle</div></div>
+    <div class="metric-card"><div class="value">${m.avg_uptime}%</div><div class="label">Avg Uptime</div></div>
+    <div class="metric-card"><div class="value">${m.tvl}</div><div class="label">TVL</div></div>
+    <div class="metric-card"><div class="value">${m.throughput}</div><div class="label">Throughput</div></div>
+    <div class="metric-card"><div class="value">${m.active_projects}</div><div class="label">Active Projects</div></div>
+    <div class="metric-card"><div class="value">${m.tokenized_properties}</div><div class="label">Tokenized Properties</div></div>
+  `;
+}
+
+function renderRevenueEngine(){
+  const el=document.getElementById('revenue-engine');
+  el.innerHTML='';
+  RE_ORDER.forEach(id=>{
+    const a=allAgents.find(x=>x.id===id);if(!a)return;
+    const cfg=RE_ICONS[id];
+    el.innerHTML+=`
+      <div class="re-card" onclick="showAgent(${a.id})">
+        <div class="icon-box" style="background:${cfg.bg};color:${cfg.color}"><i class="fas ${cfg.icon}"></i></div>
+        <div class="info"><h4>${a.name}</h4><p>${RE_LABELS[id]}</p></div>
+        <div class="re-status" style="background:rgba(0,255,136,.12);color:var(--green)">${a.status.toUpperCase()}</div>
+      </div>`;
+  });
+}
+
+function renderDivTabs(){
+  const el=document.getElementById('div-tabs');
+  let html=`<div class="div-tab ${currentDiv===0?'active':''}" style="${currentDiv===0?'border-color:var(--accent);background:rgba(102,126,234,.1)':''}" onclick="setDiv(0)"><i class="fas fa-layer-group"></i> All <span class="count">112</span></div>`;
+  for(const[id,d]of Object.entries(divisions)){
+    const active=currentDiv===+id;
+    const c=DIV_COLORS[id];
+    html+=`<div class="div-tab ${active?'active':''}" style="${active?'border-color:'+c+';background:'+c+'15':''}" onclick="setDiv(${id})"><i class="fas ${DIV_ICONS[id]}" style="color:${c}"></i> ${d.name} <span class="count">${d.agent_count}</span></div>`;
+  }
+  el.innerHTML=html;
+}
+
+function renderAgents(){
+  const el=document.getElementById('agent-grid');
+  const q=document.getElementById('search').value.toLowerCase();
+  let list=allAgents;
+  if(currentDiv)list=list.filter(a=>a.division_id===currentDiv);
+  if(currentStatus!=='all')list=list.filter(a=>a.status===currentStatus);
+  if(q)list=list.filter(a=>a.name.toLowerCase().includes(q)||a.description.toLowerCase().includes(q));
+  if(!list.length){el.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">No agents match your filters</div>';return}
+  el.innerHTML=list.map(a=>{
+    const c=DIV_COLORS[a.division_id];
+    return `<div class="agent-card${a.is_revenue_engine?' revenue-engine-card':''}" onclick="showAgent(${a.id})">
+      <div class="div-stripe" style="background:${c}"></div>
+      <div class="card-top">
+        <span class="agent-id">#${String(a.id).padStart(3,'0')}</span>
+        <span class="agent-name">${a.name}</span>
+        <span class="status-dot ${a.status}"></span>
+      </div>
+      <div class="desc">${a.description}</div>
+      <div class="card-stats">
+        <span><i class="fas fa-arrow-up"></i> ${a.uptime}%</span>
+        <span><i class="fas fa-check"></i> ${a.tasks_completed.toLocaleString()}</span>
+        <span><i class="fas fa-bolt"></i> ${a.throughput}</span>
+      </div>
+    </div>`}).join('');
+}
+
+function setDiv(id){currentDiv=id;renderDivTabs();renderAgents()}
+function setStatusFilter(s){
+  currentStatus=s;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.status===s));
+  renderAgents();
+}
+document.getElementById('search').addEventListener('input',renderAgents);
+
+function showAgent(id){
+  const a=allAgents.find(x=>x.id===id);if(!a)return;
+  const c=DIV_COLORS[a.division_id];
+  document.getElementById('modal-content').innerHTML=`
+    <button class="close-btn" onclick="closeModal()">&times;</button>
+    <h3 style="color:${c}"><i class="fas ${DIV_ICONS[a.division_id]}" style="margin-right:8px"></i>${a.name}</h3>
+    <div class="modal-div">Division ${a.division_id}: ${a.division} &middot; Agent #${a.id}${a.is_revenue_engine?' &middot; <span style="color:var(--accent);font-weight:600">REVENUE ENGINE</span>':''}</div>
+    <div class="modal-desc">${a.description}</div>
+    <div class="modal-stats">
+      <div class="modal-stat"><div class="val" style="color:${a.status==='online'?'var(--green)':a.status==='idle'?'var(--yellow)':'var(--red)'}">${a.status.toUpperCase()}</div><div class="lbl">Status</div></div>
+      <div class="modal-stat"><div class="val">${a.uptime}%</div><div class="lbl">Uptime</div></div>
+      <div class="modal-stat"><div class="val">${a.tasks_completed.toLocaleString()}</div><div class="lbl">Tasks Done</div></div>
+      <div class="modal-stat"><div class="val">${a.throughput}</div><div class="lbl">Throughput</div></div>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+fetchData();
+setInterval(fetchData,30000);
+</script>
+</body>
+</html>
