@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarpentryPro — NoblePort Systems</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #0f2040;
+    --navy-light: #1a3060;
+    --gold: #c8971a;
+    --gold-bright: #f0b429;
+    --gold-pale: #fde68a;
+    --rust: #c0392b;
+    --green: #27ae60;
+    --white: #f5f0e8;
+    --gray: #8a9bb0;
+    --card-bg: #0d1e38;
+    --border: rgba(200,151,26,0.2);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(200,151,26,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(200,151,26,0.06) 0%, transparent 50%);
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy-mid);
+    border-bottom: 2px solid var(--gold);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .logo-text h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: var(--gold-bright);
+    line-height: 1;
+  }
+  .logo-text span {
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .token-display {
+    background: rgba(200,151,26,0.15);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--gold-bright);
+    font-weight: 700;
+  }
+  .tier-badge {
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    color: var(--navy);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* NAV */
+  .nav {
+    background: var(--navy-mid);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: var(--gray);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-btn:hover { color: var(--white); }
+  .nav-btn.active {
+    color: var(--gold-bright);
+    border-bottom-color: var(--gold-bright);
+  }
+
+  /* MAIN */
+  .main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1px;
+    color: var(--gold-bright);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media(max-width:900px) {
+    .grid-4, .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  @media(max-width:600px) {
+    .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* STAT CARDS */
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  }
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--gold-bright);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+  .stat-icon { font-size: 24px; margin-bottom: 8px; }
+
+  /* BUTTONS */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    color: var(--navy);
+  }
+  .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200,151,26,0.4); }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold-bright);
+  }
+  .btn-outline:hover { background: rgba(200,151,26,0.1); }
+  .btn-danger {
+    background: rgba(192,57,43,0.2);
+    border: 1px solid var(--rust);
+    color: #e74c3c;
+  }
+  .btn-green {
+    background: rgba(39,174,96,0.2);
+    border: 1px solid var(--green);
+    color: #2ecc71;
+  }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  /* FORMS */
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .form-control {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  .form-control:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(200,151,26,0.05);
+  }
+  textarea.form-control { resize: vertical; min-height: 80px; }
+  select.form-control option { background: var(--navy-mid); }
+
+  /* DAILY LOG ENTRIES */
+  .log-entry {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .log-entry:hover { border-color: rgba(200,151,26,0.4); }
+  .log-date {
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    color: var(--navy);
+    border-radius: 8px;
+    padding: 6px 10px;
+    text-align: center;
+    min-width: 52px;
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .log-job-tag {
+    background: rgba(200,151,26,0.15);
+    border: 1px solid var(--gold);
+    color: var(--gold-bright);
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* CHANGE ORDER */
+  .co-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--gold);
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .co-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .status-pending { background: rgba(255,193,7,0.15); color: #ffc107; border: 1px solid rgba(255,193,7,0.3); }
+  .status-approved { background: rgba(39,174,96,0.15); color: #2ecc71; border: 1px solid rgba(39,174,96,0.3); }
+  .status-rejected { background: rgba(192,57,43,0.15); color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); }
+
+  /* GANTT */
+  .gantt-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .gantt-header {
+    display: grid;
+    background: rgba(200,151,26,0.1);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 0;
+    min-width: 900px;
+  }
+  .gantt-row {
+    display: grid;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    min-width: 900px;
+    padding: 6px 0;
+    transition: background 0.15s;
+  }
+  .gantt-row:hover { background: rgba(255,255,255,0.03); }
+  .gantt-task-name {
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .gantt-bar-cell { position: relative; height: 32px; }
+  .gantt-bar {
+    position: absolute;
+    height: 22px;
+    top: 5px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 11px;
+    color: var(--navy);
+    font-weight: 700;
+    min-width: 30px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 8px rgba(200,151,26,0.3);
+  }
+  .gantt-bar:hover { transform: scaleY(1.1); }
+  .gantt-bar.complete {
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+  }
+  .gantt-bar.delayed {
+    background: linear-gradient(90deg, #c0392b, #e74c3c);
+  }
+  .gantt-today-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: rgba(255,255,255,0.3);
+    border-left: 2px dashed rgba(255,255,255,0.4);
+    z-index: 2;
+  }
+
+  /* RECEIPTS */
+  .receipt-thumb {
+    background: rgba(255,255,255,0.05);
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .receipt-thumb:hover { border-color: var(--gold); background: rgba(200,151,26,0.05); }
+  .receipt-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .receipt-icon {
+    width: 44px; height: 44px;
+    background: rgba(200,151,26,0.15);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  /* LEARNING / TOKENS */
+  .xp-bar {
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    height: 8px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+    border-radius: 20px;
+    transition: width 0.8s ease;
+  }
+  .achievement {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .achievement.unlocked { border-color: var(--gold); }
+  .achievement-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(200,151,26,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .achievement.unlocked .achievement-icon {
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--navy-mid);
+    border: 1px solid var(--gold);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 540px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--gold-bright);
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--gray);
+    font-size: 20px;
+    cursor: pointer;
+  }
+  .modal-close:hover { color: var(--white); }
+
+  /* TOAST */
+  #toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    background: var(--navy-mid);
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 18px;
+    color: var(--white);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+    max-width: 320px;
+  }
+  @keyframes toastIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+
+  /* CONFIRMATION CARD (Change Order) */
+  .co-confirm-card {
+    background: linear-gradient(135deg, rgba(200,151,26,0.1), rgba(240,180,41,0.05));
+    border: 2px solid var(--gold);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .co-confirm-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--gold-bright);
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--gold-bright);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 8px;
+  }
+
+  /* TOKEN REWARD POPUP */
+  .token-reward {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    color: var(--navy);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 16px;
+    z-index: 999;
+    display: none;
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .token-reward.show { display: block; }
+  @keyframes popIn { from { transform: scale(0.5) translateY(-20px); opacity:0; } to { transform: scale(1); opacity:1; } }
+
+  /* JOB SELECTOR */
+  .job-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.04);
+    color: var(--gray);
+    transition: all 0.2s;
+  }
+  .job-pill.active, .job-pill:hover {
+    border-color: var(--gold);
+    color: var(--gold-bright);
+    background: rgba(200,151,26,0.1);
+  }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  /* tip box */
+  .tip-box {
+    background: rgba(200,151,26,0.08);
+    border: 1px solid rgba(200,151,26,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--gold-pale);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: var(--navy-light); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">🔨</div>
+    <div class="logo-text">
+      <h1>CarpentryPro</h1>
+      <span>NoblePort Systems — Field Manager</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="token-display">🪙 <span id="token-count">350</span> BUILD</div>
+    <div class="tier-badge" id="tier-badge">Journeyman</div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPanel('dashboard')">📊 Dashboard</button>
+  <button class="nav-btn" onclick="showPanel('daily-logs')">📋 Daily Logs</button>
+  <button class="nav-btn" onclick="showPanel('change-orders')">📝 Change Orders</button>
+  <button class="nav-btn" onclick="showPanel('receipts')">🧾 Receipts</button>
+  <button class="nav-btn" onclick="showPanel('scheduler')">📅 Gantt Scheduler</button>
+  <button class="nav-btn" onclick="showPanel('learning')">🎓 Training & Tokens</button>
+</nav>
+
+<div class="main">
+
+<!-- ==================== DASHBOARD ==================== -->
+<div id="panel-dashboard" class="panel active">
+  <div class="section-title">🏗️ Operations Dashboard</div>
+
+  <div class="grid-4">
+    <div class="stat-card">
+      <div class="stat-icon">🏠</div>
+      <div class="stat-value" id="dash-active-jobs">5</div>
+      <div class="stat-label">Active Jobs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📋</div>
+      <div class="stat-value" id="dash-logs-today">3</div>
+      <div class="stat-label">Logs Today</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⚠️</div>
+      <div class="stat-value" id="dash-co-pending">2</div>
+      <div class="stat-label">COs Pending</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🧾</div>
+      <div class="stat-value" id="dash-receipts-week">$4,280</div>
+      <div class="stat-label">Receipts This Week</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px;">
+    <!-- Today's Jobs -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🏗️ Today's Active Jobs</div>
+        <button class="btn btn-outline btn-sm" onclick="openModal('modal-add-job')">+ Add Job</button>
+      </div>
+      <div id="jobs-list"></div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">⚡ Quick Actions</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button class="btn btn-gold" style="width:100%;" onclick="showPanel('daily-logs'); openModal('modal-add-log')">
+          📋 Add Daily Log
+        </button>
+        <button class="btn btn-outline" style="width:100%;" onclick="showPanel('change-orders'); openModal('modal-add-co')">
+          📝 Create Change Order
+        </button>
+        <button class="btn btn-outline" style="width:100%;" onclick="showPanel('receipts'); openModal('modal-add-receipt')">
+          🧾 Upload Receipt
+        </button>
+        <button class="btn btn-outline" style="width:100%;" onclick="showPanel('scheduler')">
+          📅 View Gantt Schedule
+        </button>
+      </div>
+      <hr class="divider">
+      <div class="tip-box">
+        💡 <span><strong>Pro Tip:</strong> Log daily activities to earn <strong>+15 BUILD tokens</strong> per job per day. Consistent logging for 7 days earns the <em>Site Commander</em> badge!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Change Orders Alert -->
+  <div class="card" id="co-alert-section">
+    <div class="card-header">
+      <div class="card-title">⚠️ Change Orders Awaiting Customer Response</div>
+    </div>
+    <div id="dashboard-co-list"></div>
+  </div>
+</div>
+
+<!-- ==================== DAILY LOGS ==================== -->
+<div id="panel-daily-logs" class="panel">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+    <div class="section-title" style="margin:0">📋 Daily Job Logs</div>
+    <button class="btn btn-gold" onclick="openModal('modal-add-log')">+ New Log Entry</button>
+  </div>
+
+  <!-- Job Filter -->
+  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;" id="job-filter-pills">
+    <div class="job-pill active" onclick="filterLogs('all', this)">All Jobs</div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📅 Log History</div>
+      <span style="color:var(--gray); font-size:12px;">Earn +15 BUILD per daily log</span>
+    </div>
+    <div id="logs-list">
+      <div style="text-align:center; color:var(--gray); padding:40px;">No logs yet. Add your first daily log!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CHANGE ORDERS ==================== -->
+<div id="panel-change-orders" class="panel">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+    <div class="section-title" style="margin:0">📝 Change Orders</div>
+    <button class="btn btn-gold" onclick="openModal('modal-add-co')">+ Create Change Order</button>
+  </div>
+
+  <div class="tip-box">
+    🔔 <span>All field changes require a documented change order. Customer receives a <strong>YES / NO confirmation request</strong> which must be approved before work proceeds.</span>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:16px;">
+    <div class="stat-card"><div class="stat-value" id="co-count-pending">0</div><div class="stat-label">Pending Customer</div></div>
+    <div class="stat-card"><div class="stat-value" id="co-count-approved">0</div><div class="stat-label">Approved</div></div>
+    <div class="stat-card"><div class="stat-value" id="co-count-value">$0</div><div class="stat-label">Total CO Value</div></div>
+  </div>
+
+  <div id="co-list">
+    <div style="text-align:center; color:var(--gray); padding:40px;">No change orders yet.</div>
+  </div>
+</div>
+
+<!-- ==================== RECEIPTS ==================== -->
+<div id="panel-receipts" class="panel">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+    <div class="section-title" style="margin:0">🧾 Daily Receipts</div>
+    <button class="btn btn-gold" onclick="openModal('modal-add-receipt')">+ Upload Receipt</button>
+  </div>
+
+  <div class="tip-box">
+    📸 <span>Upload receipts daily to maintain accurate job costing. Each receipt upload earns <strong>+10 BUILD tokens</strong>. Keeping 100% receipt coverage unlocks the <em>Cost Master</em> badge.</span>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:16px;">
+    <div class="stat-card"><div class="stat-value" id="receipt-count">0</div><div class="stat-label">Receipts Uploaded</div></div>
+    <div class="stat-card"><div class="stat-value" id="receipt-total">$0</div><div class="stat-label">Total Documented</div></div>
+    <div class="stat-card"><div class="stat-value" id="receipt-today">0</div><div class="stat-label">Uploaded Today</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📁 Receipt Archive</div>
+    </div>
+    <div id="receipts-list">
+      <div style="text-align:center; color:var(--gray); padding:40px;">No receipts uploaded yet.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== GANTT SCHEDULER ==================== -->
+<div id="panel-scheduler" class="panel">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+    <div class="section-title" style="margin:0">📅 Project Scheduler — Gantt View</div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-outline btn-sm" onclick="ganttShift(-7)">← Prev Week</button>
+      <button class="btn btn-outline btn-sm" onclick="ganttShift(0)">Today</button>
+      <button class="btn btn-outline btn-sm" onclick="ganttShift(7)">Next Week →</button>
+      <button class="btn btn-gold btn-sm" onclick="openModal('modal-add-task')">+ Add Task</button>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0; overflow:hidden;">
+    <div style="padding:14px 16px; background:rgba(200,151,26,0.08); border-bottom:1px solid var(--border); display:flex; gap:16px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:6px; font-size:12px;">
+        <div style="width:12px;height:12px;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold-bright));"></div> In Progress
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; font-size:12px;">
+        <div style="width:12px;height:12px;border-radius:2px;background:linear-gradient(90deg,#27ae60,#2ecc71);"></div> Complete
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; font-size:12px;">
+        <div style="width:12px;height:12px;border-radius:2px;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div> Delayed
+      </div>
+      <div style="margin-left:auto; font-size:12px; color:var(--gray);" id="gantt-range-label"></div>
+    </div>
+    <div class="gantt-container" id="gantt-container"></div>
+  </div>
+</div>
+
+<!-- ==================== LEARNING ==================== -->
+<div id="panel-learning" class="panel">
+  <div class="section-title">🎓 Training Academy & BuildTokens</div>
+
+  <div class="grid-2">
+    <!-- Token Summary -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🪙 Your BUILD Token Balance</div>
+      </div>
+      <div style="text-align:center; padding:20px 0;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:64px; color:var(--gold-bright); line-height:1;" id="learning-token-count">350</div>
+        <div style="color:var(--gray); font-size:13px;">BUILD Tokens</div>
+        <div style="margin-top:16px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--gray); margin-bottom:4px;">
+            <span>Journeyman Progress</span>
+            <span id="xp-label">350 / 500</span>
+          </div>
+          <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:70%;"></div></div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div style="font-size:13px; color:var(--gray);">
+        <strong style="color:var(--white);">Tier Progression:</strong><br>
+        🪚 Apprentice (0) → 🔨 Journeyman (250) → 🏗️ Master Builder (750) → 🏆 Site Commander (1,500) → 👑 Grand Master (5,000)
+      </div>
+    </div>
+
+    <!-- Earning Opportunities -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">💰 Earn BUILD Tokens</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid var(--border);">
+          <div style="display:flex; gap:8px; align-items:center;"><span>📋</span><div><div style="font-size:13px; font-weight:600;">Daily Job Log</div><div style="font-size:11px; color:var(--gray);">Log field activity per job</div></div></div>
+          <div style="color:var(--gold-bright); font-weight:700; font-size:14px;">+15</div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid var(--border);">
+          <div style="display:flex; gap:8px; align-items:center;"><span>📝</span><div><div style="font-size:13px; font-weight:600;">Change Order Filed</div><div style="font-size:11px; color:var(--gray);">Documented field change</div></div></div>
+          <div style="color:var(--gold-bright); font-weight:700; font-size:14px;">+25</div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid var(--border);">
+          <div style="display:flex; gap:8px; align-items:center;"><span>🧾</span><div><div style="font-size:13px; font-weight:600;">Receipt Uploaded</div><div style="font-size:11px; color:var(--gray);">Daily cost documentation</div></div></div>
+          <div style="color:var(--gold-bright); font-weight:700; font-size:14px;">+10</div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid var(--border);">
+          <div style="display:flex; gap:8px; align-items:center;"><span>✅</span><div><div style="font-size:13px; font-weight:600;">CO Customer Approved</div><div style="font-size:11px; color:var(--gray);">Customer confirmed change</div></div></div>
+          <div style="color:var(--gold-bright); font-weight:700; font-size:14px;">+50</div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid var(--border);">
+          <div style="display:flex; gap:8px; align-items:center;"><span>📅</span><div><div style="font-size:13px; font-weight:600;">Task Completed on Time</div><div style="font-size:11px; color:var(--gray);">Gantt milestone hit</div></div></div>
+          <div style="color:var(--gold-bright); font-weight:700; font-size:14px;">+30</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements -->
+  <div class="card" style="margin-top:0;">
+    <div class="card-header">
+      <div class="card-title">🏆 Achievements</div>
+    </div>
+    <div id="achievements-list"></div>
+  </div>
+
+  <!-- Learning Quiz -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">🎓 Carpentry Knowledge Check</div>
+      <span style="color:var(--gray); font-size:12px;">Pass 70% to earn +100 BUILD</span>
+    </div>
+    <div id="quiz-container"></div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<!-- ============== MODALS ============== -->
+
+<!-- Add Job Modal -->
+<div id="modal-add-job" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">🏗️ Add New Job <button class="modal-close" onclick="closeModal('modal-add-job')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">Job Name</label>
+      <input class="form-control" id="job-name" placeholder="e.g. Smith Kitchen Remodel">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Address</label>
+      <input class="form-control" id="job-address" placeholder="123 Main St, Portsmouth NH">
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" id="job-start">
+      </div>
+      <div class="form-group">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" id="job-end">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contract Value ($)</label>
+      <input type="number" class="form-control" id="job-value" placeholder="0.00">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-control" id="job-status">
+        <option value="active">Active</option>
+        <option value="bidding">Bidding</option>
+        <option value="complete">Complete</option>
+        <option value="on-hold">On Hold</option>
+      </select>
+    </div>
+    <button class="btn btn-gold" style="width:100%;" onclick="addJob()">🏗️ Save Job +20 BUILD</button>
+  </div>
+</div>
+
+<!-- Add Log Modal -->
+<div id="modal-add-log" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">📋 New Daily Log <button class="modal-close" onclick="closeModal('modal-add-log')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">Job</label>
+      <select class="form-control" id="log-job"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input type="date" class="form-control" id="log-date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Crew on Site</label>
+      <input class="form-control" id="log-crew" placeholder="e.g. Mike, Tom, Dave (4 men)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Work Performed Today</label>
+      <textarea class="form-control" id="log-work" placeholder="Describe all work completed today..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Materials Used</label>
+      <input class="form-control" id="log-materials" placeholder="e.g. 2x6 lumber (40 pcs), 3/4 plywood (8 sheets)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Weather Conditions</label>
+      <select class="form-control" id="log-weather">
+        <option>☀️ Clear</option>
+        <option>🌥️ Partly Cloudy</option>
+        <option>🌧️ Rain (Work Delayed)</option>
+        <option>❄️ Snow/Cold</option>
+        <option>💨 High Wind</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Issues / Notes</label>
+      <textarea class="form-control" id="log-notes" placeholder="Any issues, delays, or notable observations..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Hours Worked</label>
+      <input type="number" class="form-control" id="log-hours" placeholder="8">
+    </div>
+    <button class="btn btn-gold" style="width:100%;" onclick="addLog()">📋 Save Log +15 BUILD</button>
+  </div>
+</div>
+
+<!-- Add Change Order Modal -->
+<div id="modal-add-co" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">📝 Create Change Order <button class="modal-close" onclick="closeModal('modal-add-co')">✕</button></div>
+    <div class="tip-box">⚡ Field change detected? Document it immediately and send customer confirmation request.</div>
+    <div class="form-group">
+      <label class="form-label">Job</label>
+      <select class="form-control" id="co-job"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Change Order #</label>
+      <input class="form-control" id="co-number" placeholder="CO-001" readonly>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description of Change</label>
+      <textarea class="form-control" id="co-description" placeholder="Describe the field change in detail..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Reason for Change</label>
+      <select class="form-control" id="co-reason">
+        <option>Customer Request</option>
+        <option>Unforeseen Field Condition</option>
+        <option>Design Error / Omission</option>
+        <option>Code Compliance Required</option>
+        <option>Material Substitution</option>
+        <option>Scope Addition</option>
+      </select>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Additional Cost ($)</label>
+        <input type="number" class="form-control" id="co-cost" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time Impact (Days)</label>
+        <input type="number" class="form-control" id="co-days" placeholder="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Customer Name</label>
+      <input class="form-control" id="co-customer" placeholder="Customer name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Customer Email (for confirmation)</label>
+      <input type="email" class="form-control" id="co-email" placeholder="customer@email.com">
+    </div>
+    <button class="btn btn-gold" style="width:100%;" onclick="addChangeOrder()">📝 Create CO & Send Confirmation +25 BUILD</button>
+  </div>
+</div>
+
+<!-- CO Customer Confirmation Modal -->
+<div id="modal-co-confirm" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">✉️ Customer Confirmation <button class="modal-close" onclick="closeModal('modal-co-confirm')">✕</button></div>
+    <div class="co-confirm-card">
+      <div style="font-size:12px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Change Order Request</div>
+      <div id="confirm-co-number" style="font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--gold-bright); margin-bottom:8px;"></div>
+      <div id="confirm-co-desc" style="font-size:14px; margin-bottom:12px; color:var(--white);"></div>
+      <div class="co-confirm-amount" id="confirm-co-amount"></div>
+      <div style="font-size:12px; color:var(--gray);">Additional Cost</div>
+    </div>
+    <p style="font-size:13px; color:var(--gray); margin-bottom:20px; text-align:center;">
+      Do you approve this change order? This will be documented and added to your contract.
+    </p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <button class="btn btn-danger" style="padding:16px; font-size:16px;" onclick="respondCO('rejected')">✕ NO — Reject</button>
+      <button class="btn btn-green" style="padding:16px; font-size:16px;" onclick="respondCO('approved')">✓ YES — Approve</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Receipt Modal -->
+<div id="modal-add-receipt" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">🧾 Upload Receipt <button class="modal-close" onclick="closeModal('modal-add-receipt')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">Job</label>
+      <select class="form-control" id="receipt-job"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input type="date" class="form-control" id="receipt-date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Vendor / Supplier</label>
+      <input class="form-control" id="receipt-vendor" placeholder="e.g. Home Depot, Builders Supply">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select class="form-control" id="receipt-category">
+        <option>Lumber & Framing</option>
+        <option>Hardware & Fasteners</option>
+        <option>Tools & Equipment</option>
+        <option>Subcontractor</option>
+        <option>Finishes & Trim</option>
+        <option>Windows & Doors</option>
+        <option>Concrete & Masonry</option>
+        <option>Roofing Materials</option>
+        <option>Miscellaneous</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Amount ($)</label>
+      <input type="number" class="form-control" id="receipt-amount" placeholder="0.00">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <input class="form-control" id="receipt-desc" placeholder="Brief description of purchase">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Receipt Photo</label>
+      <div class="receipt-thumb" onclick="document.getElementById('receipt-file').click()">
+        <div style="font-size:32px; margin-bottom:8px;">📸</div>
+        <div style="font-size:13px; color:var(--gray);">Tap to capture/upload receipt photo</div>
+        <input type="file" id="receipt-file" accept="image/*" style="display:none;" onchange="previewReceipt(this)">
+      </div>
+      <div id="receipt-preview" style="margin-top:10px;"></div>
+    </div>
+    <button class="btn btn-gold" style="width:100%;" onclick="addReceipt()">🧾 Save Receipt +10 BUILD</button>
+  </div>
+</div>
+
+<!-- Add Gantt Task Modal -->
+<div id="modal-add-task" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">📅 Add Scheduled Task <button class="modal-close" onclick="closeModal('modal-add-task')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">Task Name</label>
+      <input class="form-control" id="task-name" placeholder="e.g. Frame Interior Walls">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Job / Phase</label>
+      <select class="form-control" id="task-job"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Assigned To</label>
+      <input class="form-control" id="task-assigned" placeholder="Crew member or subcontractor">
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" id="task-start">
+      </div>
+      <div class="form-group">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" id="task-end">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-control" id="task-status">
+        <option value="pending">Not Started</option>
+        <option value="active">In Progress</option>
+        <option value="complete">Complete</option>
+        <option value="delayed">Delayed</option>
+      </select>
+    </div>
+    <button class="btn btn-gold" style="width:100%;" onclick="addTask()">📅 Add to Schedule</button>
+  </div>
+</div>
+
+<!-- Token Reward Popup -->
+<div class="token-reward" id="token-reward-popup"></div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<script>
+// ===================== APP STATE =====================
+const state = {
+  tokens: 350,
+  jobs: [
+    { id: 1, name: 'Smith Kitchen Remodel', address: '42 Elm St, Portsmouth NH', start: '2026-02-01', end: '2026-03-15', value: 28000, status: 'active' },
+    { id: 2, name: 'Jones Deck Addition', address: '18 Oak Ave, Hampton NH', start: '2026-02-10', end: '2026-03-01', value: 14500, status: 'active' },
+    { id: 3, name: 'Harbor View Renovation', address: '5 Dock Rd, Rye NH', start: '2026-02-15', end: '2026-04-30', value: 92000, status: 'active' },
+  ],
+  logs: [],
+  changeOrders: [],
+  receipts: [],
+  tasks: [
+    { id: 1, name: 'Demo Existing Cabinets', job: 'Smith Kitchen Remodel', assigned: 'Mike', start: '2026-02-01', end: '2026-02-03', status: 'complete' },
+    { id: 2, name: 'Rough Framing', job: 'Smith Kitchen Remodel', assigned: 'Tom', start: '2026-02-04', end: '2026-02-08', status: 'complete' },
+    { id: 3, name: 'Electrical Rough-In', job: 'Smith Kitchen Remodel', assigned: 'Sub-Electrical', start: '2026-02-09', end: '2026-02-11', status: 'active' },
+    { id: 4, name: 'Cabinet Installation', job: 'Smith Kitchen Remodel', assigned: 'Mike + Dave', start: '2026-02-18', end: '2026-02-25', status: 'pending' },
+    { id: 5, name: 'Deck Footings', job: 'Jones Deck Addition', assigned: 'Tom', start: '2026-02-10', end: '2026-02-12', status: 'complete' },
+    { id: 6, name: 'Deck Frame', job: 'Jones Deck Addition', assigned: 'Mike + Tom', start: '2026-02-13', end: '2026-02-19', status: 'active' },
+    { id: 7, name: 'Decking Boards', job: 'Jones Deck Addition', assigned: 'Crew', start: '2026-02-20', end: '2026-02-26', status: 'pending' },
+    { id: 8, name: 'Demo Phase', job: 'Harbor View Renovation', assigned: 'Full Crew', start: '2026-02-15', end: '2026-02-19', status: 'delayed' },
+  ],
+  achievements: [
+    { id: 1, icon: '📋', name: 'First Log', desc: 'Submit your first daily log', unlocked: false, requirement: 'logs', count: 1 },
+    { id: 2, icon: '🔥', name: 'Site Commander', desc: 'Log 7 consecutive days', unlocked: false, requirement: 'streak', count: 7 },
+    { id: 3, icon: '💼', name: 'Change Agent', desc: 'Create 5 change orders', unlocked: false, requirement: 'cos', count: 5 },
+    { id: 4, icon: '🧾', name: 'Cost Master', desc: 'Upload 20 receipts', unlocked: false, requirement: 'receipts', count: 20 },
+    { id: 5, icon: '✅', name: 'Customer Approved', desc: 'Get 3 COs approved', unlocked: false, requirement: 'approved', count: 3 },
+    { id: 6, icon: '🏆', name: 'Master Builder', desc: 'Earn 750 BUILD tokens', unlocked: false, requirement: 'tokens', count: 750 },
+  ],
+  coCounter: 1,
+  ganttOffset: 0,
+  quizAnswered: false,
+  confirmingCOId: null,
+};
+
+// ===================== UTILS =====================
+function today() { return new Date().toISOString().split('T')[0]; }
+function formatDate(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+function formatCurrency(n) {
+  return '$' + parseFloat(n || 0).toLocaleString('en-US', { minimumFractionDigits: 0 });
+}
+
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(b => { if (b.onclick && b.onclick.toString().includes(id)) b.classList.add('active'); });
+  if (id === 'scheduler') renderGantt();
+  if (id === 'learning') renderLearning();
+}
+
+function openModal(id) {
+  populateJobSelects();
+  if (id === 'modal-add-log') {
+    document.getElementById('log-date').value = today();
+  }
+  if (id === 'modal-add-receipt') {
+    document.getElementById('receipt-date').value = today();
+  }
+  if (id === 'modal-add-co') {
+    document.getElementById('co-number').value = 'CO-' + String(state.coCounter).padStart(3, '0');
+  }
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function populateJobSelects() {
+  ['log-job', 'co-job', 'receipt-job', 'task-job'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = state.jobs.map(j => `<option value="${j.id}">${j.name}</option>`).join('');
+  });
+  // Job filter pills
+  const fp = document.getElementById('job-filter-pills');
+  if (fp) {
+    fp.innerHTML = '<div class="job-pill active" onclick="filterLogs(\'all\', this)">All Jobs</div>' +
+      state.jobs.map(j => `<div class="job-pill" onclick="filterLogs(${j.id}, this)">${j.name}</div>`).join('');
+  }
+}
+
+// ===================== TOAST / REWARD =====================
+function toast(msg, icon = '✅') {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
+function awardTokens(amount, reason) {
+  state.tokens += amount;
+  document.getElementById('token-count').textContent = state.tokens;
+  document.getElementById('learning-token-count').textContent = state.tokens;
+  const popup = document.getElementById('token-reward-popup');
+  popup.textContent = `+${amount} BUILD — ${reason}`;
+  popup.classList.add('show');
+  setTimeout(() => popup.classList.remove('show'), 2500);
+  updateTier();
+  checkAchievements();
+}
+
+function updateTier() {
+  const t = state.tokens;
+  let tier = '🪚 Apprentice';
+  if (t >= 5000) tier = '👑 Grand Master';
+  else if (t >= 1500) tier = '🏆 Site Commander';
+  else if (t >= 750) tier = '🏗️ Master Builder';
+  else if (t >= 250) tier = '🔨 Journeyman';
+  document.getElementById('tier-badge').textContent = tier;
+  // XP bar
+  const tiers = [0, 250, 750, 1500, 5000];
+  let cur = 0, next = 250;
+  for (let i = 0; i < tiers.length - 1; i++) {
+    if (t >= tiers[i] && t < tiers[i+1]) { cur = tiers[i]; next = tiers[i+1]; break; }
+  }
+  const pct = Math.min(100, ((t - cur) / (next - cur)) * 100);
+  const xpFill = document.getElementById('xp-fill');
+  const xpLabel = document.getElementById('xp-label');
+  if (xpFill) xpFill.style.width = pct + '%';
+  if (xpLabel) xpLabel.textContent = `${t} / ${next}`;
+}
+
+// ===================== JOBS =====================
+function addJob() {
+  const name = document.getElementById('job-name').value.trim();
+  if (!name) { toast('Job name required', '⚠️'); return; }
+  const job = {
+    id: Date.now(),
+    name,
+    address: document.getElementById('job-address').value,
+    start: document.getElementById('job-start').value,
+    end: document.getElementById('job-end').value,
+    value: parseFloat(document.getElementById('job-value').value) || 0,
+    status: document.getElementById('job-status').value,
+  };
+  state.jobs.push(job);
+  closeModal('modal-add-job');
+  renderJobs();
+  awardTokens(20, 'New Job Added');
+  toast(`Job "${name}" added!`);
+  document.getElementById('job-name').value = '';
+  document.getElementById('job-address').value = '';
+}
+
+function renderJobs() {
+  const el = document.getElementById('jobs-list');
+  if (!state.jobs.length) { el.innerHTML = '<div style="color:var(--gray);text-align:center;padding:20px;">No jobs yet.</div>'; return; }
+  el.innerHTML = state.jobs.map(j => `
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-weight:600; font-size:14px;">${j.name}</div>
+        <div style="font-size:11px; color:var(--gray);">${j.address}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="color:var(--gold-bright); font-weight:700; font-size:13px;">${formatCurrency(j.value)}</div>
+        <div class="job-pill active" style="font-size:10px; padding:2px 8px; margin-top:2px;">${j.status}</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('dash-active-jobs').textContent = state.jobs.filter(j => j.status === 'active').length;
+  updateDashboardCOs();
+}
+
+// ===================== DAILY LOGS =====================
+function addLog() {
+  const jobId = document.getElementById('log-job').value;
+  const work = document.getElementById('log-work').value.trim();
+  if (!jobId || !work) { toast('Please fill in job and work performed', '⚠️'); return; }
+  const job = state.jobs.find(j => j.id == jobId);
+  const log = {
+    id: Date.now(),
+    jobId, jobName: job ? job.name : 'Unknown',
+    date: document.getElementById('log-date').value || today(),
+    crew: document.getElementById('log-crew').value,
+    work,
+    materials: document.getElementById('log-materials').value,
+    weather: document.getElementById('log-weather').value,
+    notes: document.getElementById('log-notes').value,
+    hours: document.getElementById('log-hours').value,
+  };
+  state.logs.unshift(log);
+  closeModal('modal-add-log');
+  renderLogs();
+  awardTokens(15, 'Daily Log Filed');
+  toast('Daily log saved!');
+  document.getElementById('dash-logs-today').textContent = state.logs.filter(l => l.date === today()).length;
+}
+
+function renderLogs(filterJobId = 'all') {
+  const el = document.getElementById('logs-list');
+  const logs = filterJobId === 'all' ? state.logs : state.logs.filter(l => l.jobId == filterJobId);
+  if (!logs.length) { el.innerHTML = '<div style="text-align:center; color:var(--gray); padding:40px;">No logs found.</div>'; return; }
+  el.innerHTML = logs.map(l => `
+    <div class="log-entry">
+      <div class="log-date">
+        <div style="font-size:15px;">${new Date(l.date+'T00:00:00').getDate()}</div>
+        <div>${new Date(l.date+'T00:00:00').toLocaleDateString('en-US',{month:'short'})}</div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span class="log-job-tag">${l.jobName}</span>
+          <span style="font-size:11px; color:var(--gray);">${l.weather}</span>
+          ${l.hours ? `<span style="font-size:11px; color:var(--gray);">${l.hours}h</span>` : ''}
+        </div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:4px;">${l.work}</div>
+        ${l.crew ? `<div style="font-size:12px; color:var(--gray);">👷 ${l.crew}</div>` : ''}
+        ${l.materials ? `<div style="font-size:12px; color:var(--gray);">📦 ${l.materials}</div>` : ''}
+        ${l.notes ? `<div style="font-size:12px; color:var(--gray); font-style:italic; margin-top:4px;">${l.notes}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterLogs(jobId, el) {
+  document.querySelectorAll('#job-filter-pills .job-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderLogs(jobId);
+}
+
+// ===================== CHANGE ORDERS =====================
+function addChangeOrder() {
+  const jobId = document.getElementById('co-job').value;
+  const desc = document.getElementById('co-description').value.trim();
+  if (!jobId || !desc) { toast('Please fill in job and description', '⚠️'); return; }
+  const job = state.jobs.find(j => j.id == jobId);
+  const co = {
+    id: Date.now(),
+    number: document.getElementById('co-number').value,
+    jobId, jobName: job ? job.name : 'Unknown',
+    description: desc,
+    reason: document.getElementById('co-reason').value,
+    cost: parseFloat(document.getElementById('co-cost').value) || 0,
+    days: parseInt(document.getElementById('co-days').value) || 0,
+    customer: document.getElementById('co-customer').value,
+    email: document.getElementById('co-email').value,
+    status: 'pending',
+    date: today(),
+  };
+  state.changeOrders.unshift(co);
+  state.coCounter++;
+  closeModal('modal-add-co');
+  renderChangeOrders();
+  awardTokens(25, 'Change Order Created');
+  toast(`Change Order ${co.number} created — awaiting customer confirmation`);
+  document.getElementById('co-description').value = '';
+  document.getElementById('co-cost').value = '';
+  document.getElementById('co-customer').value = '';
+  document.getElementById('co-email').value = '';
+}
+
+function renderChangeOrders() {
+  const el = document.getElementById('co-list');
+  if (!state.changeOrders.length) { el.innerHTML = '<div style="text-align:center; color:var(--gray); padding:40px;">No change orders yet.</div>'; return; }
+  el.innerHTML = state.changeOrders.map(co => `
+    <div class="co-card">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--gold-bright); letter-spacing:1px;">${co.number}</div>
+          <div style="font-size:13px; font-weight:600; margin-bottom:4px;">${co.description}</div>
+          <div style="font-size:12px; color:var(--gray);">📁 ${co.jobName} &nbsp;|&nbsp; 📅 ${formatDate(co.date)} &nbsp;|&nbsp; 🏷️ ${co.reason}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; color:var(--gold-bright);">${formatCurrency(co.cost)}</div>
+          ${co.days ? `<div style="font-size:11px; color:var(--gray);">+${co.days} day(s)</div>` : ''}
+          <div style="margin-top:6px;"><span class="co-status ${
+            co.status === 'approved' ? 'status-approved' :
+            co.status === 'rejected' ? 'status-rejected' : 'status-pending'
+          }">${co.status === 'approved' ? '✓ Approved' : co.status === 'rejected' ? '✕ Rejected' : '⏳ Awaiting Customer'}</span></div>
+        </div>
+      </div>
+      ${co.status === 'pending' ? `
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button class="btn btn-outline btn-sm" onclick="openCOConfirm(${co.id})">📨 Send Confirmation Request</button>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--gray);" onclick="simulateCustomerConfirm(${co.id})">👤 Simulate Customer Response</button>
+      </div>` : ''}
+    </div>
+  `).join('');
+
+  // Stats
+  const pending = state.changeOrders.filter(c => c.status === 'pending').length;
+  const approved = state.changeOrders.filter(c => c.status === 'approved').length;
+  const totalVal = state.changeOrders.filter(c => c.status === 'approved').reduce((s, c) => s + c.cost, 0);
+  document.getElementById('co-count-pending').textContent = pending;
+  document.getElementById('co-count-approved').textContent = approved;
+  document.getElementById('co-count-value').textContent = formatCurrency(totalVal);
+  document.getElementById('dash-co-pending').textContent = pending;
+  updateDashboardCOs();
+}
+
+function openCOConfirm(id) {
+  const co = state.changeOrders.find(c => c.id === id);
+  if (!co) return;
+  state.confirmingCOId = id;
+  document.getElementById('confirm-co-number').textContent = co.number;
+  document.getElementById('confirm-co-desc').textContent = co.description;
+  document.getElementById('confirm-co-amount').textContent = formatCurrency(co.cost);
+  openModal('modal-co-confirm');
+}
+
+function simulateCustomerConfirm(id) {
+  const co = state.changeOrders.find(c => c.id === id);
+  if (!co) return;
+  state.confirmingCOId = id;
+  openCOConfirm(id);
+}
+
+function respondCO(response) {
+  const co = state.changeOrders.find(c => c.id === state.confirmingCOId);
+  if (!co) return;
+  co.status = response;
+  closeModal('modal-co-confirm');
+  renderChangeOrders();
+  if (response === 'approved') {
+    awardTokens(50, 'Change Order Approved!');
+    toast(`✅ ${co.number} APPROVED by customer! +50 BUILD earned!`);
+  } else {
+    toast(`${co.number} rejected by customer. Discuss scope.`, '❌');
+  }
+}
+
+function updateDashboardCOs() {
+  const pending = state.changeOrders.filter(c => c.status === 'pending');
+  const el = document.getElementById('dashboard-co-list');
+  if (!el) return;
+  if (!pending.length) {
+    el.innerHTML = '<div style="color:var(--gray); text-align:center; padding:20px;">✅ No pending change orders</div>';
+    return;
+  }
+  el.innerHTML = pending.map(co => `
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; background:rgba(255,193,7,0.05); border:1px solid rgba(255,193,7,0.2); border-radius:8px; margin-bottom:8px;">
+      <div>
+        <div style="font-weight:600; font-size:13px;">${co.number} — ${co.jobName}</div>
+        <div style="font-size:12px; color:var(--gray);">${co.description.substring(0,60)}${co.description.length > 60 ? '...' : ''}</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="color:var(--gold-bright); font-weight:700;">${formatCurrency(co.cost)}</span>
+        <button class="btn btn-outline btn-sm" onclick="openCOConfirm(${co.id}); showPanel('change-orders');">Confirm →</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===================== RECEIPTS =====================
+function previewReceipt(input) {
+  const preview = document.getElementById('receipt-preview');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.innerHTML = `<img src="${e.target.result}" style="max-width:100%; border-radius:8px; border:1px solid var(--border);">`;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function addReceipt() {
+  const jobId = document.getElementById('receipt-job').value;
+  const amount = parseFloat(document.getElementById('receipt-amount').value) || 0;
+  const vendor = document.getElementById('receipt-vendor').value.trim();
+  if (!jobId || !vendor) { toast('Please fill in job and vendor', '⚠️'); return; }
+  const job = state.jobs.find(j => j.id == jobId);
+  const r = {
+    id: Date.now(),
+    jobId, jobName: job ? job.name : 'Unknown',
+    date: document.getElementById('receipt-date').value || today(),
+    vendor,
+    category: document.getElementById('receipt-category').value,
+    amount,
+    desc: document.getElementById('receipt-desc').value,
+  };
+  state.receipts.unshift(r);
+  closeModal('modal-add-receipt');
+  renderReceipts();
+  awardTokens(10, 'Receipt Uploaded');
+  toast(`Receipt from ${vendor} saved!`);
+  document.getElementById('receipt-vendor').value = '';
+  document.getElementById('receipt-amount').value = '';
+  document.getElementById('receipt-desc').value = '';
+  document.getElementById('receipt-preview').innerHTML = '';
+}
+
+function renderReceipts() {
+  const el = document.getElementById('receipts-list');
+  if (!state.receipts.length) { el.innerHTML = '<div style="text-align:center;color:var(--gray);padding:40px;">No receipts yet.</div>'; return; }
+
+  const total = state.receipts.reduce((s, r) => s + r.amount, 0);
+  const todayReceipts = state.receipts.filter(r => r.date === today());
+  document.getElementById('receipt-count').textContent = state.receipts.length;
+  document.getElementById('receipt-total').textContent = formatCurrency(total);
+  document.getElementById('receipt-today').textContent = todayReceipts.length;
+  document.getElementById('dash-receipts-week').textContent = formatCurrency(total);
+
+  el.innerHTML = state.receipts.map(r => `
+    <div class="receipt-card">
+      <div class="receipt-icon">🧾</div>
+      <div style="flex:1;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+          <span style="font-weight:600; font-size:13px;">${r.vendor}</span>
+          <span class="log-job-tag" style="font-size:10px;">${r.category}</span>
+        </div>
+        <div style="font-size:12px; color:var(--gray);">📁 ${r.jobName} &nbsp;|&nbsp; 📅 ${formatDate(r.date)}</div>
+        ${r.desc ? `<div style="font-size:12px; color:var(--gray);">${r.desc}</div>` : ''}
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:700; color:var(--gold-bright);">${formatCurrency(r.amount)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===================== GANTT =====================
+function addTask() {
+  const name = document.getElementById('task-name').value.trim();
+  if (!name) { toast('Task name required', '⚠️'); return; }
+  const jobSel = document.getElementById('task-job');
+  const jobName = jobSel.options[jobSel.selectedIndex]?.text || '';
+  const task = {
+    id: Date.now(),
+    name,
+    job: jobName,
+    assigned: document.getElementById('task-assigned').value,
+    start: document.getElementById('task-start').value,
+    end: document.getElementById('task-end').value,
+    status: document.getElementById('task-status').value,
+  };
+  state.tasks.push(task);
+  closeModal('modal-add-task');
+  renderGantt();
+  toast(`Task "${name}" added to schedule!`);
+  document.getElementById('task-name').value = '';
+}
+
+let ganttDayOffset = 0;
+
+function ganttShift(days) {
+  if (days === 0) ganttDayOffset = 0;
+  else ganttDayOffset += days;
+  renderGantt();
+}
+
+function renderGantt() {
+  const container = document.getElementById('gantt-container');
+  const DAYS = 21;
+
+  const baseDate = new Date();
+  baseDate.setDate(baseDate.getDate() + ganttDayOffset - 7);
+
+  const dates = [];
+  for (let i = 0; i < DAYS; i++) {
+    const d = new Date(baseDate);
+    d.setDate(baseDate.getDate() + i);
+    dates.push(d);
+  }
+
+  document.getElementById('gantt-range-label').textContent =
+    `${dates[0].toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${dates[DAYS-1].toLocaleDateString('en-US',{month:'short',day:'numeric'})}`;
+
+  const LABEL_W = 220;
+  const CELL_W = 42;
+  const totalW = LABEL_W + DAYS * CELL_W;
+
+  let html = `<div style="min-width:${totalW}px;">`;
+
+  // Header
+  html += `<div style="display:flex; background:rgba(200,151,26,0.08); border-bottom:1px solid var(--border); min-width:${totalW}px;">`;
+  html += `<div style="width:${LABEL_W}px; padding:8px 16px; font-size:11px; font-weight:700; color:var(--gray); text-transform:uppercase; flex-shrink:0;">Task / Phase</div>`;
+  dates.forEach((d, i) => {
+    const isToday = d.toDateString() === new Date().toDateString();
+    const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+    html += `<div style="width:${CELL_W}px; padding:6px 2px; text-align:center; font-size:10px; color:${isToday ? 'var(--gold-bright)' : isWeekend ? 'rgba(255,255,255,0.3)' : 'var(--gray)'}; font-weight:${isToday ? '700' : '400'}; flex-shrink:0; border-left:1px solid rgba(255,255,255,0.03); background:${isWeekend ? 'rgba(255,255,255,0.02)' : 'transparent'}">
+      <div>${d.getDate()}</div>
+      <div style="font-size:9px;">${d.toLocaleDateString('en-US',{weekday:'narrow'})}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Tasks
+  state.tasks.forEach(task => {
+    const taskStart = new Date(task.start + 'T00:00:00');
+    const taskEnd = new Date(task.end + 'T00:00:00');
+
+    const startIdx = dates.findIndex(d => d.toDateString() === taskStart.toDateString());
+    const endIdx = dates.findIndex(d => d.toDateString() === taskEnd.toDateString());
+
+    // Calculate bar position
+    let barLeft = -1, barWidth = 0;
+    if (taskEnd >= dates[0] && taskStart <= dates[DAYS-1]) {
+      const clampedStart = taskStart < dates[0] ? dates[0] : taskStart;
+      const clampedEnd = taskEnd > dates[DAYS-1] ? dates[DAYS-1] : taskEnd;
+
+      const sIdx = dates.findIndex(d => d.toDateString() === clampedStart.toDateString());
+      const eIdx = dates.findIndex(d => d.toDateString() === clampedEnd.toDateString());
+
+      if (sIdx >= 0) {
+        barLeft = sIdx * CELL_W;
+        barWidth = ((eIdx >= 0 ? eIdx : DAYS-1) - sIdx + 1) * CELL_W;
+      }
+    }
+
+    const barClass = task.status === 'complete' ? 'complete' : task.status === 'delayed' ? 'delayed' : '';
+    const isWeekendRow = false;
+
+    html += `<div style="display:flex; border-bottom:1px solid rgba(255,255,255,0.04); min-width:${totalW}px;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">`;
+    html += `<div style="width:${LABEL_W}px; padding:8px 16px; flex-shrink:0; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${task.name}</div>
+      <div style="font-size:10px; color:var(--gray);">${task.job} ${task.assigned ? '· ' + task.assigned : ''}</div>
+    </div>`;
+
+    html += `<div style="position:relative; flex:1; height:44px;">`;
+    // Weekend shading
+    dates.forEach((d, i) => {
+      if (d.getDay() === 0 || d.getDay() === 6) {
+        html += `<div style="position:absolute; left:${i*CELL_W}px; top:0; width:${CELL_W}px; height:100%; background:rgba(255,255,255,0.015);"></div>`;
+      }
+      if (d.toDateString() === new Date().toDateString()) {
+        html += `<div style="position:absolute; left:${i*CELL_W + CELL_W/2}px; top:0; width:1px; height:100%; background:rgba(255,255,255,0.3); border-left:1px dashed rgba(255,255,255,0.3);"></div>`;
+      }
+    });
+    if (barLeft >= 0 && barWidth > 0) {
+      html += `<div class="gantt-bar ${barClass}" style="left:${barLeft}px; width:${barWidth}px;" title="${task.name}: ${formatDate(task.start)} - ${formatDate(task.end)}">
+        ${barWidth > 60 ? task.name.substring(0,10) + (task.name.length > 10 ? '..' : '') : ''}
+      </div>`;
+    }
+    html += `</div>`;
+    html += `</div>`;
+  });
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+// ===================== LEARNING =====================
+const quiz = [
+  { q: 'What does "GMP" stand for in construction contracts?', opts: ['Guaranteed Maximum Price','General Material Pricing','Gross Margin Percentage','Government Material Protocol'], a: 0 },
+  { q: 'A change order MUST be approved by the customer before work begins to:', opts: ['Save money','Maintain legal protection for the contractor','Speed up the job','Reduce material costs'], a: 1 },
+  { q: 'Daily job logs are important because they:', opts: ['Are required by OSHA','Document work performed and protect against disputes','Only track crew hours','Are used for marketing'], a: 1 },
+  { q: 'What is a "float" in a Gantt schedule?', opts: ['A cost overrun','A type of lumber','Extra time before a task becomes critical','A foundation type'], a: 2 },
+  { q: 'In change order documentation, "time impact" refers to:', opts: ['Employee time off','Additional days added to the project schedule','The time to write the CO','Clock-in hours'], a: 1 },
+];
+
+let quizState = { current: 0, score: 0, answered: [] };
+
+function renderLearning() {
+  updateTier();
+  renderAchievements();
+  renderQuiz();
+}
+
+function renderAchievements() {
+  checkAchievements();
+  const el = document.getElementById('achievements-list');
+  el.innerHTML = state.achievements.map(a => `
+    <div class="achievement ${a.unlocked ? 'unlocked' : ''}">
+      <div class="achievement-icon">${a.unlocked ? a.icon : '🔒'}</div>
+      <div style="flex:1;">
+        <div style="font-weight:600; font-size:13px; color:${a.unlocked ? 'var(--gold-bright)' : 'var(--gray)'};">${a.name}</div>
+        <div style="font-size:11px; color:var(--gray);">${a.desc}</div>
+      </div>
+      ${a.unlocked ? '<div style="color:var(--gold-bright); font-size:18px;">✓</div>' : ''}
+    </div>
+  `).join('');
+}
+
+function checkAchievements() {
+  state.achievements.forEach(a => {
+    if (a.unlocked) return;
+    if (a.requirement === 'logs' && state.logs.length >= a.count) a.unlocked = true;
+    if (a.requirement === 'cos' && state.changeOrders.length >= a.count) a.unlocked = true;
+    if (a.requirement === 'receipts' && state.receipts.length >= a.count) a.unlocked = true;
+    if (a.requirement === 'approved' && state.changeOrders.filter(c => c.status === 'approved').length >= a.count) a.unlocked = true;
+    if (a.requirement === 'tokens' && state.tokens >= a.count) a.unlocked = true;
+  });
+}
+
+function renderQuiz() {
+  const el = document.getElementById('quiz-container');
+  if (!el) return;
+  if (quizState.current >= quiz.length) {
+    const pct = Math.round((quizState.score / quiz.length) * 100);
+    const pass = pct >= 70;
+    el.innerHTML = `
+      <div style="text-align:center; padding:30px;">
+        <div style="font-size:48px; margin-bottom:12px;">${pass ? '🏆' : '📚'}</div>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; color:${pass ? 'var(--gold-bright)' : 'var(--rust)'};">${pct}%</div>
+        <div style="font-size:14px; margin-bottom:20px;">${pass ? 'PASSED — +100 BUILD Earned!' : 'Score 70%+ to earn tokens. Review and retake!'}</div>
+        <button class="btn btn-gold" onclick="resetQuiz()">${pass ? '🎓 Retake for Practice' : '🔄 Retake Quiz'}</button>
+      </div>`;
+    if (pass && !state.quizAnswered) { state.quizAnswered = true; awardTokens(100, 'Quiz Passed!'); }
+    return;
+  }
+  const q = quiz[quizState.current];
+  el.innerHTML = `
+    <div>
+      <div style="font-size:12px; color:var(--gray); margin-bottom:8px;">Question ${quizState.current + 1} of ${quiz.length}</div>
+      <div style="font-size:15px; font-weight:600; margin-bottom:16px;">${q.q}</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        ${q.opts.map((opt, i) => `
+          <button class="btn btn-outline" style="text-align:left; justify-content:flex-start;" onclick="answerQuiz(${i})">
+            <span style="font-family:'JetBrains Mono',monospace; margin-right:8px;">${String.fromCharCode(65+i)}.</span>${opt}
+          </button>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+function answerQuiz(idx) {
+  const q = quiz[quizState.current];
+  if (idx === q.a) quizState.score++;
+  quizState.current++;
+  renderQuiz();
+}
+
+function resetQuiz() {
+  quizState = { current: 0, score: 0, answered: [] };
+  state.quizAnswered = false;
+  renderQuiz();
+}
+
+// ===================== INIT =====================
+function init() {
+  renderJobs();
+  renderLogs();
+  renderChangeOrders();
+  renderReceipts();
+  updateTier();
+  populateJobSelects();
+
+  // Default dates
+  document.getElementById('log-date').value = today();
+  document.getElementById('receipt-date').value = today();
+
+  // Init task dates
+  document.getElementById('task-start').value = today();
+  const taskEndDate = new Date();
+  taskEndDate.setDate(taskEndDate.getDate() + 5);
+  document.getElementById('task-end').value = taskEndDate.toISOString().split('T')[0];
+
+  // Job dates
+  document.getElementById('job-start').value = today();
+  const jobEnd = new Date();
+  jobEnd.setDate(jobEnd.getDate() + 60);
+  document.getElementById('job-end').value = jobEnd.toISOString().split('T')[0];
+
+  // Render achievements for learning tab
+  renderAchievements();
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+
+init();
+</script>
+</body>
+</html>
