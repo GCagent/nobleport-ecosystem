@@ -3,11 +3,12 @@ import logging
 from contextlib import asynccontextmanager
 
 import asyncpg
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, Header, HTTPException, Request, status
 from pydantic import BaseModel, Field
 from redis.asyncio import Redis
 
 from app.config import settings
+from app.db import verifications as vdb
 from app.db.audit import AuditLog
 from app.engine.scoring import (
     BLOCK,
@@ -16,6 +17,9 @@ from app.engine.scoring import (
     helius_check,
     solscan_check,
 )
+from app.routers.admin import router as admin_router
+from app.routers.evidence import router as evidence_router
+from app.security.auth import hash_api_key
 from app.security.ratelimit import RateLimiter
 from app.security.validate import is_valid_solana_address
 from app.services import birdeye, helius, solscan
@@ -50,6 +54,27 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="NoblePort Verification Engine", lifespan=lifespan)
+app.include_router(admin_router)
+app.include_router(evidence_router)
+
+
+async def _resolve_optional_user(request: Request, x_api_key: str | None) -> dict | None:
+    """Same logic as security.auth.current_user, but never raises — /verify
+    accepts unauthenticated callers (gateway behavior) while still recording
+    the actor when a key is supplied."""
+    if not x_api_key:
+        return None
+    async with request.app.state.pg.acquire() as conn:
+        row = await conn.fetchrow(
+            """
+            SELECT u.id, u.email, u.role
+              FROM api_keys k
+              JOIN users u ON u.id = k.user_id
+             WHERE k.key_hash = $1 AND k.revoked_at IS NULL
+            """,
+            hash_api_key(x_api_key),
+        )
+    return {"id": str(row["id"]), "email": row["email"], "role": row["role"]} if row else None
 
 
 @app.get("/health")
@@ -69,7 +94,11 @@ async def ready(request: Request):
 
 
 @app.post("/verify", response_model=VerifyResponse)
-async def verify(req: VerifyRequest, request: Request) -> VerifyResponse:
+async def verify(
+    req: VerifyRequest,
+    request: Request,
+    x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+) -> VerifyResponse:
     client_ip = request.client.host if request.client else "unknown"
     if not await request.app.state.ratelimit.allow(client_ip):
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, detail="rate_limited")
@@ -77,6 +106,9 @@ async def verify(req: VerifyRequest, request: Request) -> VerifyResponse:
     address = req.address.strip()
     if not is_valid_solana_address(address):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="invalid_address")
+
+    actor = await _resolve_optional_user(request, x_api_key)
+    actor_id = actor["id"] if actor else None
 
     helius_data, birdeye_data, solscan_data = await asyncio.gather(
         helius.get_account(address),
@@ -100,6 +132,7 @@ async def verify(req: VerifyRequest, request: Request) -> VerifyResponse:
             solscan_status="MISSING" if "solscan" in missing else "UNKNOWN",
             final_decision=BLOCK,
             reason=reason,
+            actor_id=actor_id,
         )
         return VerifyResponse(
             status=BLOCK,
@@ -119,9 +152,20 @@ async def verify(req: VerifyRequest, request: Request) -> VerifyResponse:
         birdeye_status=b,
         solscan_status=s,
         final_decision=final,
+        actor_id=actor_id,
     )
+
+    verification = await vdb.create(
+        request.app.state.pg,
+        address=address,
+        final_decision=final,
+        helius_status=h, birdeye_status=b, solscan_status=s,
+        moderation=None,
+        created_by=actor_id,
+    )
+
     return VerifyResponse(
         status=final,
         sources={"helius": h, "birdeye": b, "solscan": s},
-        audit=audit,
+        audit={**audit, "verification_id": verification["id"], "truth_state": verification["state"]},
     )

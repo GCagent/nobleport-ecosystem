@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     breaker_fail_threshold: int = 5
     breaker_reset_s: int = 30
 
+    evidence_dir: str = "/var/lib/noble-port/evidence"
+    evidence_max_bytes: int = 25 * 1024 * 1024  # 25 MiB
+    evidence_allowed_mime: str = "image/png,image/jpeg,image/webp,application/pdf,text/plain"
+
     log_level: str = "INFO"
 
 
