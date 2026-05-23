@@ -1,95 +1,97 @@
-# 🚀 NoblePort Production Ecosystem
-## Stephanie.ai CEO • Ultra-Scarce NBPT Token • $289.6M TVL
+# NoblePort Production Ecosystem
+## AI-Assisted Construction Operating Layer
 
-### 🎯 September 5th ICO Launch - LIVE DEPLOYMENT
+### System Profile
 
-**The world's first AI-governed, blockchain-powered real estate and construction empire**
+NoblePort Systems is an AI-assisted construction and real estate operating layer
+providing intake, estimating, permit preparation, compliance routing, audit
+logging, and human-gated execution.
+
+**Canonical Reference:** April 2026 Whitepaper
+**Audit Ref:** TA-2026-05-23 — Deep Truth Audit
 
 ---
 
-## 💎 ULTRA-SCARCE TOKENOMICS
+## Operational Status
 
-- **Total Supply:** 100,000,000 NBPT (Fixed Forever)
-- **ICO Price:** $1.00 USDC
-- **36-Month Target:** $7.58 (+658% ROI)
-- **Peak Market Cap:** $690,000,000
-- **Token Burns:** 5.32% supply reduction
+| Component | Classification | Status |
+|-----------|---------------|--------|
+| Construction Ingress API | LIVE (95%) | Property attribute parsing pipelines |
+| Scope & Estimate Support | LIVE | Baseline project brief generation |
+| Job & AWO Tracking | LIVE | Postgres write-ahead log operations |
+| Invoice Workflow Support | LIVE | Billing state management and ledger emission |
+| Human Approval Routing | LIVE | Manual sign-off on all high-risk events |
+| Stephanie.ai Orchestrator | STAGED (81%) | Multi-agent state manager in dev containers |
+| GCagent.ai Compliance | STAGED (44%) | Municipal regulation text-matching routines |
+| PermitStream.ai Review | STAGED (38%) | Document parsing schemas; awaiting API validation |
+| Cyborg.ai Identity Layer | STAGED (28%) | ERC-3643 / identity token scaffolding |
+| KUZO Swap Policy Engine | STAGED / READ-ONLY | Simulated quotes only; on-chain execution disabled |
+| NBPT Token Contracts | STAGED | Contract framework validated; mainnet pending |
 
-## 👑 AI LEADERSHIP TEAM
+## Tokenomics (NBPT)
 
-### Stephanie.ai - Sovereign CEO
-- **Intelligence:** 300K+ IQ (Near-AGI)
-- **Authority:** 61 global jurisdictions
-- **Voice:** Authentic Boston accent
-- **Governance:** Constitutional powers
+- **Total Supply:** 100,000,000 NBPT (Fixed)
+- **Standard:** ERC-3643 (T-REX) security token
+- **Compliance:** Human-gated mint/burn, identity-verified transfers
+- **Status:** Mainnet deployment pending
 
-### Specialized AI Agents
-- **🏗️ GCagent.ai:** 23 active projects, 94.2% completion
-- **📋 PermitStream.ai:** 156 permits tracked, zero throttling
-- **🛡️ CyBorg.ai:** 247 active shields, 99.97% uptime
+## AI Operating Layer
 
-## 🏗️ LIVE ECOSYSTEM METRICS
+### Stephanie.ai — Core Orchestrator
+- Multi-agent construction workflow coordinator
+- Human-gated approval routing for all financial and legal actions
+- Constitutional governance framework
 
-- **Total Value Locked:** $289.6M
-- **Tokenized Properties:** 847 assets
-- **Construction Projects:** 23 active builds
-- **System Throughput:** 1.69M tasks/second
-- **Performance:** 5B optimization optimal
+### Specialized Agents
+- **GCagent.ai:** Compliance monitoring and municipal regulation matching
+- **PermitStream.ai:** Permit document parsing and review pipeline
+- **CyBorg.ai:** Identity verification and security monitoring
 
-## 🌟 ADVANCED FEATURES
+## Architecture
 
-### CyBorg.io Blockchain Visualization
-- **🔒 Trust Constellation:** Pulsing cyan/silver transaction validation
-- **⚡ Virality Nebula:** Fast orange/yellow burst transactions
-- **🌱 Healing Cosmos:** Green/lime regenerative network growth
+```
+[ PUBLIC / INVESTOR ENTRYPOINT ]
+              |
+   +----------+----------+
+   v                      v
+ LIVE OPERATIONAL     STAGED / SIMULATED
+ - Construction       - Stephanie Orchestrator
+ - Scope & Estimate   - GCagent & PermitStream
+ - AWO & Invoices     - KUZO Read-Only Engine
+ - Human-Gate Router  - NBPT Framework
+```
 
-### Multi-Chain Integration
-- **Primary:** Ethereum (ERC-1400 security tokens)
-- **Scaling:** Arbitrum (optimized deployment)
-- **Innovation:** Base, Polygon, Optimism, Avalanche
-- **Cross-chain:** Solana, XRP, Cardano
+## Multi-Chain Integration
 
-## 🚀 QUICK START
+- **Primary:** Ethereum (ERC-3643 security tokens)
+- **Payment Rail:** Solana (USDC settlement only)
+- **Storage:** IPFS + Arweave (document anchoring)
+
+## Quick Start
 
 ```bash
-# Clone and run locally
 git clone https://github.com/nobleport/ecosystem
 cd ecosystem
 python3 -m http.server 8000
 # Open http://localhost:8000
 ```
 
-## 📊 INVESTMENT HIGHLIGHTS
+## Security & Compliance
 
-### Scarcity Advantage
-- **Bitcoin:** 21M BTC vs **100M NBPT**
-- **Ethereum:** 120M ETH vs **100M NBPT**
-- **Utility Demand:** Every transaction requires NBPT
-- **AI Optimization:** Stephanie.ai manages supply
+- **ERC-3643:** Identity-gated transfer restrictions
+- **zkSBT:** Zero-knowledge accredited investor verification
+- **Multi-sig:** Gnosis Safe treasury management
+- **Human Gate:** All treasury/securities actions require manual approval
+- **Autonomous Treasury Actions:** BLOCKED (hard-coded restriction)
+- **Autonomous Securities Operations:** BLOCKED (human multi-sig required)
 
-### Revenue Streams
-- **Real Estate:** $245.7M property portfolio
-- **Construction:** $40K+ change orders tracked
-- **DeFi Yields:** Automated optimization
-- **Platform Fees:** Transaction-based revenue
+## Key Addresses
 
-## 🛡️ SECURITY & COMPLIANCE
-
-- **ERC-1400:** SEC-compliant security tokens
-- **Epoch X Hardening:** Military-grade protection
-- **Multi-sig Governance:** Gnosis Safe integration
-- **Regulatory:** 61-jurisdiction compliance
-
-## 🎯 ICO DETAILS
-
-- **Launch Date:** September 5th, 2025
-- **Public Sale:** 12M tokens at $1.00
-- **Minimum:** $100 (100 tokens)
-- **Maximum:** $50,000 (50,000 tokens)
-- **Payment:** USDC, ETH, BTC accepted
+- **Ethereum Wallet:** `0xc59e66BB2b6E19699F82A72a1569821cb1711504`
+- **Solana Rail:** `6fbr88Qmc1LSh5XATjcaGzvVnq1H7QmB57wAyxrKMXas`
+- **NBPT Contract:** `0x3778E67655Ec26D6bC8294C6F7a1e754AFD2C91C`
+- **ENS:** `nobleport.eth`
 
 ---
 
-**Built with AI Speed Vibe Coding • Powered by Friendly AI Alliance**
-
-**Contact:** stephanie.ai@nobleport.eth • Discord: [QR Code]
+**Contact:** nobleport.eth

@@ -176,7 +176,7 @@ Complete legal package for property tokenization:
    - Open NBPT token sale at $1.00
    - Activate Uniswap V2 pools
    - Begin 36-month vesting schedule
-   - Monitor for 658% ROI trajectory to $7.58 target
+   - Monitor token metrics post-mainnet launch
 
 ## Key Metrics to Track
 
@@ -185,7 +185,7 @@ Complete legal package for property tokenization:
 - **Early Adopter Rewards**: $500 × 100 = $50,000 in NBPT
 - **Grand Prize Pool**: $2,500 for platform development
 - **ICO Participation**: Target $1M+ in first 24 hours
-- **Token Price**: Monitor path to $7.58 (658% ROI)
+- **Token Status**: Monitor mainnet deployment and compliance
 
 ## ENS-Solana Setup
 
