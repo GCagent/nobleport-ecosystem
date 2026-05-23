@@ -1,0 +1,35 @@
+{
+  "ens_name": "nobleport.eth",
+  "addresses": {
+    "ethereum": {
+      "coin_type": 60,
+      "address": "0xc59e66BB2b6E19699F82A72a1569821cb1711504",
+      "role": "primary_wallet",
+      "contracts": {
+        "nbpt_token": "0x3778E67655Ec26D6bC8294C6F7a1e754AFD2C91C"
+      }
+    },
+    "solana": {
+      "coin_type": 501,
+      "address": "6fbr88Qmc1LSh5XATjcaGzvVnq1H7QmB57wAyxrKMXas",
+      "role": "usdc_payment_rail",
+      "label": "NobleKuzo Primary Solana Rail",
+      "policy": {
+        "treasury_authority": false,
+        "governance_authority": false,
+        "nbpt_enabled": false,
+        "bridge_enabled": false,
+        "status": "LIVE_PENDING_VERIFICATION"
+      }
+    }
+  },
+  "ens_records": {
+    "eth_address": "0xc59e66BB2b6E19699F82A72a1569821cb1711504",
+    "sol_address": "6fbr88Qmc1LSh5XATjcaGzvVnq1H7QmB57wAyxrKMXas",
+    "content_hash": null,
+    "txt_records": {
+      "operating-agreement-ipfs": null,
+      "operating-agreement-arweave": null
+    }
+  }
+}

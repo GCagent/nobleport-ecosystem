@@ -68,6 +68,7 @@ Complete legal package for property tokenization:
 3. **Update ENS Records:**
    - Point `nobleport.eth` to your deployment URL
    - Add IPFS CID to ENS content hash for decentralized access
+   - Set Solana address record (see [ENS-Solana Setup](#ens-solana-setup) below)
 
 ### Option 2: Full-Stack Deployment (For Production Backend)
 
@@ -186,10 +187,56 @@ Complete legal package for property tokenization:
 - **ICO Participation**: Target $1M+ in first 24 hours
 - **Token Price**: Monitor path to $7.58 (658% ROI)
 
+## ENS-Solana Setup
+
+Link `nobleport.eth` to the verified Solana payment rail address so
+that ENS-aware wallets and dApps can resolve the Solana destination.
+
+### Option A: Manual (ENS Manager App)
+
+1. Go to [app.ens.domains](https://app.ens.domains)
+2. Connect the wallet that controls `nobleport.eth`
+3. Navigate to **nobleport.eth → Records → Addresses**
+4. Add coin type **SOL (501)**
+5. Paste: `6fbr88Qmc1LSh5XATjcaGzvVnq1H7QmB57wAyxrKMXas`
+6. Save and confirm the transaction
+
+### Option B: Script
+
+```bash
+npm install ethers bs58
+export ETH_RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY"
+export ENS_OWNER_PRIVATE_KEY="..."  # controller of nobleport.eth
+node scripts/ens-solana-setup.js
+```
+
+### Verify
+
+```bash
+export ETH_RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY"
+node scripts/verify-ens-solana.js
+```
+
+Expected output:
+```
+ENS name:  nobleport.eth
+ETH addr:  0xc59e66BB2b6E19699F82A72a1569821cb1711504
+SOL addr:  6fbr88Qmc1LSh5XATjcaGzvVnq1H7QmB57wAyxrKMXas
+STATUS:    MATCH — record is correct
+```
+
+### Cross-Chain Registry
+
+All chain addresses and ENS record targets are tracked in
+`scripts/chain-registry.json`. Update this file whenever addresses
+change so that the verification script and downstream services stay
+in sync.
+
 ## Support & Resources
 
 - **NoblePort.eth**: Main gateway
 - **Ethereum Wallet**: `0xc59e66BB2b6E19699F82A72a1569821cb1711504`
+- **Solana Rail**: `6fbr88Qmc1LSh5XATjcaGzvVnq1H7QmB57wAyxrKMXas`
 - **NBPT Token Contract**: `0x3778E67655Ec26D6bC8294C6F7a1e754AFD2C91C`
 - **Discord**: [Create invite link]
 - **Telegram**: [Create channel]
