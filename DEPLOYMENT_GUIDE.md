@@ -2,7 +2,7 @@
 
 **Version:** 2.0 - Viral Lottery + Legal Documentation
 **Date:** November 29, 2025
-**ICO Launch:** December 20, 2025
+**Status:** Construction OS launch — token offering pending counsel review
 
 ## Overview
 
@@ -20,14 +20,14 @@ The main production-ready NoblePort dashboard with all core features:
 - **Viral Lottery App** (`dashboards/lottery.html`): **NEW** - $5 entry, 5-person referral requirement
 - **Operations Monitor** (`operations-monitor/index.html`): Live system metrics
 - **Tokenomics Documentation** (`tokenomics/`): Ultra-scarce NBPT model with 100M fixed supply
-- **Stephanie.ai Voice** (`ai-voices/stephanie_ai_boston_intro.wav`): AI CEO introduction
+- **Stephanie.ai Voice** (`ai-voices/stephanie_ai_boston_intro.wav`): Orchestration assistant introduction
 
 ### 2. Viral Lottery App Features
 
 **Exact Mechanics as Specified:**
 - **$5 Entry Fee**: Single, simple entry price
 - **Mandatory 5-Person Referral**: Users must share their unique link with 5 people to unlock lottery entry
-- **First 100 Players**: Guaranteed $500 reward in NBPT tokens
+- **First 100 Participants**: Eligible for $500 reward (subject to terms)
 - **$2,500 Grand Prize Pool**: All winners enter drawing to help build the platform
 - **Unique Referral Tracking**: Each participant gets a personalized invite link
 - **Live Stats Dashboard**: Real-time participant count, spots remaining, qualified winners, total referrals
@@ -158,33 +158,40 @@ Complete legal package for property tokenization:
 - [ ] DeFi dashboard loads data
 - [ ] Operations monitor shows metrics
 
-## ICO Launch Preparation (December 20, 2025)
+## Launch Sequence (Per Legal Review)
 
-1. **Pre-Launch (Now - Dec 15):**
-   - Deploy lottery app and begin viral marketing
-   - Collect first 100 early adopters
-   - Distribute $500 rewards to qualified participants
-   - Build anticipation for ICO
+### Phase 1 — Construction OS (LAUNCH FIRST)
+- Lead → Estimate → Deposit → Permit → Build → Invoice → Closeout
+- Terms of service, privacy policy, WISP
+- HIC-compliant contract templates
+- Human review gates and audit logs
+- Payment processor integration
 
-2. **Launch Week (Dec 15-20):**
-   - Finalize smart contracts
-   - Complete security audits
-   - Prepare liquidity pools
-   - Coordinate marketing campaign
+### Phase 2 — Web3 Infrastructure (COUNSEL REQUIRED)
+- DocumentRegistry and AuditBeacon
+- Wallet read-only intelligence
+- OFAC screening
+- USDC treasury reporting
+- Non-custodial receipts
 
-3. **Launch Day (Dec 20):**
-   - Open NBPT token sale at $1.00
-   - Activate Uniswap V2 pools
-   - Begin 36-month vesting schedule
-   - Monitor token metrics post-mainnet launch
+### Phase 3 — Securities Package (COUNSEL MUST SIGN OFF)
+- PPM, subscription agreement, investor questionnaire
+- Form D, Blue Sky review
+- Transfer restrictions, KYC vendor
+- Cap table / transfer agent logic
+
+### Phase 4 — Regulated Expansion (SERIOUS CAPITAL + COUNSEL)
+- NY BitLicense or partner path review
+- Broker-dealer / ATS analysis
+- Custody structure
+- Security token transfer infrastructure
 
 ## Key Metrics to Track
 
 - **Lottery Participants**: Target 100+ in first wave
 - **Referral Conversion**: Track 5-person referral completion rate
-- **Early Adopter Rewards**: $500 × 100 = $50,000 in NBPT
+- **Early Adopter Rewards**: $500 × 100 (subject to terms)
 - **Grand Prize Pool**: $2,500 for platform development
-- **ICO Participation**: Target $1M+ in first 24 hours
 - **Token Status**: Monitor mainnet deployment and compliance
 
 ## ENS-Solana Setup
@@ -265,7 +272,7 @@ in sync.
 2. **Execute legal documents** for 236 High Rd property
 3. **Anchor to IPFS/Arweave** for permanent record
 4. **File Form D** after first token sale
-5. **Prepare for ICO launch** on December 20, 2025
+5. **Prepare token infrastructure** — pending securities counsel review
 
 ---
 

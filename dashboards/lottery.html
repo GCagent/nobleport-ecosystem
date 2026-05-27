@@ -657,9 +657,9 @@
         <div class="header">
             <div class="crown">👑</div>
             <h1 class="title">NBPT Viral Lottery</h1>
-            <p class="subtitle">Win $500 Guaranteed + Enter $2,500 Grand Prize Drawing<br>Help Build the Future of Real Estate Tokenization</p>
+            <p class="subtitle">Early Participant Rewards + Grand Prize Drawing<br>Join the NoblePort Community</p>
             <div class="viral-banner">
-                🎉 FIRST 100 PLAYERS GET GUARANTEED 
+                🎉 FIRST 100 PARTICIPANTS ELIGIBLE FOR
                 <span class="big-number">$500</span>
                 Share with 5 Friends to Unlock Your Entry! 🚀
             </div>
@@ -687,7 +687,7 @@
                     <div class="step-card">
                         <div class="step-number">4️⃣</div>
                         <div class="step-title">Win Rewards</div>
-                        <div class="step-description">First 100 get $500 guaranteed + enter $2,500 grand prize pool</div>
+                        <div class="step-description">First 100 eligible for $500 reward + enter $2,500 grand prize pool</div>
                     </div>
                 </div>
             </div>
@@ -698,7 +698,7 @@
                     <div class="prize-box">
                         <div class="prize-icon">🎁</div>
                         <div class="prize-amount">$500</div>
-                        <div class="prize-label">Guaranteed Reward</div>
+                        <div class="prize-label">Early Reward</div>
                         <div class="prize-details">First 100 players who complete the referral requirement receive $500 in NBPT tokens</div>
                     </div>
                     <div class="prize-box">
@@ -740,7 +740,7 @@
                     <div class="stat-label">Total Participants</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="guaranteedSpots">53</div>
+                    <div class="stat-number" id="eligibleSpots">53</div>
                     <div class="stat-label">$500 Spots Remaining</div>
                 </div>
                 <div class="stat-item">
@@ -785,7 +785,7 @@
         </div>
 
         <div class="winners-section">
-            <h2 class="winners-title">🏆 Recent Winners ($500 Guaranteed Rewards)</h2>
+            <h2 class="winners-title">🏆 Recent Winners ($500 Early Rewards)</h2>
             
             <div class="winner-item">
                 <div class="winner-info">
@@ -963,9 +963,9 @@
             const participantCount = parseInt(document.getElementById('participantCount').textContent);
             document.getElementById('participantCount').textContent = participantCount + 1;
             
-            const guaranteedSpots = parseInt(document.getElementById('guaranteedSpots').textContent);
-            if (guaranteedSpots > 0) {
-                document.getElementById('guaranteedSpots').textContent = guaranteedSpots - 1;
+            const eligibleSpots = parseInt(document.getElementById('eligibleSpots').textContent);
+            if (eligibleSpots > 0) {
+                document.getElementById('eligibleSpots').textContent = eligibleSpots - 1;
             }
         }
 
@@ -980,12 +980,12 @@
         function simulateLiveUpdates() {
             setInterval(() => {
                 const participantCount = parseInt(document.getElementById('participantCount').textContent);
-                const guaranteedSpots = parseInt(document.getElementById('guaranteedSpots').textContent);
+                const eligibleSpots = parseInt(document.getElementById('eligibleSpots').textContent);
                 
                 if (participantCount < 100 && Math.random() < 0.2) {
                     document.getElementById('participantCount').textContent = participantCount + 1;
-                    if (guaranteedSpots > 0) {
-                        document.getElementById('guaranteedSpots').textContent = guaranteedSpots - 1;
+                    if (eligibleSpots > 0) {
+                        document.getElementById('eligibleSpots').textContent = eligibleSpots - 1;
                     }
                     
                     const qualifiedCount = parseInt(document.getElementById('qualifiedCount').textContent);

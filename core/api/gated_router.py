@@ -4,7 +4,7 @@ from uuid import UUID
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Header, Request, status
 from pydantic import BaseModel, Field
 
 router = APIRouter(
@@ -19,6 +19,27 @@ SENSITIVE_SCOPES = frozenset([
     "token_launch",
 ])
 
+NY_BLOCKED_SCOPES = frozenset([
+    "nbpt_purchase",
+    "kuzo_swap",
+    "tokenized_real_estate",
+    "hosted_wallet",
+    "virtual_currency_business",
+])
+
+RED_GATE_SCOPES = frozenset([
+    "nbpt_sale",
+    "tokenized_fractional_ownership",
+    "kuzo_swap_execution",
+    "hosted_wallet",
+    "ai_trade_execution",
+    "yield_staking",
+    "stablecoin_issuance",
+    "public_secondary_market",
+])
+
+NY_REGION_CODES = frozenset(["NY", "new_york", "new york", "nyc"])
+
 
 class ExecutionRequest(BaseModel):
     workflow_id: UUID
@@ -27,6 +48,10 @@ class ExecutionRequest(BaseModel):
     human_signature: Optional[str] = Field(
         None,
         description="Cryptographic token or link validating manual human approval",
+    )
+    requestor_region: Optional[str] = Field(
+        None,
+        description="ISO region code or state of the requesting party",
     )
 
 
@@ -41,12 +66,44 @@ class ExecutionResponse(BaseModel):
     audit_ledger: AuditAnchor
 
 
+def _is_ny_region(region: Optional[str]) -> bool:
+    if not region:
+        return False
+    return region.strip().lower() in NY_REGION_CODES
+
+
 @router.post("/execute-gate", response_model=ExecutionResponse)
 async def process_gated_action(
     payload: ExecutionRequest,
     db_pool=Depends(lambda: router.state.db_pool),
 ):
-    if payload.action_scope.lower() in SENSITIVE_SCOPES and not payload.human_signature:
+    scope_lower = payload.action_scope.lower()
+
+    # RED GATE: hard-blocked modules — counsel must clear before any execution
+    if scope_lower in RED_GATE_SCOPES:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                f"Launch Gate BLOCKED: '{payload.action_scope}' is classified RED "
+                f"in the pre-launch law review. Securities/regulatory counsel "
+                f"must clear this module before any execution is permitted."
+            ),
+        )
+
+    # NY GEO-BLOCK: NYDFS BitLicense requirement
+    if _is_ny_region(payload.requestor_region) and scope_lower in NY_BLOCKED_SCOPES:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                f"New York Block: '{payload.action_scope}' is not available to "
+                f"New York residents. NoblePort does not offer virtual currency "
+                f"business activity in New York unless appropriate licensing, "
+                f"exemptions, or regulated partner coverage are confirmed by counsel."
+            ),
+        )
+
+    # SENSITIVE SCOPE: requires human signature
+    if scope_lower in SENSITIVE_SCOPES and not payload.human_signature:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=(
@@ -99,6 +156,7 @@ async def process_gated_action(
                 "workflow_id": str(payload.workflow_id),
                 "action_scope": payload.action_scope,
                 "resolution": action_result,
+                "requestor_region": payload.requestor_region,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
             payload_hash = hashlib.sha256(
