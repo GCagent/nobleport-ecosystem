@@ -70,8 +70,8 @@ logging, and human-gated execution.
 ## Quick Start
 
 ```bash
-git clone https://github.com/nobleport/ecosystem
-cd ecosystem
+git clone https://github.com/GCagent/nobleport-ecosystem
+cd nobleport-ecosystem
 python3 -m http.server 8000
 # Open http://localhost:8000
 ```
