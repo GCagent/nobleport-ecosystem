@@ -89,11 +89,14 @@
     }
   },
   "entity_separation": {
-    "construction_contracts": "NoblePort Construction LLC",
-    "software_saas": "NoblePort Systems",
+    "construction_contracts": "NoblePort Construction LLC (35+ years operating history)",
+    "software_saas": "NoblePort Systems LLC (Stephanie.ai, GCagent.ai, PermitStream.ai, Cyborg.ai)",
+    "media": "NoblePort Media LLC",
+    "real_estate_dev": "NoblePort Real Estate Dev LLC",
     "securities_issuer": "Separate SPV / issuer entity (TBD — counsel required)",
     "treasury_settlement": "Controlled operating entity (TBD — bank, tax, audit controls required)",
-    "investor_docs": "Separate counsel-reviewed issuer package (TBD)"
+    "investor_docs": "Separate counsel-reviewed issuer package (TBD)",
+    "canonical_address": "236 High Road, Newbury MA 01951"
   },
   "required_before_launch": {
     "legal": ["terms_of_service", "privacy_policy", "wisp", "hic_contract_templates", "awo_templates", "breach_response_plan"],

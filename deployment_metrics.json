@@ -1,21 +1,74 @@
 {
-  "deployment_timestamp": "2026-05-23T00:00:00Z",
-  "version": "4.0.0",
+  "deployment_timestamp": "2026-05-27T00:00:00Z",
+  "version": "4.1.0",
   "audit_ref": "TA-2026-05-23",
   "truth_baseline": "April 2026 Whitepaper",
+  "canonical_attribute_map": "core/stephanie_attribute_map_v1_1.md",
   "components": {
     "stephanie_ai": {
       "classification": "STAGED",
       "readiness_pct": 81,
-      "role": "multi_agent_orchestrator",
-      "governance": "human_gated"
+      "role": "executive_orchestration_interface",
+      "governance": "human_gated",
+      "voice_gates_clear": "0 of 4",
+      "voice_pipeline": {
+        "g1_waveform_p95_latency": { "target_ms": 90, "current_ms": 147, "status": "FAILING" },
+        "g2_caption_drift_p95": { "target_s": 2.0, "current_s": 3.1, "status": "FAILING" },
+        "g3_livekit_room_stability": { "status": "IN_PROGRESS" },
+        "g4_100_session_load_test": { "status": "PENDING" }
+      },
+      "sub_components": {
+        "voice_pipeline_elevenlabs": 88,
+        "livekit_webrtc": 75,
+        "react_dashboard_ui": 95,
+        "fastapi_backend": 72,
+        "websocket_real_data": 55
+      },
+      "avatar_layer": "DEFERRED"
     },
+    "platform_components": {
+      "stephanie_ai": { "completion_pct": 81, "tier": "launch_critical" },
+      "gcagent_ai": { "completion_pct": 44, "tier": "phase_2", "desc": "112-agent construction operations mesh" },
+      "permitstream_ai": { "completion_pct": 38, "tier": "phase_2", "desc": "MA/NH/ME/CT permit workflow" },
+      "cyborg_ai": { "completion_pct": 28, "tier": "phase_3", "desc": "contractor identity, ERC-3643, zk-SBT" },
+      "discord_mission_control": { "completion_pct": 8, "tier": "deferred" }
+    },
+    "blended_platform_completion_pct": 46,
+    "platform_arr": 0,
     "tokenomics": {
       "model": "ultra_scarce_100m",
       "total_supply": 100000000,
       "token_standard": "ERC-3643",
-      "mainnet_status": "pending",
+      "nbpt_deployed": false,
+      "token_holder_count": 0,
+      "tvl": 0,
+      "snapshot_dao": "configured_not_active",
+      "external_audits_commissioned": "none",
       "price_projections": "DEPRECATED — removed per truth audit"
+    },
+    "on_chain": {
+      "anchor_registry_sol": { "chain": "arbitrum_one", "status": "deployed" },
+      "investor_visible_transactions": 0,
+      "nbpt_token": "not_deployed",
+      "npp_001_governance": "drafted_not_published"
+    },
+    "architecture": {
+      "api": "FastAPI + LangGraph StateGraph",
+      "worker": "Temporal",
+      "database": "PostgreSQL 16 + pgvector",
+      "cache": "Redis asyncio",
+      "stt_tts": "ElevenLabs Conversational API",
+      "realtime": "LiveKit WebRTC (Vultr HF US-East)",
+      "semantic": "FAISS",
+      "accounting": "ERPNext",
+      "crm": "HubSpot (portal 244971555)",
+      "construction_ops": "Buildertrend + Cost Certified",
+      "primary_payment": "PayPal Instant Commerce",
+      "secondary_payment": "Stripe (human-approval-gated)",
+      "secrets": "HashiCorp Vault",
+      "document_anchor": "IPFS / Pinata",
+      "compute": "Hetzner CPU workers (no GPU cluster)",
+      "ddos": "Sharktech"
     },
     "live_systems": {
       "construction_ingress": { "status": "LIVE", "readiness_pct": 95 },
@@ -24,22 +77,16 @@
       "invoice_workflow": { "status": "LIVE", "readiness_pct": 100 },
       "human_approval_routing": { "status": "LIVE", "readiness_pct": 100 }
     },
-    "staged_systems": {
-      "gcagent_ai": { "status": "STAGED", "readiness_pct": 44, "role": "compliance_monitor" },
-      "permitstream_ai": { "status": "STAGED", "readiness_pct": 38, "role": "permit_review_engine" },
-      "cyborg_ai": { "status": "STAGED", "readiness_pct": 28, "role": "identity_layer" },
-      "kuzo_swap": { "status": "STAGED_READ_ONLY", "on_chain_execution": false }
-    },
     "blocked_capabilities": {
       "autonomous_treasury_actions": "HARD_BLOCKED",
       "autonomous_securities_operations": "HARD_BLOCKED"
-    },
-    "blockchain_integration": {
-      "primary": "ethereum",
-      "payment_rail": "solana_usdc",
-      "token_standard": "ERC-3643",
-      "compliance": "human_gated_multisig"
     }
+  },
+  "entities": {
+    "nobleport_construction_llc": "General contracting (35+ years operating history)",
+    "nobleport_systems_llc": "AI platform — Stephanie.ai, GCagent.ai, PermitStream.ai, Cyborg.ai",
+    "nobleport_media_llc": "Brand and media",
+    "nobleport_real_estate_dev_llc": "Real estate development"
   },
   "deprecated_claims": [
     "658% ROI projection",
@@ -52,6 +99,14 @@
     "847 tokenized properties",
     "156 permits tracked",
     "99.97% uptime",
-    "5B optimization optimal"
+    "5B optimization optimal",
+    "CertiK audit",
+    "Trail of Bits audit",
+    "3,030 validators",
+    "CUDA 621B ops/sec",
+    "$18.6M market cap",
+    "33,912 zoning NFTs",
+    "131,004 IQ",
+    "15.1B tasks/sec"
   ]
 }
