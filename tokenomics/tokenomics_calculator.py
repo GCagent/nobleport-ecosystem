@@ -11,7 +11,7 @@ class NBPTTokenomics:
             'Founders/Team': {'tokens': 20_000_000, 'percent': 20, 'vesting_months': 36, 'cliff_months': 6},
             'Ecosystem Development': {'tokens': 25_000_000, 'percent': 25, 'vesting_months': 36, 'cliff_months': 0},
             'Strategic Investors': {'tokens': 15_000_000, 'percent': 15, 'vesting_months': 18, 'cliff_months': 3},
-            'Public ICO': {'tokens': 12_000_000, 'percent': 12, 'vesting_months': 0, 'cliff_months': 0},
+            'Public Offering': {'tokens': 12_000_000, 'percent': 12, 'vesting_months': 0, 'cliff_months': 0},
             'AI Agent Rewards': {'tokens': 10_000_000, 'percent': 10, 'vesting_months': 24, 'cliff_months': 0},
             'Community Incentives': {'tokens': 8_000_000, 'percent': 8, 'vesting_months': 24, 'cliff_months': 0},
             'Treasury Reserve': {'tokens': 7_000_000, 'percent': 7, 'vesting_months': 60, 'cliff_months': 12},
@@ -24,10 +24,10 @@ class NBPTTokenomics:
         
         for month in range(1, months + 1):
             month_release = 0
-            circulating_supply = 12_000_000 + 3_000_000  # ICO + Liquidity at launch
+            circulating_supply = 12_000_000 + 3_000_000  # Offering + Liquidity at launch
             
             for category, details in self.allocations.items():
-                if category in ['Public ICO', 'Liquidity Provision']:
+                if category in ['Public Offering', 'Liquidity Provision']:
                     continue  # Already counted
                     
                 cliff = details['cliff_months']
@@ -40,7 +40,7 @@ class NBPTTokenomics:
             
             # Calculate cumulative circulating supply
             if month == 1:
-                cumulative = 15_000_000  # ICO + Liquidity
+                cumulative = 15_000_000  # Offering + Liquidity
             else:
                 prev_cumulative = monthly_data[-1]['cumulative_circulating']
                 cumulative = prev_cumulative + month_release
@@ -73,7 +73,7 @@ class NBPTTokenomics:
             adoption_factor = min(month / 12, 3.0)  # Caps at 3x after 12 months
             
             # Calculate projected price
-            base_price = 1.00  # $1 ICO price
+            base_price = 1.00  # $1 base price
             projected_price = base_price * utility_multiplier * scarcity_premium * adoption_factor
             
             # Market cap calculation
@@ -145,11 +145,11 @@ class NBPTTokenomics:
 • Final Circulating: {final_month['cumulative_circulating']:,.0f} NBPT ({final_month['circulating_percent']:.1f}%)
 • Permanently Locked: {final_month['locked_tokens']:,.0f} NBPT ({100-final_month['circulating_percent']:.1f}%)
 
-💰 VALUE PROJECTIONS:
-• ICO Launch Price: $1.00
-• 36-Month Target: ${final_projection['projected_price']}
-• Peak Market Cap: ${final_projection['market_cap']:,.0f}
-• Total ROI Potential: {((final_projection['projected_price'] - 1) * 100):.0f}%
+💰 MODEL PROJECTIONS (SIMULATED — NOT GUARANTEES):
+• Proposed Base Price: $1.00
+• 36-Month Model: ${final_projection['projected_price']}
+• Model Market Cap: ${final_projection['market_cap']:,.0f}
+• NOTE: These are model outputs, not investment advice or guarantees
 
 🔥 DEFLATIONARY MECHANICS:
 • Total Tokens Burned: {total_burns:,.0f} NBPT
@@ -160,14 +160,13 @@ class NBPTTokenomics:
 • Bitcoin Comparison: 21M BTC vs 100M NBPT
 • Ethereum Comparison: 120M ETH vs 100M NBPT  
 • Utility Demand: Every platform transaction requires NBPT
-• AI Optimization: Stephanie.ai manages supply dynamics
+• AI-Assisted: Stephanie.ai orchestration layer
 
-💎 INVESTMENT THESIS:
-"NBPT represents the world's first AI-governed, ultra-scarce token backed by 
-$289M+ in real estate assets and construction projects. With only 100M tokens 
-ever to exist and massive utility demand, NBPT is positioned for explosive growth."
-
-🚀 September 5th ICO: The Ultra-Scarce Revolution Begins!
+⚠️  DISCLAIMER:
+This model is for internal planning purposes only. It does not constitute
+an offer to sell securities or a solicitation. Any future offering will be
+conducted under applicable exemptions with counsel-reviewed documentation.
+Past projections are not indicative of future results.
         """
         
         with open('NBPT_Executive_Summary.txt', 'w') as f:

@@ -1,0 +1,106 @@
+{
+  "audit_ref": "TA-2026-05-23",
+  "legal_review_ref": "Pre-Launch Law Review — NoblePort Systems",
+  "launch_gates": {
+    "green": {
+      "description": "Launchable — clean revenue lanes",
+      "modules": {
+        "lead_intake": { "status": "GO", "requires": [] },
+        "estimate_workflow": { "status": "GO", "requires": [] },
+        "permit_checklist": { "status": "GO", "requires": ["no_guarantee_claims"] },
+        "awo_tracking": { "status": "GO", "requires": ["written_documentation"] },
+        "construction_document_vault": { "status": "GO", "requires": [] },
+        "customer_portal": { "status": "GO", "requires": ["privacy_policy", "terms_of_service"] },
+        "invoice_tracking": { "status": "GO", "requires": [] },
+        "human_approved_payment_records": { "status": "GO", "requires": [] },
+        "tamper_evident_audit_logs": { "status": "GO", "requires": [] },
+        "stephanie_ai_routing": { "status": "GO", "requires": ["proper_disclaimers"] }
+      }
+    },
+    "yellow": {
+      "description": "Launch only with controls in place",
+      "modules": {
+        "stripe_payments": { "status": "GATED", "requires": ["terms_of_service", "accounting_setup", "refund_policy"] },
+        "usdc_treasury": { "status": "GATED", "requires": ["counsel_review", "custody_review", "tax_review", "ofac_screening"] },
+        "wallet_intelligence": { "status": "GATED", "requires": ["read_only_enforcement"], "execution_allowed": false },
+        "investor_education": { "status": "GATED", "requires": ["no_offering_language"] },
+        "permitstream_ai": { "status": "GATED", "requires": ["no_guarantee_claims", "human_review"] },
+        "ai_recommendations": { "status": "GATED", "requires": ["human_review_gate"] },
+        "sales_compensation": { "status": "GATED", "requires": ["wage_commission_counsel_review"] },
+        "jobsite_photos": { "status": "GATED", "requires": ["consent_policy", "retention_policy"] }
+      }
+    },
+    "red": {
+      "description": "DO NOT LAUNCH — blocked until counsel clears",
+      "modules": {
+        "nbpt_sale": { "status": "BLOCKED", "reason": "Securities counsel required", "blocker": "securities_law" },
+        "tokenized_fractional_ownership": { "status": "BLOCKED", "reason": "Reg D / broker-dealer / transfer restrictions", "blocker": "securities_law" },
+        "kuzo_swap_execution": { "status": "BLOCKED", "reason": "Money transmission / broker-dealer / BitLicense risk", "blocker": "money_transmission" },
+        "new_york_token_access": { "status": "BLOCKED", "reason": "BitLicense / NY securities review", "blocker": "bitlicense" },
+        "hosted_wallets": { "status": "BLOCKED", "reason": "Custody / MSB / state licensing", "blocker": "custody" },
+        "ai_trade_execution": { "status": "BLOCKED", "reason": "Investment adviser / broker-dealer / fiduciary risk", "blocker": "broker_dealer" },
+        "yield_staking_dashboards": { "status": "BLOCKED", "reason": "Securities and marketing risk", "blocker": "securities_marketing" },
+        "stablecoin_issuance": { "status": "BLOCKED", "reason": "Heavy regulatory lane", "blocker": "stablecoin_regulation" },
+        "public_secondary_market": { "status": "BLOCKED", "reason": "Exchange / ATS / broker-dealer risk", "blocker": "exchange_ats" }
+      }
+    }
+  },
+  "geo_blocks": {
+    "new_york": {
+      "blocked_activities": [
+        "nbpt_purchase",
+        "kuzo_swap",
+        "tokenized_real_estate",
+        "hosted_wallet",
+        "virtual_currency_business"
+      ],
+      "reason": "NYDFS BitLicense required for virtual currency business activity involving NY residents",
+      "unblock_conditions": ["bitlicense_obtained", "exemption_confirmed", "partner_coverage_confirmed"]
+    }
+  },
+  "blocked_ofac_countries": [192, 364, 408, 760],
+  "danger_words": {
+    "prohibited_in_public_materials": [
+      "guaranteed returns",
+      "yield",
+      "dividend",
+      "passive income",
+      "ETF",
+      "staking rewards",
+      "profit share",
+      "pegged",
+      "stable return",
+      "risk-free",
+      "SEC-compliant",
+      "token launch",
+      "ICO",
+      "AGI",
+      "Sovereign CEO",
+      "licensed CEO",
+      "guarantees permit approval",
+      "guarantees compliance",
+      "autonomous execution"
+    ],
+    "approved_alternatives": {
+      "stephanie_ai": "Stephanie.ai is NoblePort's executive orchestration assistant for intake, routing, document preparation, workflow tracking, and human-gated decision support.",
+      "permit_claims": "AI-assisted permit and construction workflow review, subject to licensed human review and municipal authority approval.",
+      "token_offering": "Proposed private offering infrastructure, subject to securities counsel review, investor eligibility, transfer restrictions, and applicable exemption requirements.",
+      "ny_policy": "NoblePort does not custody customer digital assets, does not operate a consumer crypto exchange, and does not offer virtual currency business activity in New York unless and until appropriate licensing, exemptions, or regulated partner coverage are confirmed by counsel."
+    }
+  },
+  "entity_separation": {
+    "construction_contracts": "NoblePort Construction LLC (35+ years operating history)",
+    "software_saas": "NoblePort Systems LLC (Stephanie.ai, GCagent.ai, PermitStream.ai, Cyborg.ai)",
+    "media": "NoblePort Media LLC",
+    "real_estate_dev": "NoblePort Real Estate Dev LLC",
+    "securities_issuer": "Separate SPV / issuer entity (TBD — counsel required)",
+    "treasury_settlement": "Controlled operating entity (TBD — bank, tax, audit controls required)",
+    "investor_docs": "Separate counsel-reviewed issuer package (TBD)",
+    "canonical_address": "236 High Road, Newbury MA 01951"
+  },
+  "required_before_launch": {
+    "legal": ["terms_of_service", "privacy_policy", "wisp", "hic_contract_templates", "awo_templates", "breach_response_plan"],
+    "construction": ["coi_verification", "written_scope_enforcement", "permit_status_check", "subcontractor_qualification"],
+    "compliance": ["ofac_screening", "kyc_vendor", "audit_log_retention", "admin_access_controls"]
+  }
+}

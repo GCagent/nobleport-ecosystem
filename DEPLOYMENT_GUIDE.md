@@ -2,7 +2,7 @@
 
 **Version:** 2.0 - Viral Lottery + Legal Documentation
 **Date:** November 29, 2025
-**ICO Launch:** December 20, 2025
+**Status:** Construction OS launch — token offering pending counsel review
 
 ## Overview
 
@@ -20,14 +20,14 @@ The main production-ready NoblePort dashboard with all core features:
 - **Viral Lottery App** (`dashboards/lottery.html`): **NEW** - $5 entry, 5-person referral requirement
 - **Operations Monitor** (`operations-monitor/index.html`): Live system metrics
 - **Tokenomics Documentation** (`tokenomics/`): Ultra-scarce NBPT model with 100M fixed supply
-- **Stephanie.ai Voice** (`ai-voices/stephanie_ai_boston_intro.wav`): AI CEO introduction
+- **Stephanie.ai Voice** (`ai-voices/stephanie_ai_boston_intro.wav`): Orchestration assistant introduction
 
 ### 2. Viral Lottery App Features
 
 **Exact Mechanics as Specified:**
 - **$5 Entry Fee**: Single, simple entry price
 - **Mandatory 5-Person Referral**: Users must share their unique link with 5 people to unlock lottery entry
-- **First 100 Players**: Guaranteed $500 reward in NBPT tokens
+- **First 100 Participants**: Eligible for $500 reward (subject to terms)
 - **$2,500 Grand Prize Pool**: All winners enter drawing to help build the platform
 - **Unique Referral Tracking**: Each participant gets a personalized invite link
 - **Live Stats Dashboard**: Real-time participant count, spots remaining, qualified winners, total referrals
@@ -68,6 +68,7 @@ Complete legal package for property tokenization:
 3. **Update ENS Records:**
    - Point `nobleport.eth` to your deployment URL
    - Add IPFS CID to ENS content hash for decentralized access
+   - Set Solana address record (see [ENS-Solana Setup](#ens-solana-setup) below)
 
 ### Option 2: Full-Stack Deployment (For Production Backend)
 
@@ -157,39 +158,92 @@ Complete legal package for property tokenization:
 - [ ] DeFi dashboard loads data
 - [ ] Operations monitor shows metrics
 
-## ICO Launch Preparation (December 20, 2025)
+## Launch Sequence (Per Legal Review)
 
-1. **Pre-Launch (Now - Dec 15):**
-   - Deploy lottery app and begin viral marketing
-   - Collect first 100 early adopters
-   - Distribute $500 rewards to qualified participants
-   - Build anticipation for ICO
+### Phase 1 — Construction OS (LAUNCH FIRST)
+- Lead → Estimate → Deposit → Permit → Build → Invoice → Closeout
+- Terms of service, privacy policy, WISP
+- HIC-compliant contract templates
+- Human review gates and audit logs
+- Payment processor integration
 
-2. **Launch Week (Dec 15-20):**
-   - Finalize smart contracts
-   - Complete security audits
-   - Prepare liquidity pools
-   - Coordinate marketing campaign
+### Phase 2 — Web3 Infrastructure (COUNSEL REQUIRED)
+- DocumentRegistry and AuditBeacon
+- Wallet read-only intelligence
+- OFAC screening
+- USDC treasury reporting
+- Non-custodial receipts
 
-3. **Launch Day (Dec 20):**
-   - Open NBPT token sale at $1.00
-   - Activate Uniswap V2 pools
-   - Begin 36-month vesting schedule
-   - Monitor for 658% ROI trajectory to $7.58 target
+### Phase 3 — Securities Package (COUNSEL MUST SIGN OFF)
+- PPM, subscription agreement, investor questionnaire
+- Form D, Blue Sky review
+- Transfer restrictions, KYC vendor
+- Cap table / transfer agent logic
+
+### Phase 4 — Regulated Expansion (SERIOUS CAPITAL + COUNSEL)
+- NY BitLicense or partner path review
+- Broker-dealer / ATS analysis
+- Custody structure
+- Security token transfer infrastructure
 
 ## Key Metrics to Track
 
 - **Lottery Participants**: Target 100+ in first wave
 - **Referral Conversion**: Track 5-person referral completion rate
-- **Early Adopter Rewards**: $500 × 100 = $50,000 in NBPT
+- **Early Adopter Rewards**: $500 × 100 (subject to terms)
 - **Grand Prize Pool**: $2,500 for platform development
-- **ICO Participation**: Target $1M+ in first 24 hours
-- **Token Price**: Monitor path to $7.58 (658% ROI)
+- **Token Status**: Monitor mainnet deployment and compliance
+
+## ENS-Solana Setup
+
+Link `nobleport.eth` to the verified Solana payment rail address so
+that ENS-aware wallets and dApps can resolve the Solana destination.
+
+### Option A: Manual (ENS Manager App)
+
+1. Go to [app.ens.domains](https://app.ens.domains)
+2. Connect the wallet that controls `nobleport.eth`
+3. Navigate to **nobleport.eth → Records → Addresses**
+4. Add coin type **SOL (501)**
+5. Paste: `6fbr88Qmc1LSh5XATjcaGzvVnq1H7QmB57wAyxrKMXas`
+6. Save and confirm the transaction
+
+### Option B: Script
+
+```bash
+npm install ethers bs58
+export ETH_RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY"
+export ENS_OWNER_PRIVATE_KEY="..."  # controller of nobleport.eth
+node scripts/ens-solana-setup.js
+```
+
+### Verify
+
+```bash
+export ETH_RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY"
+node scripts/verify-ens-solana.js
+```
+
+Expected output:
+```
+ENS name:  nobleport.eth
+ETH addr:  0xc59e66BB2b6E19699F82A72a1569821cb1711504
+SOL addr:  6fbr88Qmc1LSh5XATjcaGzvVnq1H7QmB57wAyxrKMXas
+STATUS:    MATCH — record is correct
+```
+
+### Cross-Chain Registry
+
+All chain addresses and ENS record targets are tracked in
+`scripts/chain-registry.json`. Update this file whenever addresses
+change so that the verification script and downstream services stay
+in sync.
 
 ## Support & Resources
 
 - **NoblePort.eth**: Main gateway
 - **Ethereum Wallet**: `0xc59e66BB2b6E19699F82A72a1569821cb1711504`
+- **Solana Rail**: `6fbr88Qmc1LSh5XATjcaGzvVnq1H7QmB57wAyxrKMXas`
 - **NBPT Token Contract**: `0x3778E67655Ec26D6bC8294C6F7a1e754AFD2C91C`
 - **Discord**: [Create invite link]
 - **Telegram**: [Create channel]
@@ -218,7 +272,7 @@ Complete legal package for property tokenization:
 2. **Execute legal documents** for 236 High Rd property
 3. **Anchor to IPFS/Arweave** for permanent record
 4. **File Form D** after first token sale
-5. **Prepare for ICO launch** on December 20, 2025
+5. **Prepare token infrastructure** — pending securities counsel review
 
 ---
 

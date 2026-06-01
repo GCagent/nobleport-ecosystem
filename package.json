@@ -1,7 +1,7 @@
 {
   "name": "nobleport-production-ecosystem",
   "version": "3.0.0",
-  "description": "Complete NoblePort Systems - Stephanie.ai CEO, Ultra-Scarce NBPT Token, Advanced DeFi Dashboard",
+  "description": "NoblePort Systems - AI-assisted construction operating layer",
   "main": "index.html",
   "scripts": {
     "start": "python3 -m http.server 8000",
@@ -12,7 +12,7 @@
     "nobleport", "stephanie.ai", "defi", "real-estate", "blockchain", 
     "ai", "tokenomics", "ultra-scarce", "nbpt", "construction", "rwa"
   ],
-  "author": "Stephanie.ai - AI CEO of NoblePort Systems",
+  "author": "NoblePort Systems",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nobleport/ecosystem"
+    "url": "https://github.com/GCagent/nobleport-ecosystem"
   },
   "homepage": "https://nobleport.eth"
 }

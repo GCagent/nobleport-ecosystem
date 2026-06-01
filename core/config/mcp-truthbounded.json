@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "nobleport-truthbounded-spine": {
+      "command": "node",
+      "args": ["/home/ubuntu/nobleport-systems/mcp/dist/index.js"],
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "tools": [
+        {
+          "name": "submit_gated_execution_request",
+          "description": "Submits a construction project or administrative state change to the human-gated processing engine. High-risk actions automatically default to the pending verification queue.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "workflow_id": { "type": "string", "format": "uuid" },
+              "action_scope": {
+                "type": "string",
+                "enum": ["intake_sync", "estimate_support", "treasury_movement", "permit_filing"]
+              },
+              "payload_summary": { "type": "object" },
+              "human_signature": { "type": "string" }
+            },
+            "required": ["workflow_id", "action_scope", "payload_summary"]
+          }
+        }
+      ]
+    }
+  }
+}

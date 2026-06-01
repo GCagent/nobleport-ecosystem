@@ -1,77 +1,64 @@
-# 👑 NoblePort Ultimate Production Ecosystem
+# NoblePort Production Ecosystem
 
-## 🚀 Complete AI-Governed Real Estate Empire
+## AI-Assisted Construction Operating Layer
 
-**Stephanie.ai CEO • $289.6M TVL • Ultra-Scarce NBPT • September 5th ICO**
+**Human-Gated Execution | ERC-3643 Security Token | 100M Fixed NBPT Supply**
 
-### 📦 Package Contents:
+### Package Contents
 
-#### 🏠 **Main Dashboard** (`index.html`)
-- Production-optimized NoblePort ecosystem
-- Stephanie.ai AI CEO with 300K+ IQ
-- Ultra-scarce NBPT tokenomics (100M supply)
-- Real-time system metrics and performance
+#### Main Dashboard (`index.html`)
+- System status overview with LIVE / STAGED / BLOCKED classification
+- Operational component readiness metrics
+- Security constraint visibility
 
-#### 🔧 **Operations Monitor** (`operations-monitor/`)
-- Professional infrastructure monitoring
-- Multi-chain RPC health checks
-- Wallet and token analysis
-- Bridge and governance monitoring
-- CSV export capabilities
+#### Operations Monitor (`operations-monitor/`)
+- Infrastructure monitoring dashboard
+- Workflow state tracking
+- Audit log viewer
 
-#### 📊 **DeFi Analytics** (`dashboards/`)
-- Live DeFi dashboard with real-time data
-- Essex County properties dashboard
-- Advanced blockchain visualization
+#### DeFi Analytics (`dashboards/`)
 - Pool vs token comparative analytics
+- Essex County properties dashboard
+- Jupiter Routing Lab (split vs single-DEX execution)
 
-#### 💎 **Tokenomics** (`tokenomics/`)
-- Complete ultra-scarce NBPT model
-- 658% ROI projections over 36 months
-- Detailed vesting schedules
-- Burn mechanisms and supply analysis
+#### Tokenomics (`tokenomics/`)
+- Ultra-scarce NBPT model (100M fixed supply)
+- Vesting schedules and burn mechanisms
 
-#### 🎤 **AI Voices** (`ai-voices/`)
-- Stephanie.ai Boston accent audio
-- Professional voice synthesis
-- Ready for presentations and demos
+#### Smart Contracts (`contracts/`)
+- ERC-3643 security token (NBPTSecurityToken.sol)
+- Identity registry with zkSBT integration
+- Modular compliance engine (Reg D, OFAC, Rule 144)
+- Zero-knowledge accredited investor verification
 
-### 🎯 **Deployment Instructions:**
+#### Core Infrastructure (`core/`)
+- Human-gated API router (FastAPI)
+- Workflow state management schema
+- Immutable audit chain
+- MCP tool configuration
 
-1. **Upload to Replit:**
-   - Create new Replit project
-   - Upload entire package
-   - Set main file to `index.html`
+#### AI Voices (`ai-voices/`)
+- Stephanie.ai voice synthesis
 
-2. **Local Development:**
-   ```bash
-   python3 -m http.server 8000
-   # Access at http://localhost:8000
-   ```
+### Deployment
 
-3. **Production Deployment:**
-   - All files optimized for production
-   - SEO meta tags included
-   - Mobile responsive design
-   - Performance monitoring ready
+```bash
+python3 -m http.server 8000
+# Access at http://localhost:8000
+```
 
-### 🚀 **Key Features:**
+### System Architecture
 
-- **👑 Stephanie.ai AI CEO** with constitutional governance
-- **💎 Ultra-Scarce NBPT** (100M fixed supply)
-- **🏗️ AI Construction Team** (GCagent.ai, PermitStream.ai)
-- **🛡️ CyBorg.ai Security** (247 active shields)
-- **📊 Professional Monitoring** (Operations dashboard)
-- **🌟 Advanced Visualization** (Shooting star effects)
+| Layer | Components |
+|-------|-----------|
+| LIVE | Construction intake (95%), scope & estimate, AWO tracking, invoice workflow, human approval routing |
+| STAGED | Stephanie.ai (81%), GCagent (44%), PermitStream (38%), CyBorg (28%), KUZO (read-only), NBPT contracts |
+| BLOCKED | Autonomous treasury actions, autonomous securities operations |
 
-### 📈 **ICO Launch Ready:**
+### Truth Audit Reference
 
-- **Launch Date:** September 5th, 2025
-- **ICO Price:** $1.00 NBPT
-- **Target Price:** $7.58 (658% ROI)
-- **Total Supply:** 100M (Fixed Forever)
+**Audit:** TA-2026-05-23 | **Baseline:** April 2026 Whitepaper
 
-**The world's first AI-governed real estate empire is ready for launch!**
-
----
-*Built with AI Speed Vibe Coding • Powered by the Friendly AI Alliance*
+All historical unverified metrics (ROI projections, TVL figures, anthropomorphic
+claims) have been deprecated per the Deep Truth Audit and removed from
+investor-facing materials.
