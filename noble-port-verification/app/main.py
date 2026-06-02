@@ -18,6 +18,7 @@ from app.engine.scoring import (
     solscan_check,
 )
 from app.routers.admin import router as admin_router
+from app.routers.esign import router as esign_router
 from app.routers.evidence import router as evidence_router
 from app.security.auth import hash_api_key
 from app.security.ratelimit import RateLimiter
@@ -56,6 +57,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="NoblePort Verification Engine", lifespan=lifespan)
 app.include_router(admin_router)
 app.include_router(evidence_router)
+app.include_router(esign_router)
 
 
 async def _resolve_optional_user(request: Request, x_api_key: str | None) -> dict | None:

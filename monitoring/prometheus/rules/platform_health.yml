@@ -1,0 +1,65 @@
+# Core platform health — targets / latency / datastores / audit integrity.
+
+groups:
+  - name: platform_targets
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "Scrape target {{ $labels.job }} ({{ $labels.instance }}) is down"
+          runbook_url: "https://runbooks.nobleport.systems/target-down"
+
+      - alert: APILatencyP95High
+        expr: |
+          histogram_quantile(
+            0.95, sum(rate(http_request_duration_seconds_bucket{component=~"verification|construction|stephanie"}[5m])) by (le, component)
+          ) > 0.300
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.component }} API p95 latency > 300ms"
+          description: "Request latency p95 above the 300ms target for 10m."
+          runbook_url: "https://runbooks.nobleport.systems/api-latency"
+
+  - name: datastores
+    rules:
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 1m
+        labels: { severity: critical, component: database }
+        annotations:
+          summary: "PostgreSQL is unreachable"
+          runbook_url: "https://runbooks.nobleport.systems/postgres-down"
+
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels: { severity: critical, component: cache }
+        annotations:
+          summary: "Redis is unreachable (rate-limit + breaker state at risk)"
+          runbook_url: "https://runbooks.nobleport.systems/redis-down"
+
+  - name: audit_integrity
+    rules:
+      # The verification engine fails CLOSED: an audit-log write failure must
+      # block the request. Any nonzero write-failure rate is a hard problem.
+      - alert: AuditChainWriteFailures
+        expr: rate(audit_log_write_failures_total[5m]) > 0
+        for: 0m
+        labels: { severity: critical, component: verification, slo: audit_integrity }
+        annotations:
+          summary: "Audit-log (hash chain) write failures detected"
+          description: "No log = no go: failed audit writes force fail-closed BLOCKs. Investigate Postgres immediately."
+          runbook_url: "https://runbooks.nobleport.systems/audit-chain"
+
+      - alert: AuditChainBrokenLink
+        # row_hash continuity check exported by the engine (1 = ok, 0 = broken)
+        expr: min(audit_log_chain_intact) == 0
+        for: 0m
+        labels: { severity: critical, component: verification, slo: audit_integrity }
+        annotations:
+          summary: "Audit hash-chain continuity check FAILED"
+          description: "A row_hash does not match sha256(prev_hash || payload). Possible tampering. Freeze and investigate."
+          runbook_url: "https://runbooks.nobleport.systems/audit-chain"
