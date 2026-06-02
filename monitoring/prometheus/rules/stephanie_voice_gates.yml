@@ -1,0 +1,62 @@
+# Stephanie.ai voice pipeline launch gates (STAGED — 0 of 4 clear).
+#
+# Thresholds are the EXACT gate targets from deployment_metrics.json. These
+# gates are currently FAILING in staging (g1 ~147ms vs 90ms; g2 ~3.1s vs 2.0s);
+# the alerts below are the objective pass/fail signal that must go quiet before
+# the voice layer can be promoted out of STAGED. No avatar/GPU metrics — the
+# avatar layer is DEFERRED and there is no GPU cluster.
+
+groups:
+  - name: stephanie_voice_gates
+    rules:
+      - alert: VoiceGateG1WaveformLatency
+        # g1: waveform synthesis p95 latency target 90ms
+        expr: |
+          histogram_quantile(
+            0.95, sum(rate(stephanie_voice_waveform_latency_seconds_bucket[5m])) by (le)
+          ) > 0.090
+        for: 10m
+        labels: { severity: warning, component: stephanie, gate: g1, tier: staged }
+        annotations:
+          summary: "Voice gate G1 failing — waveform p95 latency > 90ms"
+          description: "ElevenLabs waveform synthesis p95 exceeds the 90ms promotion gate. Voice layer remains STAGED."
+          runbook_url: "https://runbooks.nobleport.systems/voice-g1-latency"
+
+      - alert: VoiceGateG2CaptionDrift
+        # g2: caption drift p95 target 2.0s
+        expr: |
+          histogram_quantile(
+            0.95, sum(rate(stephanie_voice_caption_drift_seconds_bucket[5m])) by (le)
+          ) > 2.0
+        for: 10m
+        labels: { severity: warning, component: stephanie, gate: g2, tier: staged }
+        annotations:
+          summary: "Voice gate G2 failing — caption drift p95 > 2.0s"
+          description: "Caption-to-audio drift p95 exceeds the 2.0s promotion gate."
+          runbook_url: "https://runbooks.nobleport.systems/voice-g2-drift"
+
+      - alert: VoiceGateG3LiveKitRoomInstability
+        # g3: LiveKit WebRTC room stability
+        expr: |
+          (
+            sum(rate(livekit_room_disconnects_total[15m]))
+              / clamp_min(sum(rate(livekit_room_joins_total[15m])), 1)
+          ) > 0.02
+        for: 15m
+        labels: { severity: warning, component: stephanie, gate: g3, tier: staged }
+        annotations:
+          summary: "Voice gate G3 — LiveKit room disconnect ratio > 2%"
+          description: "WebRTC room stability below the promotion gate (Vultr HF US-East)."
+          runbook_url: "https://runbooks.nobleport.systems/voice-g3-livekit"
+
+      - alert: StephanieBackendWebSocketRealDataStalled
+        # websocket_real_data sub-component is only 55% — watch for stalls
+        expr: |
+          rate(stephanie_ws_messages_total[5m]) == 0
+          and on() (max(stephanie_ws_connections) > 0)
+        for: 10m
+        labels: { severity: warning, component: stephanie, tier: staged }
+        annotations:
+          summary: "Stephanie websocket connected but no real-data messages flowing"
+          description: "Open websocket connections with zero message throughput for 10m."
+          runbook_url: "https://runbooks.nobleport.systems/stephanie-ws"
