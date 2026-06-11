@@ -1,0 +1,130 @@
+{
+  "_comment": "NOBLEPORT.COM — Cloudflare Configuration (apply via API or Dashboard)",
+  "_doc": "https://api.cloudflare.com/#zone-settings-edit-zone-settings-info",
+
+  "ssl": {
+    "mode": "full_strict",
+    "always_use_https": true,
+    "min_tls_version": "1.2",
+    "tls_1_3": "on",
+    "automatic_https_rewrites": true,
+    "opportunistic_encryption": true,
+    "ssl_recommender": true
+  },
+
+  "security": {
+    "waf": "on",
+    "bot_management": "on",
+    "security_level": "high",
+    "challenge_ttl": 1800,
+    "browser_integrity_check": true,
+    "hotlink_protection": true,
+    "email_obfuscation": true,
+    "server_side_exclude": true
+  },
+
+  "firewall_rules": [
+    {
+      "name": "Block non-US traffic to invest portal",
+      "expression": "(http.host eq \"invest.nobleport.com\" and ip.geoip.country ne \"US\")",
+      "action": "challenge",
+      "priority": 1
+    },
+    {
+      "name": "Rate limit API endpoints",
+      "expression": "(http.host eq \"api.nobleport.com\")",
+      "action": "rate_limit",
+      "rate_limit": {
+        "threshold": 100,
+        "period": 60,
+        "action": "challenge"
+      },
+      "priority": 2
+    },
+    {
+      "name": "Block known bad bots on all subdomains",
+      "expression": "(cf.client.bot and not cf.bot_management.verified_bot)",
+      "action": "block",
+      "priority": 3
+    },
+    {
+      "name": "Require managed challenge for DAO voting",
+      "expression": "(http.host eq \"dao.nobleport.com\" and http.request.uri.path contains \"/vote\")",
+      "action": "managed_challenge",
+      "priority": 4
+    }
+  ],
+
+  "performance": {
+    "cache_level": "aggressive",
+    "browser_cache_ttl": 14400,
+    "always_online": true,
+    "minify": {
+      "js": true,
+      "css": true,
+      "html": true
+    },
+    "brotli": true,
+    "early_hints": true,
+    "rocket_loader": false,
+    "polish": "lossy",
+    "webp": true
+  },
+
+  "network": {
+    "http2": true,
+    "http3": true,
+    "0rtt": true,
+    "websockets": true,
+    "ip_geolocation": true,
+    "pseudo_ipv4": "add_header"
+  },
+
+  "page_rules": [
+    {
+      "url": "api.nobleport.com/*",
+      "settings": {
+        "cache_level": "bypass",
+        "ssl": "full_strict",
+        "security_level": "high",
+        "waf": "on"
+      }
+    },
+    {
+      "url": "stream.nobleport.com/*",
+      "settings": {
+        "cache_level": "bypass",
+        "websockets": true,
+        "ssl": "full_strict"
+      }
+    },
+    {
+      "url": "ipfs.nobleport.com/*",
+      "settings": {
+        "cache_level": "standard",
+        "edge_cache_ttl": 86400,
+        "browser_cache_ttl": 86400
+      }
+    },
+    {
+      "url": "app.nobleport.com/assets/*",
+      "settings": {
+        "cache_level": "aggressive",
+        "edge_cache_ttl": 2592000,
+        "browser_cache_ttl": 2592000
+      }
+    }
+  ],
+
+  "custom_headers": {
+    "all_subdomains": {
+      "X-Frame-Options": "DENY",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
+      "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.nobleport.com wss://ws.nobleport.com; font-src 'self' https://fonts.gstatic.com",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
+    }
+  }
+}
