@@ -1,40 +1,39 @@
 # 👑 NoblePort Ultimate Production Ecosystem
 
-## 🚀 Complete AI-Governed Real Estate Empire
+## 🚀 AI-Governed Real Estate Platform
 
-**Stephanie.ai CEO • $289.6M TVL • Ultra-Scarce NBPT • September 5th ICO**
+**Stephanie.ai CEO • NBPT (100M Fixed Supply) • Demonstration Package**
+
+> **Notice.** This package is a demonstration / overview. It is not an offer to sell, or a solicitation of an offer to buy, any securities. Any NBPT offering will be made only to eligible investors pursuant to definitive offering materials under an applicable exemption.
 
 ### 📦 Package Contents:
 
 #### 🏠 **Main Dashboard** (`index.html`)
-- Production-optimized NoblePort ecosystem
-- Stephanie.ai AI CEO with 300K+ IQ
-- Ultra-scarce NBPT tokenomics (100M supply)
-- Real-time system metrics and performance
+- Overview UI for the NoblePort ecosystem
+- Stephanie.ai AI coordination layer
+- NBPT tokenomics overview (100M fixed supply)
+- Demonstration metrics
 
 #### 🔧 **Operations Monitor** (`operations-monitor/`)
-- Professional infrastructure monitoring
+- Infrastructure monitoring UI
 - Multi-chain RPC health checks
 - Wallet and token analysis
-- Bridge and governance monitoring
 - CSV export capabilities
 
 #### 📊 **DeFi Analytics** (`dashboards/`)
-- Live DeFi dashboard with real-time data
-- Essex County properties dashboard
-- Advanced blockchain visualization
-- Pool vs token comparative analytics
+- Sample DeFi dashboard
+- Sample Essex County properties dashboard
+- Visualization components
+- Pool / token comparative views
 
 #### 💎 **Tokenomics** (`tokenomics/`)
-- Complete ultra-scarce NBPT model
-- 658% ROI projections over 36 months
-- Detailed vesting schedules
-- Burn mechanisms and supply analysis
+- NBPT supply model (illustrative)
+- Vesting and burn mechanism notes
+- Modeling figures are illustrative and not projections or guarantees
 
 #### 🎤 **AI Voices** (`ai-voices/`)
-- Stephanie.ai Boston accent audio
-- Professional voice synthesis
-- Ready for presentations and demos
+- Stephanie.ai sample voice audio (synthetic)
+- For presentation and demonstration purposes
 
 ### 🎯 **Deployment Instructions:**
 
@@ -50,28 +49,24 @@
    ```
 
 3. **Production Deployment:**
-   - All files optimized for production
+   - Static files
    - SEO meta tags included
-   - Mobile responsive design
-   - Performance monitoring ready
+   - Mobile responsive
 
 ### 🚀 **Key Features:**
 
-- **👑 Stephanie.ai AI CEO** with constitutional governance
-- **💎 Ultra-Scarce NBPT** (100M fixed supply)
-- **🏗️ AI Construction Team** (GCagent.ai, PermitStream.ai)
-- **🛡️ CyBorg.ai Security** (247 active shields)
-- **📊 Professional Monitoring** (Operations dashboard)
-- **🌟 Advanced Visualization** (Shooting star effects)
+- **👑 Stephanie.ai** coordination/drafting layer
+- **💎 NBPT** (100M fixed supply, target ERC-1400)
+- **🏗️ Construction Operations Tooling** (GCagent.ai, PermitStream.ai)
+- **🛡️ CyBorg.ai** security monitoring
+- **📊 Operations Monitoring** UI
+- **🌟 Visualization Effects**
 
-### 📈 **ICO Launch Ready:**
+### 📈 **Offering Status:**
 
-- **Launch Date:** September 5th, 2025
-- **ICO Price:** $1.00 NBPT
-- **Target Price:** $7.58 (658% ROI)
-- **Total Supply:** 100M (Fixed Forever)
+Offering structure, exemption, eligibility, price, minimums, and timing are determined by counsel and disclosed only in definitive offering materials provided to eligible investors. No public sale, ICO, or unregistered solicitation is being conducted via this repository.
 
-**The world's first AI-governed real estate empire is ready for launch!**
+**This package is a demonstration vehicle. It is not a live securities offering.**
 
 ---
-*Built with AI Speed Vibe Coding • Powered by the Friendly AI Alliance*
+*Built as a demonstration of an AI-assisted real estate and construction platform. Not legal, investment, tax, or accounting advice.*
