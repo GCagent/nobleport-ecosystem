@@ -83,15 +83,20 @@ class CallLog:
         self.pool = pool
 
     async def record(self, env, *, status: str, level: str, truth_label: str,
-                    latency_ms: Optional[int] = None, error: Optional[str] = None) -> None:
+                    latency_ms: Optional[int] = None, error: Optional[str] = None,
+                    subagent_count: Optional[int] = None,
+                    bytes_raw: Optional[int] = None,
+                    bytes_packed: Optional[int] = None) -> None:
         async with self.pool.acquire() as conn:
             await conn.execute(
                 """
                 INSERT INTO mcp_call_log
                     (run_id, requesting_agent, target_agent, module_name, tool_name,
-                     project_id, truth_label, approval_level, status, latency_ms, error_message)
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+                     project_id, truth_label, approval_level, status, latency_ms, error_message,
+                     subagent_count, bytes_raw, bytes_packed)
+                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
                 """,
                 env.run_id, env.requesting_agent, env.target_agent, env.module, env.action,
                 env.project_id, truth_label, level, status, latency_ms, error,
+                subagent_count, bytes_raw, bytes_packed,
             )

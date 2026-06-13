@@ -1,10 +1,15 @@
-"""Redis cache + per-actor rate limiting for the gateway."""
+"""Redis cache + per-actor rate limiting for the gateway.
+
+Cache entries are stored as base64 compression packets, so the cache is
+compressed at rest and on the wire by default.
+"""
 
 from __future__ import annotations
 
-import json
 import time
 from typing import Any, Optional
+
+from . import compression
 
 
 class Cache:
@@ -17,11 +22,16 @@ class Cache:
             data = await self.redis.get(f"cache:{key}")
         except Exception:
             return None
-        return json.loads(data) if data else None
+        if not data:
+            return None
+        try:
+            return compression.unpack_b64(data)
+        except Exception:
+            return None
 
     async def set(self, key: str, value: Any, ttl_s: Optional[int] = None) -> None:
         try:
-            await self.redis.setex(f"cache:{key}", ttl_s or self.ttl_s, json.dumps(value, default=str))
+            await self.redis.setex(f"cache:{key}", ttl_s or self.ttl_s, compression.pack_b64(value))
         except Exception:
             pass
 

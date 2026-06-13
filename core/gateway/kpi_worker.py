@@ -20,6 +20,7 @@ import logging
 from typing import Awaitable, Callable, Optional
 
 from .registry import AGENTS, MODULES, TOOLS
+from .subagents import SUBAGENTS
 
 log = logging.getLogger("nobleport.gateway.kpi")
 
@@ -140,7 +141,18 @@ class KpiWorker:
                         """,
                         m.module_id, m.module_name, m.owner_agent, m.kpi_name, m.source_table,
                     )
-        log.info("seeded %d agents, %d tools, %d modules", len(AGENTS), len(TOOLS), len(MODULES))
+                for s in SUBAGENTS:
+                    await conn.execute(
+                        """
+                        INSERT INTO mcp_subagent_registry (parent_agent, subagent_name, skill, serves, enabled)
+                        VALUES ($1,$2,$3,$4,$5)
+                        ON CONFLICT (parent_agent, subagent_name) DO UPDATE
+                            SET skill=EXCLUDED.skill, serves=EXCLUDED.serves, enabled=EXCLUDED.enabled
+                        """,
+                        s.parent, s.name, s.skill, sorted(s.serves), s.enabled,
+                    )
+        log.info("seeded %d agents, %d tools, %d modules, %d sub-agents",
+                 len(AGENTS), len(TOOLS), len(MODULES), len(SUBAGENTS))
 
     async def snapshot_once(self) -> int:
         written = 0

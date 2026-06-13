@@ -22,6 +22,7 @@ from .gateway import Gateway
 from .governance import GovernanceGate
 from .killswitch import GLOBAL, KillSwitch
 from .kpi_worker import KpiWorker
+from .supervisor import Supervisor
 
 logging.basicConfig(level=settings.log_level)
 log = logging.getLogger("nobleport.gateway.app")
@@ -42,9 +43,11 @@ async def lifespan(app: FastAPI):
     if settings.use_http_executor:
         async with app.state.pg.acquire() as conn:
             rows = await conn.fetch("SELECT agent_name, endpoint FROM mcp_agent_registry")
-        executor = HttpExecutor({r["agent_name"]: r["endpoint"] for r in rows}, settings.tool_timeout_s)
+        inner = HttpExecutor({r["agent_name"]: r["endpoint"] for r in rows}, settings.tool_timeout_s)
     else:
-        executor = StubExecutor()
+        inner = StubExecutor()
+    # Main agents delegate to sub-agents; compression is applied to the findings.
+    executor = Supervisor(inner=inner)
 
     app.state.killswitch = killswitch
     app.state.gateway = Gateway(
@@ -181,6 +184,36 @@ async def metrics_p95_csv(request: Request, window_hours: int = 24):
         content=body, media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=nobleport_p95.csv"},
     )
+
+
+@app.get("/api/metrics/optimization")
+async def metrics_optimization(request: Request, window_hours: int = 24):
+    """Realized compression savings + sub-agent delegation, last N hours."""
+    async with request.app.state.pg.acquire() as conn:
+        row = await conn.fetchrow(
+            """
+            SELECT COUNT(*) FILTER (WHERE bytes_raw IS NOT NULL) AS measured_calls,
+                   COALESCE(SUM(bytes_raw), 0)    AS bytes_raw,
+                   COALESCE(SUM(bytes_packed), 0) AS bytes_packed,
+                   COALESCE(SUM(subagent_count), 0) AS subagent_dispatches,
+                   COALESCE(AVG(subagent_count), 0) AS avg_subagents_per_call
+              FROM mcp_call_log
+             WHERE created_at >= NOW() - ($1 || ' hours')::interval
+            """,
+            str(window_hours),
+        )
+    raw = row["bytes_raw"] or 0
+    packed = row["bytes_packed"] or 0
+    return {
+        "window_hours": window_hours,
+        "measured_calls": row["measured_calls"],
+        "bytes_raw": raw,
+        "bytes_packed": packed,
+        "saved_bytes": max(raw - packed, 0),
+        "compression_ratio": round(packed / raw, 4) if raw else 1.0,
+        "subagent_dispatches": row["subagent_dispatches"],
+        "avg_subagents_per_call": round(float(row["avg_subagents_per_call"]), 2),
+    }
 
 
 # --- Kill switch (admin) ---------------------------------------------------

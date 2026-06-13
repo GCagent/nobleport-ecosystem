@@ -105,15 +105,21 @@ class Gateway:
         try:
             result = await self.executor.execute(env)
             latency = int((time.monotonic() - start) * 1000)
+            # Lift the supervisor's optimization meta out of the result body.
+            meta = result.pop("_meta", None) if isinstance(result, dict) else None
             truth_label = result.get("truth_label", env.truth_label) if isinstance(result, dict) else env.truth_label
             await self.beacon.postwrite(env, "SUCCESS", latency, result)
-            await self.calllog.record(env, status="SUCCESS", level=level,
-                                      truth_label=truth_label, latency_ms=latency)
+            await self.calllog.record(
+                env, status="SUCCESS", level=level, truth_label=truth_label, latency_ms=latency,
+                subagent_count=(meta or {}).get("subagent_count"),
+                bytes_raw=(meta or {}).get("bytes_raw"),
+                bytes_packed=(meta or {}).get("bytes_packed"),
+            )
             if cache_key:
                 await self.cache.set(cache_key, result)
             return InvokeResult(run_id=str(env.run_id), status="SUCCESS", decision="PERMIT",
                                 level=level, latency_ms=latency, truth_label=truth_label,
-                                result=result, audit=audit)
+                                result=result, audit=audit, optimization=meta)
         except Exception as exc:
             latency = int((time.monotonic() - start) * 1000)
             await self.beacon.postwrite(env, "FAILED", latency, None, error=str(exc))

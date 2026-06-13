@@ -64,3 +64,4 @@ class InvokeResult(BaseModel):
     latency_ms: Optional[int] = None
     result: Optional[dict[str, Any]] = None
     audit: Optional[dict[str, Any]] = None
+    optimization: Optional[dict[str, Any]] = None
