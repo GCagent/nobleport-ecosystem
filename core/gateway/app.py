@@ -13,6 +13,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response, 
 from redis.asyncio import Redis
 
 from . import metrics
+from . import operational_truth
 from .audit import AuditBeacon, CallLog
 from .cache import Cache, RateLimiter
 from .config import settings
@@ -81,6 +82,19 @@ def require_admin(x_admin_token: str | None = Header(default=None, alias="X-Admi
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+@app.get("/health/features")
+async def health_features():
+    """Operational-truth feature matrix — honest status counts + frozen commands."""
+    return operational_truth.report(settings.launch_gates_path)
+
+
+@app.get("/health/frozen")
+async def health_frozen():
+    """Actions the system refuses to run autonomously."""
+    frozen = operational_truth.load_frozen_commands(settings.launch_gates_path)
+    return {"count": len(frozen), "commands": frozen}
 
 
 @app.get("/ready")

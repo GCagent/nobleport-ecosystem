@@ -72,6 +72,27 @@ measured per call and rolled up at `/api/metrics/optimization`, so the saving
 is auditable, not assumed. The Redis cache is compressed at rest and on the
 wire by default.
 
+## Operational-truth feature matrix
+
+`/health/features` returns an honest, evidence-backed classification of every
+feature surface this repo actually contains — the anti-inflation layer. Each
+feature points at a real file, and the status reflects *code maturity*, not
+marketing:
+
+| Label | Meaning |
+|-------|---------|
+| LIVE | implemented, tested, self-instrumenting (needs only Postgres+Redis) |
+| STAGED | built + tested; needs deployment / external credentials |
+| MODELED | model or spec exists; logic not running |
+| INTERNAL_RD | research / aspirational (contracts, tokenization) |
+
+Today the matrix declares **23 features** (10 LIVE, 6 STAGED, 4 MODELED,
+3 INTERNAL_RD) and **14 frozen commands** — actions the system refuses to run
+autonomously (money movement, token issuance, contract generation, permit
+filing), derived from the launch-gates RED scopes plus the governance
+human-gate. Status reflects code state in this repo; public KPIs still require
+deployment and connected telemetry. No inflated counts.
+
 ## Governance ladder (L0–L4)
 
 | Level | Meaning                         | Behavior in the gate                              |
@@ -97,6 +118,8 @@ pre-launch law review governs.
 | Method | Path                          | Purpose                                  |
 |--------|-------------------------------|------------------------------------------|
 | GET    | `/health`, `/ready`           | liveness / readiness                     |
+| GET    | `/health/features`            | operational-truth feature matrix         |
+| GET    | `/health/frozen`              | frozen commands (refused autonomously)   |
 | POST   | `/agent/invoke`               | run an MCP call through the gateway      |
 | GET    | `/api/kpi/modules`            | all 50 modules + latest snapshot         |
 | GET    | `/api/kpi/module/{id}`        | one module + snapshot history            |
@@ -145,7 +168,7 @@ pip install -r core/gateway/requirements.txt
 python -m pytest core/gateway/tests -q        # run from the repo root
 ```
 
-The suite (39 tests) covers the governance ladder, kill-switch fail-closed
+The suite (45 tests) covers the governance ladder, kill-switch fail-closed
 behavior, P95 math, registry integrity (50 modules), and envelope validation —
 no database required.
 
