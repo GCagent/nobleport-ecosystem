@@ -59,6 +59,15 @@ def test_l4_write_without_signature_parks():
     assert out.requires_human is True
 
 
+def test_underdeclared_level_cannot_dodge_human_gate():
+    # Caller claims L0 on an L4 money/legal tool — the registry floor still PARKs.
+    out = gate().evaluate(env(target_agent="Kuzo.io", module="Approval Queue",
+                              action="kuzo.capture_customer_approval",
+                              approval_level="L0", message="approve deposit"))
+    assert out.decision == "PARK"
+    assert out.level == "L4"
+
+
 def test_l4_write_with_signature_permitted():
     out = gate().evaluate(env(target_agent="Kuzo.io", module="Approval Queue",
                               action="kuzo.capture_customer_approval",

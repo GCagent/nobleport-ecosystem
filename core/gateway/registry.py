@@ -188,3 +188,25 @@ def validate() -> None:
     for t in TOOLS:
         assert t.agent_name in AGENT_NAMES, f"tool {t.tool_name} has unknown agent {t.agent_name}"
         assert t.approval_level in APPROVAL_LEVELS, f"tool {t.tool_name} has bad level {t.approval_level}"
+
+
+# --- Effective approval level ---------------------------------------------
+# A tool's registered level is a FLOOR. A caller cannot under-declare (e.g.
+# claim L0 on an L4 money/legal tool) to dodge the human-approval gate.
+_TOOL_LEVEL = {t.tool_name: t.approval_level for t in TOOLS}
+
+
+def _level_rank(level: str) -> int:
+    return APPROVAL_LEVELS.index(level) if level in APPROVAL_LEVELS else 0
+
+
+def tool_level(action: str) -> Optional[str]:
+    return _TOOL_LEVEL.get(action)
+
+
+def effective_level(action: str, declared: str) -> str:
+    """The stricter of the caller-declared level and the tool's registered level."""
+    registered = _TOOL_LEVEL.get(action)
+    if registered is None:
+        return declared if declared in APPROVAL_LEVELS else "L0"
+    return registered if _level_rank(registered) > _level_rank(declared) else declared

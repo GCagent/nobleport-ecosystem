@@ -23,7 +23,7 @@ import logging
 from pathlib import Path
 
 from .envelope import GateOutcome, McpEnvelope
-from .registry import AGENT_NAMES, HUMAN_APPROVAL_LEVELS
+from .registry import AGENT_NAMES, HUMAN_APPROVAL_LEVELS, effective_level
 
 log = logging.getLogger("nobleport.gateway.governance")
 
@@ -84,7 +84,8 @@ class GovernanceGate:
                                reason=f"gate_error_fail_closed:{type(exc).__name__}")
 
     def _evaluate(self, env: McpEnvelope) -> GateOutcome:
-        level = env.normalized_level()
+        # Registered tool level is a floor — callers cannot under-declare.
+        level = effective_level(env.action, env.normalized_level())
 
         # L0 — topology: the target must be a known internal agent.
         if env.target_agent not in AGENT_NAMES:

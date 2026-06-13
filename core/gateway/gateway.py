@@ -21,7 +21,7 @@ from .envelope import InvokeResult, McpEnvelope
 from .executors import ToolExecutor
 from .governance import GovernanceGate
 from .killswitch import KillSwitch
-from .registry import TOOLS
+from .registry import TOOLS, effective_level
 
 log = logging.getLogger("nobleport.gateway")
 
@@ -48,7 +48,8 @@ class Gateway:
         self.executor = executor
 
     async def invoke(self, env: McpEnvelope) -> InvokeResult:
-        level = env.normalized_level()
+        # Effective level honors the tool's registered floor (no under-declaring).
+        level = effective_level(env.action, env.normalized_level())
 
         # 1. Kill switch — instant, fail-closed.
         engaged, scope = await self.killswitch.engaged(env.target_agent)
