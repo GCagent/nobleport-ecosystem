@@ -9,8 +9,17 @@
     "deploy": "echo 'NoblePort Production Ready'"
   },
   "keywords": [
-    "nobleport", "stephanie.ai", "defi", "real-estate", "blockchain", 
-    "ai", "tokenomics", "ultra-scarce", "nbpt", "construction", "rwa"
+    "nobleport",
+    "stephanie.ai",
+    "defi",
+    "real-estate",
+    "blockchain",
+    "ai",
+    "tokenomics",
+    "ultra-scarce",
+    "nbpt",
+    "construction",
+    "rwa"
   ],
   "author": "NoblePort Systems",
   "license": "MIT",
@@ -22,5 +31,8 @@
     "type": "git",
     "url": "https://github.com/GCagent/nobleport-ecosystem"
   },
-  "homepage": "https://nobleport.eth"
+  "homepage": "https://nobleport.eth",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
 }
