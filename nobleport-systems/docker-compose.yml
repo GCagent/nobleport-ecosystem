@@ -1,0 +1,66 @@
+# NoblePort Systems — full stack for a single Hostinger VPS (4GB+/2 vCPU).
+# Caddy terminates TLS for nobleportsystem.io / *.kuzo.io and forwards to the
+# Rust gateway; the gateway rate-limits and routes to the Python orchestrator.
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - gateway
+
+  gateway:
+    build: ./gateway
+    restart: unless-stopped
+    environment:
+      ORCHESTRATOR_URL: http://orchestrator:8000
+      RUST_LOG: info
+    depends_on:
+      - orchestrator
+
+  orchestrator:
+    build: ./orchestrator
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://nobleport:${POSTGRES_PASSWORD:?set in .env}@postgres:5432/nobleport
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nobleport
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      POSTGRES_DB: nobleport
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nobleport"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:
+  caddy_data:
+  caddy_config:
