@@ -67,6 +67,14 @@ logging, and human-gated execution.
 - **Payment Rail:** Solana (USDC settlement only)
 - **Storage:** IPFS + Arweave (document anchoring)
 
+## Platform Core
+
+The full-stack platform (Rust edge gateway + Python orchestrator with the
+Stephanie/GCagent/PermitStream/CyBorg agents, 50+ module registry, workflow
+engine, and human-gate approval routing) lives in
+[`nobleport-systems/`](nobleport-systems/README.md), with Docker deployment
+for a Hostinger VPS.
+
 ## Quick Start
 
 ```bash
@@ -74,6 +82,9 @@ git clone https://github.com/GCagent/nobleport-ecosystem
 cd nobleport-ecosystem
 python3 -m http.server 8000
 # Open http://localhost:8000
+
+# Platform core (gateway + orchestrator):
+cd nobleport-systems && docker compose up -d --build
 ```
 
 ## Security & Compliance

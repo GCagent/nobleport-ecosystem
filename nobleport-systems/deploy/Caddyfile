@@ -1,0 +1,13 @@
+# TLS-terminating front proxy for the NoblePort Systems stack.
+# Point A records for nobleportsystem.io and *.kuzo.io at the VPS IP;
+# Caddy provisions Let's Encrypt certificates automatically.
+
+nobleportsystem.io {
+    encode gzip
+    reverse_proxy gateway:8080
+}
+
+*.kuzo.io {
+    encode gzip
+    reverse_proxy gateway:8080
+}
