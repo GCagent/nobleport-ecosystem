@@ -15,6 +15,18 @@ def test_health():
     assert body["status"] == "ok"
     assert body["modules"] >= 50
     assert body["agents"] == ["cyborg", "gcagent", "permitstream", "stephanie"]
+    assert body["voice"]["provider"] == "voicebox"
+
+
+def test_voice_status_disabled(monkeypatch):
+    monkeypatch.setenv("STEPHANIE_VOICE_ENABLED", "false")
+    c = client()
+    r = c.get("/voice/status")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["provider"] == "voicebox"
+    assert body["status"] == "disabled"
+    assert body["reachable"] is False
 
 
 def test_module_listing_and_filters():
@@ -65,13 +77,19 @@ def test_unknown_workflow_404():
     assert c.post("/workflows/nope/start", json={"payload": {}}).status_code == 404
 
 
-def test_avatar_websocket_dialog():
+def test_avatar_websocket_dialog(monkeypatch):
+    monkeypatch.setenv("STEPHANIE_VOICE_ENABLED", "false")
     c = client()
     with c.websocket_connect("/ws/avatar") as ws:
         ws.send_text("Can you help with a permit?")
         reply = ws.receive_json()
         assert reply["persona"] == "stephanie"
         assert "PermitStream" in reply["reply"]
+        assert reply["voice"] == {
+            "provider": "voicebox",
+            "enabled": False,
+            "queued": False,
+        }
         ws.send_text("what about NBPT tokens?")
         reply = ws.receive_json()
         assert "multi-sig" in reply["reply"]
