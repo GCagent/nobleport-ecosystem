@@ -4,6 +4,7 @@ Sits behind the Rust gateway (which handles TLS termination, rate limiting,
 and routing for nobleportsystem.io / *.kuzo.io). Endpoints:
 
   GET  /health                         liveness
+  GET  /voice/status                   Stephanie voice-provider status
   GET  /modules                        module catalog + health
   GET  /modules/{name}                 single module
   GET  /workflows                      workflow definitions
@@ -16,6 +17,8 @@ and routing for nobleportsystem.io / *.kuzo.io). Endpoints:
 
 from __future__ import annotations
 
+import asyncio
+import logging
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
@@ -25,7 +28,10 @@ from nobleport import __version__
 from nobleport.agents import build_agents
 from nobleport.human_gate import AlreadyResolvedError, HumanGate
 from nobleport.registry import ModuleRegistry, UnknownModuleError
+from nobleport.voice import VoiceboxSpeaker
 from nobleport.workflows import WORKFLOWS, WorkflowEngine
+
+logger = logging.getLogger(__name__)
 
 
 class StartRequest(BaseModel):
@@ -45,11 +51,34 @@ def create_app() -> FastAPI:
     gate = HumanGate()
     agents = build_agents()
     engine = WorkflowEngine(registry, gate, agents)
+    speaker = VoiceboxSpeaker()
+    voice_tasks: set[asyncio.Task[dict[str, Any]]] = set()
 
     app.state.registry = registry
     app.state.gate = gate
     app.state.agents = agents
     app.state.engine = engine
+    app.state.speaker = speaker
+
+    def queue_voice(text: str) -> bool:
+        """Queue non-blocking speech without making avatar text depend on TTS."""
+        if not speaker.enabled:
+            return False
+
+        task = asyncio.create_task(speaker.speak(text))
+        voice_tasks.add(task)
+
+        def finished(done: asyncio.Task[dict[str, Any]]) -> None:
+            voice_tasks.discard(done)
+            try:
+                result = done.result()
+                if not result.get("spoken", False):
+                    logger.warning("Stephanie voice output failed: %s", result.get("status"))
+            except Exception:
+                logger.exception("Unexpected Stephanie voice task failure")
+
+        task.add_done_callback(finished)
+        return True
 
     # -- health ---------------------------------------------------------------
 
@@ -57,7 +86,12 @@ def create_app() -> FastAPI:
     async def health() -> dict[str, Any]:
         return {"status": "ok", "version": __version__,
                 "modules": len(registry.all()),
-                "agents": sorted(agents)}
+                "agents": sorted(agents),
+                "voice": speaker.summary()}
+
+    @app.get("/voice/status")
+    async def voice_status() -> dict[str, Any]:
+        return await speaker.status()
 
     # -- modules ----------------------------------------------------------------
 
@@ -156,8 +190,17 @@ def create_app() -> FastAPI:
         try:
             while True:
                 message = await ws.receive_text()
-                await ws.send_json({"persona": "stephanie",
-                                    "reply": stephanie.avatar_reply(message)})
+                reply = stephanie.avatar_reply(message)
+                voice_queued = queue_voice(reply)
+                await ws.send_json({
+                    "persona": "stephanie",
+                    "reply": reply,
+                    "voice": {
+                        "provider": speaker.provider,
+                        "enabled": speaker.enabled,
+                        "queued": voice_queued,
+                    },
+                })
         except WebSocketDisconnect:
             pass
 
