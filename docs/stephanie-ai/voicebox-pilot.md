@@ -8,7 +8,7 @@
 
 ## Objective
 
-Add a self-hosted Voicebox speech layer to Stephanie.ai without making the existing avatar text path depend on TTS availability. The implementation is staged and ready for runtime connection, but it must not be described as live or production-verified until an actual Voicebox instance, authorized Stephanie voice profile, audible output, and test evidence are verified.
+Add a self-hosted Voicebox speech layer to Stephanie.ai without making the existing avatar text path depend on TTS availability. The code and configuration are staged, and the focused orchestrator CI run has passed. Runtime connectivity, authorized voice binding, audible output, performance, and production activation remain unverified.
 
 ## Current State
 
@@ -16,8 +16,8 @@ Add a self-hosted Voicebox speech layer to Stephanie.ai without making the exist
 |---|---|
 | Code integration — Voicebox `POST /speak`, fail-open text path, `/voice/status` | STAGED |
 | Configuration and Docker routing | STAGED |
-| Unit/integration test cases | ADDED TO REPOSITORY |
-| Focused GitHub Actions workflow | ADDED — PASSING RUN NOT YET EVIDENCED |
+| Unit/integration tests | ADDED |
+| Focused GitHub Actions workflow | PASSED |
 | PR #18 | DRAFT / MERGEABLE |
 | Voicebox service reachable from Stephanie runtime | PENDING VERIFICATION |
 | Authorized Stephanie voice profile/default binding | PENDING VERIFICATION |
@@ -55,76 +55,109 @@ VOICEBOX_TIMEOUT_SECONDS=10
 
 For a direct local orchestrator run outside Docker, `VOICEBOX_URL` may use `http://127.0.0.1:17493`.
 
-## Implemented Surfaces
+## Verified Upstream API Assumptions
 
-- `orchestrator/nobleport/voice.py`
-  - `VoiceSettings`
-  - `VoiceboxSpeaker`
-  - Voicebox `POST /speak` adapter
-  - `/health` reachability check
-  - timeout parsing and fail-open behavior
-- `GET /voice/status`
-  - reports enabled/reachable status without exposing the configured provider URL
-- `WS /ws/avatar`
-  - preserves the normal Stephanie text reply
-  - queues the same reply for voice when enabled
-  - returns provider/enabled/queued metadata
-- Docker Compose
-  - passes Voicebox configuration to the orchestrator
-  - routes to a separately running host Voicebox instance through `host.docker.internal`
-- Repository tests
-  - disabled/fail-open behavior
-  - provider summary privacy
-  - voice status endpoint
-  - avatar voice metadata
+The current upstream Voicebox documentation shows:
 
-## Activation Path
+- `GET /health` for service health.
+- `GET /profiles` for listing voice profiles.
+- `POST /speak` for agent voice output.
+- `X-Voicebox-Client-Id` for per-client voice binding.
+- `profile` may be a profile name or id; Voicebox resolves explicit profile first, then client binding, then the configured global default.
+- Native Bearer-token authentication is not documented for the local REST examples. If NoblePort places Voicebox behind an authenticated reverse proxy, that proxy authentication is deployment-specific and separate from the native Voicebox API.
+- `POST /speak` is used to trigger playback through Voicebox. It must not be treated as a direct MP3-download endpoint unless the deployed version is independently verified to behave that way.
+
+## Runtime Activation and Verification
 
 ### 1. Verify Voicebox reachability
 
-From the same runtime/network context as the Stephanie orchestrator, confirm the Voicebox service responds:
+Run this from the same runtime/network context as the Stephanie orchestrator:
 
 ```bash
-curl "$VOICEBOX_URL/health"
+curl -f "$VOICEBOX_URL/health"
 ```
 
-Then inspect available profiles or configured bindings using the Voicebox API/version actually deployed. Confirm that the selected Stephanie voice is authorized for NoblePort use.
+Expected result: successful HTTP response from the deployed Voicebox service.
 
-### 2. Verify direct speech behavior
+If NoblePort intentionally adds authentication at a reverse proxy, include the proxy-required credentials there. Do not assume native Voicebox Bearer authentication unless the deployed environment has explicitly added it.
 
-Send a controlled test to the Voicebox `POST /speak` endpoint using the authorized profile or client default binding. A successful HTTP response alone is not sufficient evidence; verify that audible speech is actually produced at the intended output target.
+### 2. Verify the authorized Stephanie profile or client binding
 
-Example payload shape used by the Stephanie adapter:
+List profiles:
 
 ```bash
-curl -X POST "$VOICEBOX_URL/speak" \
+curl -f "$VOICEBOX_URL/profiles"
+```
+
+Confirm the authorized Stephanie voice by exact profile name or id. Do not require a `status: active` field unless the deployed API actually returns one.
+
+The current Stephanie adapter can also use the `stephanie-ai` client binding when `VOICEBOX_PROFILE` is empty.
+
+### 3. Verify direct Voicebox speech
+
+```bash
+curl -f -X POST "$VOICEBOX_URL/speak" \
   -H "Content-Type: application/json" \
   -H "X-Voicebox-Client-Id: stephanie-ai" \
-  -d '{"text":"Hello, this is Stephanie","profile":"stephanie","personality":false}'
+  -d '{"text":"Hello, this is Stephanie. Voice connection verified.","profile":"stephanie","personality":false}'
 ```
 
-If the deployed Voicebox version uses a different profile identifier or default client binding, use the verified runtime configuration rather than assuming the literal `stephanie` profile name.
+A successful HTTP response is not enough. Verify that the intended Voicebox host/output target actually produces audible speech in the authorized Stephanie voice.
 
-### 3. Enable Stephanie voice
+If the authorized profile uses a different name or id, replace `stephanie` with the verified runtime identifier. If the `stephanie-ai` client already has a verified default binding, the explicit `profile` field may be omitted.
+
+### 4. Enable Stephanie voice in staging
 
 ```text
 STEPHANIE_VOICE_ENABLED=true
 ```
 
-Set `VOICEBOX_URL` to the reachable private endpoint and optionally set `VOICEBOX_PROFILE` to the authorized profile identifier. Restart the orchestrator after changing runtime environment configuration.
+Set `VOICEBOX_URL` to the reachable private endpoint and, if needed, set `VOICEBOX_PROFILE` to the verified authorized profile. Restart the orchestrator after changing runtime environment configuration.
 
-### 4. Verify through Stephanie
+### 5. Verify the full Stephanie path
 
 1. Check `GET /api/voice/status` through the NoblePort gateway.
 2. Connect to `/ws/avatar`.
 3. Send a controlled test prompt.
-4. Verify the JSON reply.
+4. Verify the JSON response.
 5. Verify audible Stephanie speech.
 6. Record success/failure and latency evidence.
 
-### 5. Merge only after evidence review
+## Runtime Evidence Package
 
-PR #18 may be merged after code/test review, but merge status and production activation are separate decisions. Do not classify Stephanie voice as production-live solely because the PR is merged.
+Capture at minimum:
+
+| Evidence | Method |
+|---|---|
+| Voicebox health | Save the successful `/health` response and HTTP status |
+| Profile/binding proof | Save the relevant `/profiles` result or verified client-binding evidence |
+| Direct speech proof | Record the test result showing audible playback from `POST /speak` |
+| Stephanie integration status | Save the `/api/voice/status` response |
+| Full flow proof | Record the `/ws/avatar` test and confirmed audible output |
+| Runtime logs | Capture relevant Voicebox and orchestrator logs for the test window |
+| Performance | Capture time-to-first-audio, end-to-end latency, and errors |
+
+Do not store private voice samples or unnecessary raw recordings in the repository.
+
+## Merge and Production Gates
+
+PR #18 may move from draft to review after the runtime evidence package is captured and reviewed. Merging and production activation are separate decisions.
+
+Before production activation:
+
+- [ ] Runtime evidence reviewed.
+- [ ] Authorized voice profile/default binding confirmed.
+- [ ] Full staging conversation smoke test passed.
+- [ ] Rollback confirmed: `STEPHANIE_VOICE_ENABLED=false`.
+- [ ] Selected TTS model license reviewed for intended commercial use.
+- [ ] Privacy, logging, retention, and access controls reviewed.
+- [ ] Explicit production approval recorded.
+
+Only after those gates should production set:
+
+```text
+STEPHANIE_VOICE_ENABLED=true
+```
 
 ## Not Yet Implemented or Verified
 
@@ -136,37 +169,10 @@ PR #18 may be merged after code/test review, but merge status and production act
 - STT / microphone input
 - barge-in / interruption handling
 - LiveKit or Pipecat realtime transport
-- benchmark harness and measured latency
-- passing GitHub Actions evidence for the current branch
+- benchmark harness and measured production-grade latency
 - runtime validation against an actual Voicebox instance
 - authorized Stephanie voice profile/default binding confirmation
 - first verified audible response generated from Stephanie's `/ws/avatar` flow
-
-## Acceptance Gates
-
-The pilot remains **STAGED** until all gates pass with reproducible evidence.
-
-| Gate | Requirement |
-|---|---|
-| G1 | Voicebox instance reachable from the running Stephanie orchestrator |
-| G2 | Authorized Stephanie voice profile/default binding confirmed |
-| G3 | A `/ws/avatar` test message produces verified audible speech |
-| G4 | Time-to-first-audio and end-to-end latency measured |
-| G5 | Voice consistency and prosody reviewed by a human |
-| G6 | Selected model license reviewed for intended commercial use |
-| G7 | Voice consent / authorization documented |
-| G8 | Secrets, logs, retention, and access controls reviewed |
-| G9 | Passing code/test evidence captured |
-| G10 | Explicit production approval recorded before public/customer-facing rollout |
-
-## Security and Governance
-
-- No voice-cloning workflow may be enabled without documented authorization from the voice owner.
-- Do not commit API keys, model credentials, voice samples, or private recordings.
-- Keep Voicebox on a local/private network path; do not expose an unauthenticated local API directly to the public internet.
-- Public broadcasting, outbound calling, publishing, and customer-facing autonomous voice actions remain governed by the Stephanie.ai Authority Matrix and applicable human approval requirements.
-- Treat third-party TTS model licenses separately from the Voicebox application license.
-- Any future recording or transcription capability must follow applicable consent, privacy, and retention requirements.
 
 ## Engineering Task Status
 
@@ -178,10 +184,11 @@ The pilot remains **STAGED** until all gates pass with reproducible evidence.
 - [x] Add timeout and fail-open behavior.
 - [x] Add repository test cases.
 - [x] Add focused GitHub Actions orchestrator test workflow.
-- [ ] Obtain passing GitHub Actions evidence for the branch.
+- [x] Obtain passing GitHub Actions evidence for the branch.
 - [ ] Connect and verify a running Voicebox instance.
 - [ ] Confirm authorized Stephanie voice profile/default binding.
 - [ ] Verify first audible Stephanie response end-to-end.
+- [ ] Capture runtime evidence package.
 - [ ] Implement managed-provider fallback.
 - [ ] Add circuit breaker/retry policy.
 - [ ] Add AuditBeacon voice events.
@@ -190,4 +197,4 @@ The pilot remains **STAGED** until all gates pass with reproducible evidence.
 
 ## Truth Status
 
-**Current classification:** STAGED & READY FOR RUNTIME ACTIVATION — CODE AND CONFIGURATION ARE IN PLACE, BUT ACTUAL AUDIBLE SPEECH, RUNTIME CONNECTIVITY, PASSING CI EVIDENCE, PERFORMANCE, AND PRODUCTION DEPLOYMENT ARE NOT YET VERIFIED.
+**Current classification:** STAGED & READY FOR RUNTIME ACTIVATION — CODE, CONFIGURATION, AND CI ARE VERIFIED AT THE REPOSITORY LEVEL; ACTUAL AUDIBLE SPEECH, RUNTIME CONNECTIVITY, AUTHORIZED VOICE BINDING, PERFORMANCE, AND PRODUCTION DEPLOYMENT ARE NOT YET VERIFIED.
