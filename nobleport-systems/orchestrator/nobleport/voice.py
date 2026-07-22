@@ -21,6 +21,17 @@ def _env_bool(name: str, default: bool = False) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _env_float(name: str, default: float) -> float:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    try:
+        value = float(raw)
+    except ValueError:
+        return default
+    return value if value > 0 else default
+
+
 @dataclass(frozen=True)
 class VoiceSettings:
     enabled: bool
@@ -39,7 +50,7 @@ class VoiceSettings:
             profile=profile,
             client_id=os.getenv("VOICEBOX_CLIENT_ID", "stephanie-ai").strip() or "stephanie-ai",
             personality=_env_bool("VOICEBOX_PERSONALITY", False),
-            timeout_seconds=float(os.getenv("VOICEBOX_TIMEOUT_SECONDS", "10")),
+            timeout_seconds=_env_float("VOICEBOX_TIMEOUT_SECONDS", 10.0),
         )
 
 
