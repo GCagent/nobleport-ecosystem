@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "network": {
+    "name": "Arbitrum One",
+    "chainId": 42161,
+    "nativeCurrency": "ETH"
+  },
+  "assets": {
+    "NBPT": {
+      "contractAddress": "0xf72dfcab3889ecd409eeea2c21b7eebd6de79a47",
+      "source": "user-provided",
+      "onchainVerification": "pending"
+    }
+  },
+  "wallets": {
+    "kuzo": {
+      "address": "0x5108b22204f214352ad500719344E1C865B1dbDb",
+      "source": "user-provided",
+      "ownershipVerification": "pending-signed-message"
+    }
+  },
+  "uniswap": {
+    "chain": "arbitrum",
+    "readOnlyDataEnabled": true,
+    "quoteMode": "read-only",
+    "transactionPreparationEnabled": false,
+    "autonomousTradingEnabled": false,
+    "requiresWalletSignature": true,
+    "requiresHumanApproval": true
+  },
+  "truthStatus": "CONFIGURED_IN_REPOSITORY_NOT_DEPLOYED_OR_ONCHAIN_VERIFIED"
+}
