@@ -1,0 +1,11 @@
+apiVersion: 1
+providers:
+  - name: nobleport
+    orgId: 1
+    folder: NoblePort
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/dashboards
+      foldersFromFilesStructure: false

@@ -87,6 +87,50 @@ label is `ok | flagged | block`. Detects:
 Swap the backend with any class that implements `moderate(text) ->
 Verdict` to call a real model.
 
+### E-signature — "Seal" (open-source envelope signing)
+
+An audit-first, from-scratch e-signature layer — the open-source counterpart
+to a hosted signing service — for getting AWOs, change orders, invoices and
+permit authorizations signed. No third-party signing account required.
+
+Lifecycle (state machine in `app/engine/esign.py`, enforced server-side):
+
+```
+envelope:   DRAFT ──send──→ SENT ──all signed──→ COMPLETED  (terminal)
+              │               ├── recipient declines ─→ DECLINED (terminal)
+              └── void ───────┴── void ─────────────→ VOIDED  (terminal)
+
+recipient:  PENDING ──→ SIGNED
+                   └──→ DECLINED
+```
+
+Flow:
+
+1. `POST /esign/envelopes` (multipart) — sender (`admin|moderator|contractor`)
+   uploads the document with `subject`, optional `message`, and
+   `routing` (`sequential` | `parallel`). The document is hashed (SHA-256)
+   and stored under `ESIGN_DIR`.
+2. `POST /esign/envelopes/{id}/recipients` — add `{name, email, role,
+   routing_order}`. Roles: `signer`, `approver` (both block completion) and
+   `viewer` (non-blocking). Recipients are locked once the envelope is sent.
+3. `POST /esign/envelopes/{id}/send` — `DRAFT → SENT`; mints a one-time
+   signing token per recipient (hashed at rest, raw returned once — deliver
+   out-of-band, like the API-key model).
+4. `POST /esign/envelopes/{id}/sign` — token-authenticated (no account).
+   Requires explicit `consent_given` (ESIGN Act / UETA). In `sequential`
+   routing a signer is blocked until all lower `routing_order` signers are
+   done. Completing the last signer flips the envelope to `COMPLETED`.
+5. `POST /esign/envelopes/{id}/decline` / `/void` — recipient declines (token)
+   or sender voids (API key).
+
+Each signature is **tamper-evident**: `signature_hash =
+sha256(document_sha256 || recipient_id || email || signed_at || consent)`.
+`GET /esign/envelopes/{id}/certificate` returns a deterministic Certificate of
+Completion carrying every signer's hash plus its own `certificate_hash`.
+`GET /esign/envelopes/{id}/document?token=…` serves the source document to a
+token holder or an authenticated sender role. Every send/sign/decline/void
+appends an `esign_*` row to the shared audit chain (below).
+
 ### Append-only audit log
 
 `audit_log` is hash-chained: `row_hash = sha256(prev_hash || canonical_json(payload))`,
@@ -108,6 +152,9 @@ share one tamper-evident chain.
 | `EVIDENCE_DIR`          | where uploads land on disk                         |
 | `EVIDENCE_MAX_BYTES`    | per-file upload cap (default 25 MiB)               |
 | `EVIDENCE_ALLOWED_MIME` | CSV of accepted Content-Types                      |
+| `ESIGN_DIR`             | where e-signature documents land on disk           |
+| `ESIGN_MAX_BYTES`       | per-document upload cap (default 25 MiB)           |
+| `ESIGN_ALLOWED_MIME`    | CSV of accepted document Content-Types             |
 
 ## Tests
 
@@ -116,5 +163,7 @@ pip install -r requirements.txt
 pytest -q
 ```
 
-37 tests covering scoring, validator, breaker, hash chain, moderation,
-truth-state transitions, and auth-key minting.
+58 tests covering scoring, validator, breaker, hash chain, moderation,
+truth-state transitions, auth-key minting, and the e-signature engine
+(envelope/recipient state machines, signing tokens, signature & certificate
+hashing, sequential/parallel routing).
