@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Stephanie.ai Contractor Intake</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0e17;
+            --surface: #111827;
+            --border: #1e2a3a;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .topbar__brand {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .topbar__status {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .topbar__status.active { background: rgba(16,185,129,0.12); color: var(--success); }
+        .topbar__status.trial { background: rgba(245,158,11,0.12); color: var(--warning); }
+        .topbar__status.suspended { background: rgba(239,68,68,0.12); color: var(--error); }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            padding: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .metric-card__label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-card__value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .metric-card__value.money { color: var(--success); }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .intake-link {
+            font-size: 14px;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+        }
+
+        .intake-link:hover { background: rgba(59,130,246,0.08); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.new { background: rgba(59,130,246,0.12); color: var(--accent); }
+        .status-badge.qualified { background: rgba(16,185,129,0.12); color: var(--success); }
+        .status-badge.estimate_scheduled { background: rgba(245,158,11,0.12); color: var(--warning); }
+        .status-badge.proposal_sent { background: rgba(168,85,247,0.12); color: #a855f7; }
+        .status-badge.accepted { background: rgba(16,185,129,0.2); color: var(--success); }
+
+        .btn-sm {
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text);
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-sm:hover { background: var(--surface); border-color: var(--accent); }
+
+        .btn-sm.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .actions { display: flex; gap: 8px; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p { margin-bottom: 16px; }
+
+        .audit-section {
+            margin-top: 40px;
+        }
+
+        .audit-entry {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .audit-entry:last-child { border-bottom: none; }
+
+        .audit-entry__action {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .audit-entry__time {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <span class="topbar__brand">Stephanie.ai Dashboard</span>
+    <span class="topbar__status trial" id="accountStatus">Loading...</span>
+</div>
+
+<div class="container">
+    <div class="metrics">
+        <div class="metric-card">
+            <div class="metric-card__label">Total Leads</div>
+            <div class="metric-card__value" id="metricLeads">-</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-card__label">New This Week</div>
+            <div class="metric-card__value" id="metricNew">-</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-card__label">Proposals Sent</div>
+            <div class="metric-card__value" id="metricProposals">-</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-card__label">Pipeline Value</div>
+            <div class="metric-card__value money" id="metricPipeline">-</div>
+        </div>
+    </div>
+
+    <div class="section-title">
+        Recent Leads
+        <a class="intake-link" id="intakeLink" href="#">Copy Intake Link</a>
+    </div>
+
+    <div id="leadsTable"></div>
+
+    <div class="audit-section">
+        <div class="section-title">Audit Trail</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
+            <div id="auditEntries">
+                <div class="empty-state"><p>Loading audit trail...</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    const contractorId = params.get('cid') || localStorage.getItem('contractor_id') || '';
+
+    if (!contractorId) {
+        document.querySelector('.container').innerHTML = `
+            <div class="empty-state">
+                <h2>Welcome to Stephanie.ai</h2>
+                <p>Register your contractor account to get started.</p>
+                <form id="regForm" style="max-width:400px;margin:0 auto;text-align:left;">
+                    <div style="margin-bottom:12px;">
+                        <label style="display:block;font-size:14px;margin-bottom:4px;">Company Name</label>
+                        <input type="text" id="regCompany" required style="width:100%;padding:10px;background:#111827;border:1px solid #1e2a3a;border-radius:8px;color:#f1f5f9;font-size:16px;">
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <label style="display:block;font-size:14px;margin-bottom:4px;">Your Name</label>
+                        <input type="text" id="regName" required style="width:100%;padding:10px;background:#111827;border:1px solid #1e2a3a;border-radius:8px;color:#f1f5f9;font-size:16px;">
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <label style="display:block;font-size:14px;margin-bottom:4px;">Email</label>
+                        <input type="email" id="regEmail" required style="width:100%;padding:10px;background:#111827;border:1px solid #1e2a3a;border-radius:8px;color:#f1f5f9;font-size:16px;">
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <label style="display:block;font-size:14px;margin-bottom:4px;">Phone</label>
+                        <input type="tel" id="regPhone" required style="width:100%;padding:10px;background:#111827;border:1px solid #1e2a3a;border-radius:8px;color:#f1f5f9;font-size:16px;">
+                    </div>
+                    <button type="submit" style="width:100%;padding:14px;background:#3b82f6;color:white;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">Create Account (Free Trial)</button>
+                </form>
+            </div>`;
+
+        document.getElementById('regForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resp = await fetch('/api/contractors/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    company_name: document.getElementById('regCompany').value,
+                    owner_name: document.getElementById('regName').value,
+                    email: document.getElementById('regEmail').value,
+                    phone: document.getElementById('regPhone').value
+                })
+            });
+            const data = await resp.json();
+            if (resp.ok) {
+                localStorage.setItem('contractor_id', data.contractor_id);
+                window.location.href = '/dashboard?cid=' + data.contractor_id;
+            } else {
+                alert(data.detail || 'Registration failed');
+            }
+        });
+        return;
+    }
+
+    localStorage.setItem('contractor_id', contractorId);
+
+    async function loadDashboard() {
+        try {
+            const resp = await fetch('/api/dashboard/' + contractorId);
+            if (!resp.ok) throw new Error('Failed to load');
+            const data = await resp.json();
+
+            const statusEl = document.getElementById('accountStatus');
+            statusEl.textContent = data.contractor.status.toUpperCase();
+            statusEl.className = 'topbar__status ' + data.contractor.status;
+
+            document.getElementById('metricLeads').textContent = data.metrics.total_leads;
+            document.getElementById('metricNew').textContent = data.metrics.new_leads;
+            document.getElementById('metricProposals').textContent = data.metrics.proposals_sent;
+            document.getElementById('metricPipeline').textContent = '$' + data.metrics.total_pipeline_value.toLocaleString();
+
+            const intakeLink = document.getElementById('intakeLink');
+            const intakeUrl = window.location.origin + '/?cid=' + contractorId;
+            intakeLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigator.clipboard.writeText(intakeUrl).then(() => {
+                    intakeLink.textContent = 'Copied!';
+                    setTimeout(() => { intakeLink.textContent = 'Copy Intake Link'; }, 2000);
+                });
+            });
+
+            if (data.recent_leads.length === 0) {
+                document.getElementById('leadsTable').innerHTML = `
+                    <div class="empty-state">
+                        <p>No leads yet. Share your intake link to start receiving projects.</p>
+                        <p style="font-size:13px;color:#4b5563;word-break:break-all;">${intakeUrl}</p>
+                    </div>`;
+            } else {
+                let html = `<table><thead><tr><th>Homeowner</th><th>Project</th><th>Estimate</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
+                data.recent_leads.forEach(lead => {
+                    const est = lead.estimated_range_low && lead.estimated_range_high
+                        ? '$' + Math.round(lead.estimated_range_low).toLocaleString() + ' - $' + Math.round(lead.estimated_range_high).toLocaleString()
+                        : 'Pending';
+                    html += `<tr>
+                        <td>${lead.homeowner_name}</td>
+                        <td>${lead.project_type.replace(/_/g, ' ')}</td>
+                        <td>${est}</td>
+                        <td><span class="status-badge ${lead.status}">${lead.status.replace(/_/g, ' ')}</span></td>
+                        <td class="actions">
+                            <button class="btn-sm primary" onclick="generateProposal('${lead.id}')">Generate Proposal</button>
+                        </td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                document.getElementById('leadsTable').innerHTML = html;
+            }
+        } catch (err) {
+            document.getElementById('leadsTable').innerHTML = '<div class="empty-state"><p>Failed to load dashboard data.</p></div>';
+        }
+
+        // Load audit trail
+        try {
+            const auditResp = await fetch('/api/audit/recent?limit=20');
+            const auditData = await auditResp.json();
+            if (auditData.length === 0) {
+                document.getElementById('auditEntries').innerHTML = '<div class="empty-state"><p>No audit entries yet.</p></div>';
+            } else {
+                let html = '';
+                auditData.forEach(entry => {
+                    const time = new Date(entry.created_at).toLocaleString();
+                    html += `<div class="audit-entry">
+                        <span class="audit-entry__action">${entry.action}</span>
+                        &mdash; ${entry.detail || entry.entity_type + ':' + entry.entity_id}
+                        <span class="audit-entry__time">${time}</span>
+                    </div>`;
+                });
+                document.getElementById('auditEntries').innerHTML = html;
+            }
+        } catch (err) {}
+    }
+
+    window.generateProposal = async function(leadId) {
+        const btn = event.target;
+        btn.textContent = 'Generating...';
+        btn.disabled = true;
+        try {
+            const resp = await fetch('/api/proposals/generate/' + leadId, { method: 'POST' });
+            if (resp.ok) {
+                btn.textContent = 'Generated';
+                btn.style.background = '#10b981';
+                btn.style.borderColor = '#10b981';
+                loadDashboard();
+            } else {
+                throw new Error('Failed');
+            }
+        } catch (err) {
+            btn.textContent = 'Error';
+            btn.style.background = '#ef4444';
+            btn.style.borderColor = '#ef4444';
+        }
+    };
+
+    loadDashboard();
+})();
+</script>
+</body>
+</html>

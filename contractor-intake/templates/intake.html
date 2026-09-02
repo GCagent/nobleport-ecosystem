@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Your Free Project Estimate | Stephanie.ai</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0e17;
+            --surface: #111827;
+            --surface-hover: #1a2332;
+            --border: #1e2a3a;
+            --border-focus: #3b82f6;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gold: #d4a017;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* --- Header --- */
+        .header {
+            text-align: center;
+            padding: 48px 24px 32px;
+            background: linear-gradient(180deg, rgba(59,130,246,0.08) 0%, transparent 100%);
+        }
+
+        .header__badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(59,130,246,0.12);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 24px;
+            font-size: 13px;
+            color: var(--accent);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        /* --- Trust Bar --- */
+        .trust-bar {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .trust-item svg {
+            width: 18px;
+            height: 18px;
+            color: var(--success);
+            flex-shrink: 0;
+        }
+
+        /* --- Form Container --- */
+        .form-container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 32px 24px 80px;
+        }
+
+        /* --- Steps --- */
+        .step-indicator {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .step-dot {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            transition: background 0.3s;
+        }
+
+        .step-dot.active { background: var(--accent); }
+        .step-dot.completed { background: var(--success); }
+
+        .step { display: none; }
+        .step.active { display: block; }
+
+        .step-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .step-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+        }
+
+        /* --- Form Fields --- */
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .field label .optional {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .field input,
+        .field select,
+        .field textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+        }
+
+        .field input::placeholder,
+        .field textarea::placeholder {
+            color: #4b5563;
+        }
+
+        .field textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .field select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .field-row { grid-template-columns: 1fr; }
+        }
+
+        .field-error {
+            font-size: 13px;
+            color: var(--error);
+            margin-top: 4px;
+            display: none;
+        }
+
+        .field.invalid input,
+        .field.invalid select,
+        .field.invalid textarea {
+            border-color: var(--error);
+        }
+
+        .field.invalid .field-error { display: block; }
+
+        /* --- Project Type Cards --- */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .project-card {
+            padding: 16px 12px;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .project-card:hover {
+            background: var(--surface-hover);
+            border-color: rgba(59,130,246,0.3);
+        }
+
+        .project-card.selected {
+            border-color: var(--accent);
+            background: rgba(59,130,246,0.08);
+        }
+
+        .project-card .icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .project-card .label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* --- Budget Slider --- */
+        .budget-display {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .budget-display .amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .budget-range {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .budget-range input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            border: none;
+            padding: 0;
+        }
+
+        .budget-range input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid var(--bg);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .budget-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* --- Timeline Cards --- */
+        .timeline-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+        }
+
+        .timeline-card {
+            padding: 14px 12px;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .timeline-card:hover { border-color: rgba(59,130,246,0.3); }
+        .timeline-card.selected {
+            border-color: var(--accent);
+            background: rgba(59,130,246,0.08);
+        }
+
+        .timeline-card .time { font-weight: 600; font-size: 15px; }
+        .timeline-card .desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* --- Buttons --- */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover { background: var(--accent-hover); }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover { background: var(--surface); }
+
+        /* --- Success State --- */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 60px 24px;
+        }
+
+        .success-screen.visible { display: block; }
+
+        .success-icon {
+            width: 72px;
+            height: 72px;
+            background: rgba(16,185,129,0.12);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .success-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--success);
+        }
+
+        .success-screen h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .success-screen p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .success-screen .ref-id {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: var(--surface);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--accent);
+        }
+
+        /* --- Scope Preview --- */
+        .scope-preview {
+            display: none;
+            margin-top: 24px;
+            padding: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .scope-preview.visible { display: block; }
+
+        .scope-preview h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: var(--gold);
+        }
+
+        .scope-preview .scope-text {
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre-line;
+            color: var(--text-secondary);
+        }
+
+        .scope-preview .estimate-range {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: rgba(59,130,246,0.06);
+            border-radius: var(--radius-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .scope-preview .estimate-label { font-size: 14px; color: var(--text-secondary); }
+        .scope-preview .estimate-value { font-size: 20px; font-weight: 700; color: var(--accent); }
+
+        /* --- Loading --- */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.visible { display: block; }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading p {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 13px;
+            color: #4b5563;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <span class="header__badge">Powered by Stephanie.ai</span>
+    <h1>Tell Us About Your Project</h1>
+    <p>Get a detailed scope of work and estimate in minutes. No obligation, no sales calls.</p>
+</div>
+
+<div class="trust-bar">
+    <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Licensed &amp; Insured
+    </div>
+    <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        AI-Powered Estimates
+    </div>
+    <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Response in Under 2 Minutes
+    </div>
+</div>
+
+<div class="form-container">
+    <div class="step-indicator">
+        <div class="step-dot active" data-step="0"></div>
+        <div class="step-dot" data-step="1"></div>
+        <div class="step-dot" data-step="2"></div>
+        <div class="step-dot" data-step="3"></div>
+    </div>
+
+    <form id="intakeForm" novalidate>
+
+        <!-- Step 1: Project Type -->
+        <div class="step active" data-step="0">
+            <div class="step-title">What type of project?</div>
+            <div class="step-subtitle">Select the category that best describes your project.</div>
+
+            <input type="hidden" id="projectType" name="project_type" required>
+
+            <div class="project-grid">
+                <div class="project-card" data-type="kitchen">
+                    <span class="icon">&#9737;</span>
+                    <span class="label">Kitchen</span>
+                </div>
+                <div class="project-card" data-type="bathroom">
+                    <span class="icon">&#9832;</span>
+                    <span class="label">Bathroom</span>
+                </div>
+                <div class="project-card" data-type="roofing">
+                    <span class="icon">&#9960;</span>
+                    <span class="label">Roofing</span>
+                </div>
+                <div class="project-card" data-type="siding">
+                    <span class="icon">&#9638;</span>
+                    <span class="label">Siding</span>
+                </div>
+                <div class="project-card" data-type="addition">
+                    <span class="icon">&#10010;</span>
+                    <span class="label">Addition</span>
+                </div>
+                <div class="project-card" data-type="deck_patio">
+                    <span class="icon">&#9782;</span>
+                    <span class="label">Deck / Patio</span>
+                </div>
+                <div class="project-card" data-type="basement">
+                    <span class="icon">&#9047;</span>
+                    <span class="label">Basement</span>
+                </div>
+                <div class="project-card" data-type="full_renovation">
+                    <span class="icon">&#9881;</span>
+                    <span class="label">Full Reno</span>
+                </div>
+                <div class="project-card" data-type="painting">
+                    <span class="icon">&#9997;</span>
+                    <span class="label">Painting</span>
+                </div>
+                <div class="project-card" data-type="flooring">
+                    <span class="icon">&#9633;</span>
+                    <span class="label">Flooring</span>
+                </div>
+                <div class="project-card" data-type="windows_doors">
+                    <span class="icon">&#9708;</span>
+                    <span class="label">Windows</span>
+                </div>
+                <div class="project-card" data-type="other">
+                    <span class="icon">&#8943;</span>
+                    <span class="label">Other</span>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button type="button" class="btn btn-primary" onclick="nextStep()" disabled id="step0Next">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Project Details -->
+        <div class="step" data-step="1">
+            <div class="step-title">Describe your project</div>
+            <div class="step-subtitle">The more detail you share, the more accurate your estimate.</div>
+
+            <div class="field">
+                <label for="description">Project Description</label>
+                <textarea id="description" name="project_description" required
+                    placeholder="Example: I want to gut-renovate my kitchen. It's about 12x14 feet. I'd like new cabinets, quartz counters, a tile backsplash, and updated appliances. The layout will stay the same but I want to add an island."></textarea>
+                <div class="field-error">Please describe your project.</div>
+            </div>
+
+            <div class="field">
+                <label>Estimated Budget</label>
+                <div class="budget-display">
+                    <span class="amount" id="budgetDisplay">$25,000 - $50,000</span>
+                </div>
+                <div class="budget-range">
+                    <span class="budget-label">$5k</span>
+                    <input type="range" id="budgetMin" name="budget_min" min="5000" max="250000" step="5000" value="25000">
+                    <input type="range" id="budgetMax" name="budget_max" min="5000" max="500000" step="5000" value="50000">
+                    <span class="budget-label">$500k</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>When do you want to start?</label>
+                <div class="timeline-options">
+                    <div class="timeline-card" data-timeline="asap">
+                        <div class="time">ASAP</div>
+                        <div class="desc">Emergency</div>
+                    </div>
+                    <div class="timeline-card" data-timeline="1-2 weeks">
+                        <div class="time">1-2 Weeks</div>
+                        <div class="desc">Soon</div>
+                    </div>
+                    <div class="timeline-card" data-timeline="1-2 months">
+                        <div class="time">1-2 Months</div>
+                        <div class="desc">Planning</div>
+                    </div>
+                    <div class="timeline-card selected" data-timeline="flexible">
+                        <div class="time">Flexible</div>
+                        <div class="desc">No rush</div>
+                    </div>
+                </div>
+                <input type="hidden" id="timeline" name="timeline" value="flexible">
+            </div>
+
+            <div class="btn-row">
+                <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Contact Info -->
+        <div class="step" data-step="2">
+            <div class="step-title">Your contact information</div>
+            <div class="step-subtitle">So we can send your detailed estimate.</div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label for="homeownerName">Full Name</label>
+                    <input type="text" id="homeownerName" name="homeowner_name" required placeholder="Jane Smith">
+                    <div class="field-error">Name is required.</div>
+                </div>
+                <div class="field">
+                    <label for="homeownerPhone">Phone</label>
+                    <input type="tel" id="homeownerPhone" name="homeowner_phone" required placeholder="(555) 123-4567">
+                    <div class="field-error">Phone is required.</div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="homeownerEmail">Email</label>
+                <input type="email" id="homeownerEmail" name="homeowner_email" required placeholder="jane@example.com">
+                <div class="field-error">Valid email is required.</div>
+            </div>
+
+            <div class="field">
+                <label for="propertyAddress">Property Address</label>
+                <input type="text" id="propertyAddress" name="property_address" required placeholder="123 Main St, Anytown, MA 01234">
+                <div class="field-error">Property address is required.</div>
+            </div>
+
+            <div class="btn-row">
+                <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                <button type="button" class="btn btn-primary" onclick="nextStep()">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Review & Submit -->
+        <div class="step" data-step="3">
+            <div class="step-title">Review your project</div>
+            <div class="step-subtitle">Confirm the details below, then submit to get your AI-generated estimate.</div>
+
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+                <div style="display:grid;gap:12px;">
+                    <div>
+                        <div style="font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Project</div>
+                        <div style="font-weight:600;" id="reviewType">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Budget</div>
+                        <div style="font-weight:600;" id="reviewBudget">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Timeline</div>
+                        <div style="font-weight:600;" id="reviewTimeline">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Description</div>
+                        <div style="font-size:14px;color:var(--text-secondary);line-height:1.6;" id="reviewDesc">-</div>
+                    </div>
+                    <div style="border-top:1px solid var(--border);padding-top:12px;">
+                        <div style="font-size:12px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Contact</div>
+                        <div style="font-weight:600;" id="reviewContact">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Get My Estimate</button>
+            </div>
+        </div>
+
+    </form>
+
+    <!-- Loading State -->
+    <div class="loading" id="loadingState">
+        <div class="spinner"></div>
+        <p>Stephanie.ai is analyzing your project...</p>
+        <p style="font-size:13px;margin-top:8px;color:#4b5563;">Generating scope of work and preliminary estimate</p>
+    </div>
+
+    <!-- Success State -->
+    <div class="success-screen" id="successState">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2>Project Submitted</h2>
+        <p>Your project details have been received and your scope is being prepared.</p>
+        <p>A contractor will reach out within 24 hours with your detailed proposal.</p>
+        <div class="ref-id" id="refId"></div>
+
+        <div class="scope-preview" id="scopePreview">
+            <h3>Preliminary Scope of Work</h3>
+            <div class="scope-text" id="scopeText"></div>
+            <div class="estimate-range">
+                <span class="estimate-label">Estimated Range</span>
+                <span class="estimate-value" id="estimateRange"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    Stephanie.ai Contractor Intake System &mdash; NoblePort Systems
+</div>
+
+<script>
+(function() {
+    let currentStep = 0;
+    const totalSteps = 4;
+    let formData = { timeline: 'flexible' };
+
+    // --- Project Type Selection ---
+    document.querySelectorAll('.project-card').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('.project-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            const type = card.dataset.type;
+            document.getElementById('projectType').value = type;
+            formData.project_type = type;
+            document.getElementById('step0Next').disabled = false;
+        });
+    });
+
+    // --- Timeline Selection ---
+    document.querySelectorAll('.timeline-card').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('.timeline-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            document.getElementById('timeline').value = card.dataset.timeline;
+            formData.timeline = card.dataset.timeline;
+        });
+    });
+
+    // --- Budget Sliders ---
+    const budgetMin = document.getElementById('budgetMin');
+    const budgetMax = document.getElementById('budgetMax');
+    const budgetDisplay = document.getElementById('budgetDisplay');
+
+    function updateBudget() {
+        let min = parseInt(budgetMin.value);
+        let max = parseInt(budgetMax.value);
+        if (min > max) {
+            if (this === budgetMin) { budgetMax.value = min; max = min; }
+            else { budgetMin.value = max; min = max; }
+        }
+        formData.budget_min = min;
+        formData.budget_max = max;
+        budgetDisplay.textContent = '$' + min.toLocaleString() + ' - $' + max.toLocaleString();
+    }
+
+    budgetMin.addEventListener('input', updateBudget);
+    budgetMax.addEventListener('input', updateBudget);
+
+    // --- Navigation ---
+    window.nextStep = function() {
+        if (!validateStep(currentStep)) return;
+        if (currentStep === 2) updateReview();
+        currentStep++;
+        showStep(currentStep);
+    };
+
+    window.prevStep = function() {
+        currentStep--;
+        showStep(currentStep);
+    };
+
+    function showStep(step) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+        document.querySelectorAll('.step-dot').forEach((dot, i) => {
+            dot.classList.remove('active', 'completed');
+            if (i === step) dot.classList.add('active');
+            if (i < step) dot.classList.add('completed');
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function validateStep(step) {
+        let valid = true;
+        if (step === 0) {
+            if (!formData.project_type) { valid = false; }
+        }
+        if (step === 1) {
+            const desc = document.getElementById('description');
+            if (!desc.value.trim()) {
+                desc.closest('.field').classList.add('invalid');
+                valid = false;
+            } else {
+                desc.closest('.field').classList.remove('invalid');
+            }
+        }
+        if (step === 2) {
+            ['homeownerName', 'homeownerPhone', 'homeownerEmail', 'propertyAddress'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el.value.trim()) {
+                    el.closest('.field').classList.add('invalid');
+                    valid = false;
+                } else {
+                    el.closest('.field').classList.remove('invalid');
+                }
+            });
+            const email = document.getElementById('homeownerEmail');
+            if (email.value && !email.value.includes('@')) {
+                email.closest('.field').classList.add('invalid');
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    function updateReview() {
+        const type = formData.project_type || '';
+        document.getElementById('reviewType').textContent = type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        document.getElementById('reviewBudget').textContent = budgetDisplay.textContent;
+        document.getElementById('reviewTimeline').textContent = formData.timeline || 'Flexible';
+        document.getElementById('reviewDesc').textContent = document.getElementById('description').value;
+        const name = document.getElementById('homeownerName').value;
+        const phone = document.getElementById('homeownerPhone').value;
+        const email = document.getElementById('homeownerEmail').value;
+        document.getElementById('reviewContact').textContent = name + ' | ' + phone + ' | ' + email;
+    }
+
+    // --- Submit ---
+    document.getElementById('intakeForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (!validateStep(currentStep)) return;
+
+        const form = this;
+        form.style.display = 'none';
+        document.querySelector('.step-indicator').style.display = 'none';
+        const loading = document.getElementById('loadingState');
+        loading.classList.add('visible');
+
+        const payload = {
+            contractor_id: new URLSearchParams(window.location.search).get('cid') || 'demo',
+            homeowner_name: document.getElementById('homeownerName').value,
+            homeowner_email: document.getElementById('homeownerEmail').value,
+            homeowner_phone: document.getElementById('homeownerPhone').value,
+            property_address: document.getElementById('propertyAddress').value,
+            project_type: formData.project_type,
+            project_description: document.getElementById('description').value,
+            budget_min: parseInt(budgetMin.value),
+            budget_max: parseInt(budgetMax.value),
+            timeline: formData.timeline,
+            urgency: formData.timeline === 'asap' ? 'high' : 'normal',
+            source: 'web_intake'
+        };
+
+        try {
+            const resp = await fetch('/api/intake', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await resp.json();
+
+            if (resp.ok) {
+                loading.classList.remove('visible');
+                const success = document.getElementById('successState');
+                success.classList.add('visible');
+                document.getElementById('refId').textContent = 'Ref: ' + result.lead_id;
+
+                // Try to generate proposal
+                try {
+                    const propResp = await fetch('/api/proposals/generate/' + result.lead_id, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (propResp.ok) {
+                        const prop = await propResp.json();
+                        document.getElementById('scopeText').textContent = prop.scope_of_work;
+                        document.getElementById('estimateRange').textContent =
+                            '$' + Math.round(prop.total_amount * 0.9).toLocaleString() +
+                            ' - $' + Math.round(prop.total_amount * 1.1).toLocaleString();
+                        document.getElementById('scopePreview').classList.add('visible');
+                    }
+                } catch (err) { /* Proposal generation is optional at this stage */ }
+            } else {
+                throw new Error(result.detail || 'Submission failed');
+            }
+        } catch (err) {
+            loading.classList.remove('visible');
+            form.style.display = 'block';
+            document.querySelector('.step-indicator').style.display = 'flex';
+            alert('Something went wrong: ' + err.message + '. Please try again.');
+        }
+    });
+
+    // Clear validation on input
+    document.querySelectorAll('input, textarea, select').forEach(el => {
+        el.addEventListener('input', () => el.closest('.field')?.classList.remove('invalid'));
+    });
+})();
+</script>
+</body>
+</html>
