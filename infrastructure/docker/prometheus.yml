@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "gateway-brain"
+    static_configs:
+      - targets: ["gateway-brain:8080"]
+    metrics_path: /metrics
+
+  - job_name: "stephanie-stream"
+    static_configs:
+      - targets: ["stephanie-stream:8081"]
+    metrics_path: /metrics
+
+  - job_name: "websocket-service"
+    static_configs:
+      - targets: ["websocket-service:8082"]
+    metrics_path: /metrics
+
+  - job_name: "redis"
+    static_configs:
+      - targets: ["redis:6379"]
+
+  - job_name: "nginx"
+    static_configs:
+      - targets: ["nginx:80"]
+    metrics_path: /nginx_status

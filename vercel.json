@@ -9,6 +9,21 @@
   ],
   "routes": [
     {
+      "src": "/health",
+      "dest": "/index.html",
+      "headers": {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store"
+      }
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
@@ -28,8 +43,47 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), microphone=(), camera=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.nobleport.com wss://ws.nobleport.com; font-src 'self' https://fonts.gstatic.com"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://api.nobleport.com/:path*"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/dao",
+      "destination": "https://dao.nobleport.com",
+      "permanent": false
+    },
+    {
+      "source": "/invest",
+      "destination": "https://invest.nobleport.com",
+      "permanent": false
+    },
+    {
+      "source": "/build",
+      "destination": "https://build.nobleport.com",
+      "permanent": false
     }
   ]
 }
