@@ -1,9 +1,23 @@
 # NoblePort Systems — Platform Core
 
-Full-stack implementation of the NoblePort nano-ecosystem: a Rust edge
-gateway, a Python orchestrator hosting the four AI agents and the 60+ module
-catalog, a declarative workflow engine with human-gated execution, and a
-Docker deployment targeting a single Hostinger VPS.
+NoblePort Systems is developing a **governed nano-ecosystem** that connects
+construction, real-estate development, property intelligence, investment
+infrastructure, and tokenized real-world assets.
+
+This repository is the platform core: a Rust edge gateway, a Python
+orchestrator hosting the four AI agents and the 60+ module catalog, a
+declarative workflow engine with human-gated execution, and a Docker
+deployment targeting a single Hostinger VPS.
+
+**Readiness:** modules are `LIVE` / `STAGED` / `READ_ONLY`. Token products,
+SEC-registration language, and “production-ready / ready for investors”
+claims are **PROPOSED or BLOCKED** until runtime, legal, compliance, and
+transaction evidence exists. Physical property/evidence is the source of
+truth; a generic transferable token is not the ownership mechanism.
+Canonical copy: `GCagent/nobleport.etf` → `skills/nano-ecosystem/POSITIONING-v1.md`.
+Market reference: Deloitte ~$4T tokenized real estate by 2035 (not the
+unsubstantiated $654T RealFi/XRP figure).
+
 
 ```
                     nobleportsystem.io / *.kuzo.io
