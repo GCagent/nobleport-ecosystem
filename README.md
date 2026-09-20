@@ -21,6 +21,7 @@ logging, and human-gated execution.
 | Job & AWO Tracking | LIVE | Postgres write-ahead log operations |
 | Invoice Workflow Support | LIVE | Billing state management and ledger emission |
 | Human Approval Routing | LIVE | Manual sign-off on all high-risk events |
+| Nano Ecosystem Chain | STAGED | Infill/ADU evidence graph (`nano_infill_chain`); hypothetical until real-parcel verification |
 | Stephanie.ai Orchestrator | STAGED (81%) | Multi-agent state manager in dev containers |
 | GCagent.ai Compliance | STAGED (44%) | Municipal regulation text-matching routines |
 | PermitStream.ai Review | STAGED (38%) | Document parsing schemas; awaiting API validation |

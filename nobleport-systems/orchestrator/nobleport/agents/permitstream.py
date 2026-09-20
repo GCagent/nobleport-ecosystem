@@ -1,8 +1,9 @@
 """PermitStream.ai — permit workflow agent.
 
-Owns permit intake, parsing, package assembly, filing (human-gated), and
-status tracking. All modules are currently STAGED, so the engine invokes
-them in simulation until API validation completes.
+Owns permit intake, parsing, package assembly, filing (human-gated), status
+tracking, and the nano-chain entitlement verification matrix. All modules are
+currently STAGED, so the engine invokes them in simulation until API
+validation completes. Nothing is labeled permitted without source evidence.
 """
 
 from __future__ import annotations
@@ -10,6 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from nobleport.agents.base import BaseAgent
+from nobleport import nano_demo
 
 
 class PermitStreamAgent(BaseAgent):
@@ -19,6 +21,7 @@ class PermitStreamAgent(BaseAgent):
         self.on("permits.intake", self._intake)
         self.on("permits.checklist", self._checklist)
         self.on("permits.submission", self._submission)
+        self.on("nano.entitlement", self._nano_entitlement)
 
     async def _intake(self, action: str, payload: dict[str, Any],
                       simulate: bool) -> dict[str, Any]:
@@ -46,3 +49,7 @@ class PermitStreamAgent(BaseAgent):
                          else "Filed after human approval"),
             }
         }
+
+    async def _nano_entitlement(self, action: str, payload: dict[str, Any],
+                                simulate: bool) -> dict[str, Any]:
+        return {"entitlement": nano_demo.entitlement_matrix(payload)}
