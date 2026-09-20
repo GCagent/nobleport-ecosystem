@@ -1,8 +1,9 @@
 """Grounded nano-chain run for 236 High Road, Newbury, MA (SITE-236HIGH).
 
 Assessor, zoning class, and lot geometry are ingested from NoblePort's
-Patriot Properties record (Account #997 / R26-0-12). This is still not an
-AHJ determination. The 8-unit (6+2) program fails baseline density;
+Patriot Properties record (Account #997 / R26-0-12). Dimensional numbers
+are from Newbury Zoning Bylaw Article VI (R-AG table). This is still not
+an AHJ determination. The 8-unit (6+2) program fails baseline density;
 Stephanie does not authorize acquisition and nothing is labeled permitted.
 """
 
@@ -15,6 +16,53 @@ RUN_ID = "NEWBURY-236HIGH"
 ADDRESS = "236 High Road, Newbury, MA 01951"
 LOT_SF = 8712
 MIN_LOT_SF = 40000
+TWO_FAMILY_MIN_SF_PUBLIC_WATER = 60000
+TWO_FAMILY_MIN_SF_OTHER = 80000
+FRONTAGE_MIN_FT = 125
+SETBACK_PROPERTY_FT = 10
+SETBACK_STREET_FT = 20
+HEIGHT_MAX_FT = 35
+
+DIMENSIONAL = {
+    "district": "R-AG",
+    "district_name": "Residential-Agricultural",
+    "district_alias": "AR / Agricultural-Residential",
+    "source": "Newbury Zoning Bylaw, Article VI — Table of Dimensional Requirements",
+    "single_family": {
+        "lot_sf": MIN_LOT_SF,
+        "frontage_ft": FRONTAGE_MIN_FT,
+        "setback_property_ft": SETBACK_PROPERTY_FT,
+        "setback_street_ft": SETBACK_STREET_FT,
+        "height_ft": HEIGHT_MAX_FT,
+    },
+    "two_family_public_water": {
+        "lot_sf": TWO_FAMILY_MIN_SF_PUBLIC_WATER,
+        "frontage_ft": FRONTAGE_MIN_FT,
+        "setback_property_ft": SETBACK_PROPERTY_FT,
+        "setback_street_ft": SETBACK_STREET_FT,
+        "height_ft": HEIGHT_MAX_FT,
+    },
+    "two_family_other": {
+        "lot_sf": TWO_FAMILY_MIN_SF_OTHER,
+        "frontage_ft": FRONTAGE_MIN_FT,
+        "setback_property_ft": SETBACK_PROPERTY_FT,
+        "setback_street_ft": SETBACK_STREET_FT,
+        "height_ft": HEIGHT_MAX_FT,
+    },
+    "lot_meets_any_row": False,
+}
+
+HISTORIC = {
+    "bylaw": "Newbury Chapter 65 — Historic Preservation",
+    "delay_months_if_preferably_preserved": 9,
+    "existing_structure_year": 2021,
+    "existing_structure_likely_significant": False,
+    "corridor_scrutiny": True,
+    "note": (
+        "2021 barn (permit #21-329RB) is modern construction. "
+        "High Road streetscape and any new massing still need inventory review."
+    ),
+}
 
 
 def is_site_236(payload: dict[str, Any]) -> bool:
@@ -42,6 +90,8 @@ def site_screen(payload: dict[str, Any]) -> dict[str, Any]:
         "zoning": "R-AG",
         "min_lot_sf": MIN_LOT_SF,
         "nonconforming": True,
+        "dimensional": DIMENSIONAL,
+        "historic": HISTORIC,
         "corridor": "Historic First Parish / High Road (Route 1A)",
         "structure": "Barn / outbuilding, LUC 106, permit #21-329RB",
         "advances_to": "feasibility",
@@ -54,7 +104,10 @@ def site_screen(payload: dict[str, Any]) -> dict[str, Any]:
             },
             "lot_geometry": {
                 "status": "HALT",
-                "evidence": f"{LOT_SF} SF vs {MIN_LOT_SF} SF R-AG minimum",
+                "evidence": (
+                    f"{LOT_SF} SF vs {MIN_LOT_SF} SF R-AG single-family / "
+                    f"{TWO_FAMILY_MIN_SF_PUBLIC_WATER}–{TWO_FAMILY_MIN_SF_OTHER} SF two-family"
+                ),
             },
             "utilities": {
                 "status": "VERIFY",
@@ -95,20 +148,26 @@ def feasibility_model(payload: dict[str, Any]) -> dict[str, Any]:
             {
                 "id": "requested",
                 "program": "6-unit infill + 2 ADUs (8 units)",
+                "units": 8,
                 "feasible": False,
                 "path": "Failed baseline — lot coverage / parking geometry",
             },
             {
                 "id": "by_right",
                 "program": "Single-family + 1 ADU",
+                "units": 2,
                 "feasible": True,
                 "path": "M.G.L. c. 40A §3 (AHA) subject to a principal dwelling and §6 treatment of the nonconformity",
             },
             {
                 "id": "discretionary",
                 "program": "Two-family conversion or detached carriage ADU",
+                "units": 2,
                 "feasible": True,
-                "path": "ZBA relief for coverage, setbacks, wastewater",
+                "path": (
+                    f"ZBA relief for lot area ({TWO_FAMILY_MIN_SF_PUBLIC_WATER}–"
+                    f"{TWO_FAMILY_MIN_SF_OTHER} SF table vs {LOT_SF} SF), coverage, setbacks, wastewater"
+                ),
             },
         ],
         "acquisition_authorized": False,
@@ -123,7 +182,7 @@ def feasibility_model(payload: dict[str, Any]) -> dict[str, Any]:
 def entitlement_matrix(payload: dict[str, Any]) -> dict[str, Any]:
     rows = [
         ("dimensional_controls", "GATE_LOCKED",
-         "Non-conforming area/frontage vs R-AG 40,000 SF minimum.",
+         f"Non-conforming area/frontage vs R-AG {MIN_LOT_SF} SF / {FRONTAGE_MIN_FT} ft (Article VI).",
          "M.G.L. c. 40A §6 finding / special permit — VERIFY with Newbury ZBA counsel."),
         ("density", "FAILED",
          "8-unit (6+2) density fails lot coverage and parking geometry on 8,712 SF.",
@@ -135,7 +194,7 @@ def entitlement_matrix(payload: dict[str, Any]) -> dict[str, Any]:
          "AHA ADU-by-right is accessory to a principal dwelling. No principal dwelling on record.",
          "Legal opinion on barn-to-ADU vs new principal dwelling + ADU."),
         ("historical_context", "CAUTION",
-         "High Road corridor — local demolition delay and architectural inventory.",
+         "High Road corridor — Chapter 65 nine-month delay if Preferably Preserved. 2021 barn is not itself historic; new massing still needs inventory.",
          "Historic inventory check before exterior alteration or new massing."),
         ("water_wastewater", "VERIFY",
          "Title 5 setbacks on 8,712 SF cap bedroom count if not on sewer.",
@@ -147,7 +206,7 @@ def entitlement_matrix(payload: dict[str, Any]) -> dict[str, Any]:
          "Route 1A is a high-visibility thoroughfare.",
          "MassDOT / municipal curb-cut and traffic staging plan on the critical path."),
         ("required_municipal_approvals", "STAGED",
-         "Building, ZBA, historic/demolition delay, Board of Health, possibly MassDOT.",
+         "Building, ZBA, historic/demolition delay if triggered, Board of Health, possibly MassDOT.",
          "Nothing labeled permitted until source evidence supports it."),
     ]
     return {
@@ -166,6 +225,18 @@ def entitlement_matrix(payload: dict[str, Any]) -> dict[str, Any]:
             for surface, status, finding, action in rows
         ],
         "anything_labeled_permitted": False,
+        "wastewater": {
+            "status": "VERIFY",
+            "sewer_unknown": True,
+            "on_sewer": (
+                "Bedroom count still limited by setbacks, parking, and §6 — "
+                "sewer removes the Title 5 reserve-area ceiling, not the density gate."
+            ),
+            "on_title_5": (
+                "System, foundation, and reserve-area setbacks on 8,712 SF "
+                "create an immediate bedroom ceiling."
+            ),
+        },
         "note": "Nothing is labeled permitted until source evidence supports it.",
     }
 
@@ -200,6 +271,7 @@ def design_concepts(payload: dict[str, Any]) -> dict[str, Any]:
         "selection_authority": "human",
         "stamped_drawings": False,
         "pivot": True,
+        "historic": HISTORIC,
     }
 
 
@@ -229,6 +301,12 @@ def construction_sequence(payload: dict[str, Any]) -> dict[str, Any]:
             "route_1a_traffic_plan",
             "massdot_curb_cut",
             "stretch_code_heat_pump",
+        ],
+        "route_1a_constraints": [
+            "traffic_management",
+            "curb_cut",
+            "delivery_buffer",
+            "historic_predecessor",
         ],
     }
 
@@ -262,7 +340,7 @@ def stress_tests(payload: dict[str, Any]) -> dict[str, Any]:
             {"driver": "density", "shock": "8-unit program", "result": "FAILED BASELINE"},
             {"driver": "permitting", "shock": "§6 finding denied or ADU path fails without a principal dwelling"},
             {"driver": "wastewater", "shock": "Title 5 reserve area consumes the lot; bedroom count collapses"},
-            {"driver": "historic", "shock": "demolition delay / corridor design review extends preconstruction"},
+            {"driver": "historic", "shock": "Chapter 65 delay / corridor design review extends preconstruction"},
             {"driver": "cost_escalation", "note": "Do not underwrite a 10% overrun on an 8-unit model that cannot be built"},
         ],
         "base_case_is_not_the_plan": True,

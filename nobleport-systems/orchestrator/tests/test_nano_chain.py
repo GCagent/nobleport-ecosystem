@@ -159,17 +159,28 @@ def test_236_high_road_halts_eight_unit_density():
     assert screen["classification"] == "CONSTRAINED INFILL"
     assert screen["lot_sf"] == 8712
     assert screen["acquisition_authorized"] is False
+    assert screen["dimensional"]["single_family"]["lot_sf"] == 40000
+    assert screen["dimensional"]["two_family_public_water"]["lot_sf"] == 60000
+    assert screen["dimensional"]["two_family_other"]["lot_sf"] == 80000
+    assert screen["dimensional"]["lot_meets_any_row"] is False
+    assert screen["historic"]["delay_months_if_preferably_preserved"] == 9
+    assert screen["historic"]["existing_structure_likely_significant"] is False
 
     model = feasibility_model(payload)
     assert model["requested_feasible"] is False
     assert model["gate"] == "DENSITY_GATE_LOCKED"
     assert model["acquisition_authorized"] is False
+    requested = next(y for y in model["yields"] if y["id"] == "requested")
+    assert requested["units"] == 8 and requested["feasible"] is False
+    by_right = next(y for y in model["yields"] if y["id"] == "by_right")
+    assert by_right["units"] == 2 and by_right["feasible"] is True
 
     matrix = entitlement_matrix(payload)
     assert matrix["anything_labeled_permitted"] is False
     density = next(r for r in matrix["matrix"] if r["surface"] == "density")
     assert density["status"] == "FAILED"
     assert density["permitted"] is False
+    assert matrix["wastewater"]["sewer_unknown"] is True
 
     design = design_concepts(payload)
     halted = next(c for c in design["concepts"] if c["id"] == "eight_unit")
