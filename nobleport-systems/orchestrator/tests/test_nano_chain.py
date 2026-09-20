@@ -7,7 +7,12 @@ from nobleport.nano_demo import (
     DEFAULT_COSTS,
     EVIDENCE_GRAPH,
     SEQUENCE_SPINE,
+    design_concepts,
+    draw_package,
+    entitlement_matrix,
     feasibility_model,
+    five_harness,
+    site_screen,
 )
 from nobleport.workflows import WORKFLOWS, WorkflowState
 from nobleport.workflows.definitions import Step
@@ -143,3 +148,60 @@ def test_nano_chain_rejection_never_releases_a_draw():
         note="electrical CO still open"))
     assert run.state is WorkflowState.REJECTED
     assert all(r.module != "nano.draw_manager" for r in run.results)
+
+
+def test_236_high_road_halts_eight_unit_density():
+    payload = {
+        "site_id": "SITE-236HIGH",
+        "address": "236 High Road, Newbury, MA 01951",
+    }
+    screen = site_screen(payload)
+    assert screen["classification"] == "CONSTRAINED INFILL"
+    assert screen["lot_sf"] == 8712
+    assert screen["acquisition_authorized"] is False
+
+    model = feasibility_model(payload)
+    assert model["requested_feasible"] is False
+    assert model["gate"] == "DENSITY_GATE_LOCKED"
+    assert model["acquisition_authorized"] is False
+
+    matrix = entitlement_matrix(payload)
+    assert matrix["anything_labeled_permitted"] is False
+    density = next(r for r in matrix["matrix"] if r["surface"] == "density")
+    assert density["status"] == "FAILED"
+    assert density["permitted"] is False
+
+    design = design_concepts(payload)
+    halted = next(c for c in design["concepts"] if c["id"] == "eight_unit")
+    assert halted["status"] == "halted"
+    assert any(c["id"] == "historic_sf_adu" and c["status"] == "active"
+               for c in design["concepts"])
+
+    draw = draw_package(payload)
+    assert draw["funds_released"] is False
+    assert draw["requested"] == 0
+
+    harness = five_harness(payload)
+    assert harness["harness"]["execution"] == "PASS"
+    assert harness["harness"]["governance"] == "GATE LOCKED"
+    assert harness["harness"]["testing_release"] == "FAILED BASELINE"
+    assert harness["overall_state"] == "STAGED — DENSITY GATE LOCKED"
+
+
+def test_nano_chain_236_payload_locks_density_before_draw_gate():
+    engine, _, gate = make_engine()
+    run = asyncio.run(engine.start("nano_infill_chain", {
+        "site_id": "SITE-236HIGH",
+        "address": "236 High Road, Newbury, MA 01951",
+    }))
+    assert run.state is WorkflowState.AWAITING_APPROVAL
+    pending = gate.pending_for_workflow(run.id)
+    assert pending[0].module == "nano.draw_manager"
+    feasibility = next(r for r in run.results if r.module == "nano.feasibility")
+    assert feasibility.output["feasibility"]["requested_feasible"] is False
+    entitlement = next(r for r in run.results if r.module == "nano.entitlement")
+    assert entitlement.output["entitlement"]["anything_labeled_permitted"] is False
+    design = next(r for r in run.results if r.module == "nano.generative_design")
+    halted = next(c for c in design.output["design"]["concepts"]
+                  if c["id"] == "eight_unit")
+    assert halted["status"] == "halted"

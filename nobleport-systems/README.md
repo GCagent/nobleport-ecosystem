@@ -92,7 +92,7 @@ Orchestrator (Python ≥3.11):
 ```bash
 cd orchestrator
 pip install -e .[dev]
-pytest                       # 28 tests
+pytest                       # 30 tests
 uvicorn nobleport.api:app --port 8000
 ```
 
@@ -115,10 +115,10 @@ curl -X POST localhost:8080/api/approvals/<id>/resolve \
      -H 'content-type: application/json' \
      -d '{"approved":true,"actor":"ops@nobleport"}'
 
-# Hypothetical infill chain (suspends on the construction-loan draw):
+# Grounded 236 High Road, Newbury run (density gate locks 8-unit program):
 curl -X POST localhost:8080/api/workflows/nano_infill_chain/start \
      -H 'content-type: application/json' \
-     -d '{"payload":{"market":"Amesbury/Newburyport","program":"6-unit infill + 2 ADUs"}}'
+     -d '{"payload":{"site_id":"SITE-236HIGH","address":"236 High Road, Newbury, MA 01951"}}'
 ```
 
 Avatar channel: connect a WebSocket client to `ws://localhost:8080/ws/avatar`

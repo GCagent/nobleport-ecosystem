@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from . import nano_236
+
 DEMO_MARKET = "Amesbury/Newburyport"
 DEMO_PROGRAM = "6-unit infill + 2 ADUs"
 DEMO_UNITS = 8
@@ -67,10 +69,18 @@ EVIDENCE_GRAPH: tuple[str, ...] = (
 
 
 def is_hypothetical(payload: dict[str, Any]) -> bool:
+    if nano_236.is_site_236(payload):
+        return False
     return not bool(payload.get("verified_parcel"))
 
 
+def is_site_236(payload: dict[str, Any]) -> bool:
+    return nano_236.is_site_236(payload)
+
+
 def site_id(payload: dict[str, Any]) -> str:
+    if nano_236.is_site_236(payload):
+        return nano_236.SITE_ID
     return str(payload.get("site_id") or DEMO_SITE_ID)
 
 
@@ -84,6 +94,8 @@ def costs_from(payload: dict[str, Any]) -> dict[str, int]:
 
 
 def feasibility_model(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.feasibility_model(payload)
     costs = costs_from(payload)
     units = int(payload.get("units") or DEMO_UNITS)
     unit_value = int(payload.get("unit_value") or DEFAULT_UNIT_VALUE)
@@ -118,6 +130,8 @@ def feasibility_model(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def site_screen(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.site_screen(payload)
     hypothetical = is_hypothetical(payload)
     status = "VERIFY" if hypothetical else payload.get("screen_status", "VERIFY")
     surfaces = {
@@ -151,6 +165,8 @@ def site_screen(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def entitlement_matrix(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.entitlement_matrix(payload)
     hypothetical = is_hypothetical(payload)
     matrix = [
         {
@@ -173,6 +189,8 @@ def entitlement_matrix(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def design_concepts(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.design_concepts(payload)
     return {
         "hypothetical": is_hypothetical(payload),
         "site_id": site_id(payload),
@@ -200,6 +218,8 @@ def design_concepts(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def construction_sequence(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.construction_sequence(payload)
     return {
         "hypothetical": is_hypothetical(payload),
         "site_id": site_id(payload),
@@ -215,6 +235,8 @@ def construction_sequence(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def draw_package(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.draw_package(payload)
     requested = int(payload.get("draw_requested") or 287_500)
     evidence = int(payload.get("evidence_completeness") or 94)
     exception = payload.get("draw_exception") or (
@@ -234,6 +256,8 @@ def draw_package(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def stress_tests(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.stress_tests(payload)
     model = feasibility_model(payload)
     overrun = model["hard_cost_overrun"]
     return {
@@ -274,6 +298,8 @@ def stress_tests(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def property_ops(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.property_ops(payload)
     return {
         "hypothetical": is_hypothetical(payload),
         "site_id": site_id(payload),
@@ -289,6 +315,8 @@ def property_ops(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def evidence_graph(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.evidence_graph(payload)
     return {
         "hypothetical": is_hypothetical(payload),
         "site_id": site_id(payload),
@@ -301,6 +329,8 @@ def evidence_graph(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def five_harness(payload: dict[str, Any]) -> dict[str, Any]:
+    if nano_236.is_site_236(payload):
+        return nano_236.five_harness(payload)
     verified = bool(payload.get("verified_parcel"))
     testing_verified = bool(payload.get("testing_verified"))
     return {
