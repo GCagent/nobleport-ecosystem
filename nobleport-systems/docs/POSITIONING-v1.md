@@ -93,3 +93,36 @@ Grounded parcel run remains `STAGED — DENSITY GATE LOCKED`. Governed
 tokenization of an 8-unit program on 236 High Road is **BLOCKED**.
 
 See `EXAMPLE-236-high-road-newbury.md`.
+
+## Stephanie.ai — cryptographic world computer
+
+Adopt the pattern. Do not treat a future Ethereum fork as live, and do not
+put the NoblePort business on chain.
+
+Ethereum is the trust and settlement computer. It is not the database.
+
+Path: NoblePort applications → Stephanie Gateway → MCP → off-chain execution
+→ evidence/proof → human authorization → Ethereum settlement/attestation.
+
+Doctrine: Stephanie first → policy engine → evidence verification →
+human-in-the-loop → execution.
+
+| Tag | Use on this layer |
+|---|---|
+| VERIFIED | Fusaka/PeerDAS, Ethereum mainnet 3 December 2025. NoblePort does not operate it. Published pursuit of further scaling, statelessness, censorship resistance, account abstraction, simplification, and post-quantum readiness is a documented direction, not completion. |
+| STAGED | Proof-oriented receipts, parallel agents, minimum on-chain data, human gates, Gateway/MCP as a pattern. |
+| PROPOSED | ZK proofs of NoblePort workflows and any actual settlement. |
+| RESEARCH | Glamsterdam (ePBS, block-level access lists) is in development, not mainnet. Hegotá (FOCIL) is targeted 2027, not mainnet. Lean consensus / few-slot finality has no committed fork. |
+| UNVERIFIED | Internal artifacts claiming 3,012 validators (1.2 TB, 88 ms P95) and 3,212 live nodes (621.78 billion ops/sec). They conflict. Do not merge either into verified state. |
+
+Six rules: proof over recomputation; parallel independent work; large data
+off-chain; execution separated from authority; cheap verification;
+cryptographic agility for identity.
+
+A construction payment is evidence in, parallel checks, a compact hash
+package, Stephanie’s advisory policy, a human authorization, then a receipt.
+The chain does not store the invoices or photographs. Skill:
+`GCagent/nobleport.etf` → `skills/27-cryptographic-world-computer/SKILL.md`.
+
+Sources: Ethereum Foundation Fusaka announcement (3 Dec 2025);
+ethereum.org roadmap, Fusaka, and security pages.

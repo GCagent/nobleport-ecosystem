@@ -18,6 +18,13 @@ Canonical copy: `GCagent/nobleport.etf` → `skills/nano-ecosystem/POSITIONING-v
 Market reference: Deloitte ~$4T tokenized real estate by 2035 (not the
 unsubstantiated $654T RealFi/XRP figure).
 
+**Stephanie computer pattern:** off-chain execution, on-chain verification,
+humans on irreversible actions. Ethereum (Fusaka/PeerDAS, mainnet 3 Dec 2025)
+is the trust and settlement computer, not this platform’s database.
+Glamsterdam, Hegotá, and Lean consensus stay research/roadmap — not live.
+Internal claims of 3,012 or 3,212 validators and 621.78 billion ops/sec stay
+**UNVERIFIED** until reconciled. Skill 27 in `GCagent/nobleport.etf`.
+
 
 ```
                     nobleportsystem.io / *.kuzo.io
