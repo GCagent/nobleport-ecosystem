@@ -99,10 +99,21 @@ See `EXAMPLE-236-high-road-newbury.md`.
 Adopt the pattern. Do not treat a future Ethereum fork as live, and do not
 put the NoblePort business on chain.
 
-Ethereum is the trust and settlement computer. It is not the database.
+Ethereum is the trust and attestation computer. It is not the database.
 
-Path: NoblePort applications → Stephanie Gateway → MCP → off-chain execution
-→ evidence/proof → human authorization → Ethereum settlement/attestation.
+Path: NoblePort applications → Stephanie Gateway / MCP → policy and human
+approval → settlement router → Stellar, EVM, or Solana.
+
+Stellar is a **yes for technical evaluation** as a settlement and RWA rail
+(issuer controls, anchors, Soroban, stablecoin and escrow movement). It is
+not a replacement for EVM or Solana, and it is not a reason to buy XLM.
+SDF reports RWAs crossed $3 billion in June 2026. DTCC’s 27 May 2026 release
+plans a DTC tokenization connection with assets expected in 1H 2027 — that
+connection is not live. Franklin Templeton reported BENJI on Stellar over
+$650 million as of April 2026; that is their fund. No production funds and
+no contractual assets move until policy, security testing, compliance review,
+and human approval. NBPT’s ERC-1400 / fixed 100 million / regulatory
+assertions stay proposed or unverified. Adapter v0.1 starts read-only.
 
 Doctrine: Stephanie first → policy engine → evidence verification →
 human-in-the-loop → execution.
