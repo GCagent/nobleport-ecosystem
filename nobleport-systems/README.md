@@ -30,6 +30,13 @@ Glamsterdam, Hegotá, and Lean consensus stay research/roadmap — not live.
 Internal claims of 3,012 or 3,212 validators and 621.78 billion ops/sec stay
 **UNVERIFIED** until reconciled. Skill 27 in `GCagent/nobleport.etf`.
 
+**AI capacity:** NVIDIA supplies processing. Stephanie would turn it into
+construction results. The connection is **PROPOSED**, not deployed. Rubin
+partner products (second half of 2026) and 800 VDC / Kyber (2027) are
+related NVIDIA milestones, not one rollout and not a NoblePort cluster.
+NeMo, CUDAOrchestrator, AvatarGPU, AuditBeacon, and IPFS are named in an
+internal audit and are **UNVERIFIED** as a live integration. Skill 28.
+
 
 ```
                     nobleportsystem.io / *.kuzo.io
