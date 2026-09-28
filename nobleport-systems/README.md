@@ -23,6 +23,9 @@ humans on irreversible actions. Ethereum (Fusaka/PeerDAS, mainnet 3 Dec 2025)
 is the trust and attestation computer, not this platform’s database.
 Stellar is under evaluation as a settlement and RWA rail behind the gateway.
 It does not replace EVM or Solana, and no production funds move.
+Soroban security rules (host `require_auth`, TTL is not an access control,
+admin-gated WASM upgrade) are documented. No NoblePort contract is deployed
+and this is not an audit.
 Glamsterdam, Hegotá, and Lean consensus stay research/roadmap — not live.
 Internal claims of 3,012 or 3,212 validators and 621.78 billion ops/sec stay
 **UNVERIFIED** until reconciled. Skill 27 in `GCagent/nobleport.etf`.
