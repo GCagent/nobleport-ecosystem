@@ -31,6 +31,14 @@ services:
     environment:
       DATABASE_URL: postgresql://nobleport:${POSTGRES_PASSWORD:?set in .env}@postgres:5432/nobleport
       REDIS_URL: redis://redis:6379/0
+      STEPHANIE_VOICE_ENABLED: ${STEPHANIE_VOICE_ENABLED:-false}
+      VOICEBOX_URL: ${VOICEBOX_URL:-http://host.docker.internal:17493}
+      VOICEBOX_PROFILE: ${VOICEBOX_PROFILE:-}
+      VOICEBOX_CLIENT_ID: ${VOICEBOX_CLIENT_ID:-stephanie-ai}
+      VOICEBOX_PERSONALITY: ${VOICEBOX_PERSONALITY:-false}
+      VOICEBOX_TIMEOUT_SECONDS: ${VOICEBOX_TIMEOUT_SECONDS:-10}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       postgres:
         condition: service_healthy
