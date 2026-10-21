@@ -1,0 +1,92 @@
+# Governance guardrails — the alerts that matter most for a human-gated,
+# launch-gated platform. These watch for VIOLATIONS of the hard constraints in
+# core/config/launch-gates.json and deployment_metrics.json. Every one of these
+# firing at value > 0 is a compliance incident, not a performance blip.
+
+groups:
+  - name: hard_blocked_capabilities
+    rules:
+      # deployment_metrics.json: autonomous_treasury_actions = HARD_BLOCKED
+      - alert: AutonomousTreasuryActionFired
+        expr: increase(nobleport_autonomous_treasury_action_total[1m]) > 0
+        for: 0m
+        labels: { severity: critical, control: hard_block, blocker: treasury }
+        annotations:
+          summary: "HARD-BLOCKED autonomous treasury action was executed"
+          description: "An autonomous treasury movement fired. This is hard-blocked and must be impossible. Page security + counsel; freeze treasury keys."
+          runbook_url: "https://runbooks.nobleport.systems/hard-block-violation"
+
+      # deployment_metrics.json: autonomous_securities_operations = HARD_BLOCKED
+      - alert: AutonomousSecuritiesActionFired
+        expr: increase(nobleport_autonomous_securities_action_total[1m]) > 0
+        for: 0m
+        labels: { severity: critical, control: hard_block, blocker: securities }
+        annotations:
+          summary: "HARD-BLOCKED autonomous securities operation was executed"
+          description: "An autonomous securities/NBPT operation fired. Multi-sig human gate was bypassed. Page security + securities counsel immediately."
+          runbook_url: "https://runbooks.nobleport.systems/hard-block-violation"
+
+  - name: launch_gate_red
+    rules:
+      # RED modules in launch-gates.json must never execute pre-clearance.
+      - alert: RedLaunchGateModuleExecuted
+        expr: increase(nobleport_red_gate_execution_total[5m]) > 0
+        for: 0m
+        labels: { severity: critical, control: launch_gate }
+        annotations:
+          summary: "RED launch-gate module executed: {{ $labels.module }}"
+          description: "A DO-NOT-LAUNCH module ran (e.g. nbpt_sale, kuzo_swap_execution, hosted_wallets, ai_trade_execution). Counsel clearance required before this is allowed."
+          runbook_url: "https://runbooks.nobleport.systems/red-gate"
+
+      # KUZO swap policy engine is READ-ONLY / execution disabled.
+      - alert: KuzoSwapExecutionAttempt
+        expr: increase(kuzo_swap_execution_attempt_total[5m]) > 0
+        for: 0m
+        labels: { severity: critical, control: read_only, blocker: money_transmission }
+        annotations:
+          summary: "KUZO swap EXECUTION attempted (engine must be read-only)"
+          description: "The KUZO engine is simulated/read-only; on-chain execution is disabled. Investigate how an execution path was reached."
+          runbook_url: "https://runbooks.nobleport.systems/kuzo-readonly"
+
+  - name: geo_and_human_gate
+    rules:
+      # launch-gates.json geo_blocks: New York virtual-currency activity blocked
+      - alert: NewYorkBlockedActivityAttempt
+        expr: increase(nobleport_ny_blocked_activity_total[5m]) > 0
+        for: 0m
+        labels: { severity: critical, control: geo_block, jurisdiction: new_york }
+        annotations:
+          summary: "NY-blocked activity attempted: {{ $labels.activity }}"
+          description: "A NY resident attempted a blocked virtual-currency activity (nbpt_purchase, kuzo_swap, tokenized_real_estate, hosted_wallet). BitLicense / exemption required."
+          runbook_url: "https://runbooks.nobleport.systems/ny-geo-block"
+
+      # OFAC screening must run on relevant flows.
+      - alert: OFACScreeningGap
+        expr: |
+          rate(nobleport_ofac_screenable_events_total[15m])
+          > rate(nobleport_ofac_screened_total[15m])
+        for: 10m
+        labels: { severity: critical, control: compliance }
+        annotations:
+          summary: "Screenable events outpacing OFAC screening"
+          description: "Events requiring OFAC screening are not all being screened. Compliance gap."
+          runbook_url: "https://runbooks.nobleport.systems/ofac-screening"
+
+      # High-risk actions must wait in the human-gated pending queue.
+      - alert: HumanApprovalGateBypassed
+        expr: increase(nobleport_high_risk_action_auto_approved_total[5m]) > 0
+        for: 0m
+        labels: { severity: critical, control: human_gate }
+        annotations:
+          summary: "High-risk action auto-approved without human signature"
+          description: "A high-risk workflow (treasury_movement / permit_filing) cleared without a human_signature. The truth-bounded spine requires manual sign-off."
+          runbook_url: "https://runbooks.nobleport.systems/human-gate"
+
+      - alert: PermitDiscrepancyDetected
+        expr: increase(permitstream_discrepancy_total[15m]) > 0
+        for: 0m
+        labels: { severity: warning, component: permitstream, tier: staged }
+        annotations:
+          summary: "PermitStream discrepancy detected (zero-tolerance target)"
+          description: "A permit data discrepancy was flagged. PermitStream output is advisory and requires licensed human review."
+          runbook_url: "https://runbooks.nobleport.systems/permit-discrepancy"

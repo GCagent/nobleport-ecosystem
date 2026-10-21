@@ -1,0 +1,70 @@
+# Multi-window SLO burn-rate alerts.
+#
+# Each SLO pairs a fast window (page now — budget burning quickly) with a slow
+# window (ticket — sustained erosion), which is what cuts false positives vs a
+# single static threshold. Targets are the truth-bounded SLOs documented in
+# monitoring/README.md; none assert revenue, TVL, or GPU throughput.
+#
+# Burn-rate convention (Google SRE workbook):
+#   page   if 5m AND 1h burn rate > 14.4   (2% of 30d budget in 1h)
+#   ticket if 30m AND 6h burn rate > 6     (5% of 30d budget in 6h)
+
+groups:
+  - name: slo_recording
+    interval: 30s
+    rules:
+      # --- Verification gateway availability (SLO 99.9%) -------------------
+      - record: slo:verification_requests:error_ratio_rate5m
+        expr: |
+          sum(rate(verification_requests_total{outcome="error"}[5m]))
+            / clamp_min(sum(rate(verification_requests_total[5m])), 1)
+      - record: slo:verification_requests:error_ratio_rate1h
+        expr: |
+          sum(rate(verification_requests_total{outcome="error"}[1h]))
+            / clamp_min(sum(rate(verification_requests_total[1h])), 1)
+      - record: slo:verification_requests:error_ratio_rate30m
+        expr: |
+          sum(rate(verification_requests_total{outcome="error"}[30m]))
+            / clamp_min(sum(rate(verification_requests_total[30m])), 1)
+      - record: slo:verification_requests:error_ratio_rate6h
+        expr: |
+          sum(rate(verification_requests_total{outcome="error"}[6h]))
+            / clamp_min(sum(rate(verification_requests_total[6h])), 1)
+
+  - name: slo_burn_alerts
+    rules:
+      - alert: VerificationGatewaySLOFastBurn
+        expr: |
+          slo:verification_requests:error_ratio_rate5m > (14.4 * 0.001)
+          and slo:verification_requests:error_ratio_rate1h > (14.4 * 0.001)
+        for: 2m
+        labels: { severity: critical, component: verification, slo: availability }
+        annotations:
+          summary: "Verification gateway burning error budget fast (>14.4x)"
+          description: "5m and 1h error ratio exceed the 99.9% SLO fast-burn threshold. ~2% of the 30d budget will burn within the hour."
+          runbook_url: "https://runbooks.nobleport.systems/verification-availability"
+
+      - alert: VerificationGatewaySLOSlowBurn
+        expr: |
+          slo:verification_requests:error_ratio_rate30m > (6 * 0.001)
+          and slo:verification_requests:error_ratio_rate6h > (6 * 0.001)
+        for: 15m
+        labels: { severity: warning, component: verification, slo: availability }
+        annotations:
+          summary: "Verification gateway slow error-budget burn (>6x)"
+          description: "Sustained 30m/6h error ratio above the 99.9% SLO. Open a ticket and investigate provider failures (helius/birdeye/solscan)."
+          runbook_url: "https://runbooks.nobleport.systems/verification-availability"
+
+      # --- Construction ingress availability (SLO 99.5%) ------------------
+      - alert: ConstructionIngressSLOFastBurn
+        expr: |
+          (
+            sum(rate(construction_ingress_requests_total{outcome="error"}[5m]))
+              / clamp_min(sum(rate(construction_ingress_requests_total[5m])), 1)
+          ) > (14.4 * 0.005)
+        for: 5m
+        labels: { severity: critical, component: construction, slo: availability }
+        annotations:
+          summary: "Construction ingress error budget burning fast"
+          description: "Property intake/parsing pipeline error ratio exceeds the 99.5% SLO fast-burn threshold."
+          runbook_url: "https://runbooks.nobleport.systems/construction-ingress"

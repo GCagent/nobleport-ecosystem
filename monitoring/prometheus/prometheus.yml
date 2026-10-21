@@ -1,0 +1,84 @@
+# Prometheus scrape configuration — NoblePort Systems observability
+# Truth baseline: deployment_metrics.json (audit_ref TA-2026-05-23).
+# Targets reflect the ACTUAL architecture: FastAPI + LangGraph, Temporal
+# workers, PostgreSQL 16 + pgvector, Redis, LiveKit, ElevenLabs voice.
+# There is NO GPU cluster (Hetzner CPU workers) — no nvidia/CUDA scrape jobs.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    platform: nobleport-systems
+    audit_ref: TA-2026-05-23
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # LIVE operational systems (construction operating layer)
+  - job_name: construction-ingress
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["construction-ingress:8000"]
+        labels: { component: construction, tier: live }
+
+  # NoblePort verification engine (the /verify fail-closed gateway)
+  - job_name: verification-engine
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["verification-engine:8080"]
+        labels: { component: verification, tier: live }
+
+  # Stephanie.ai backend (FastAPI + LangGraph StateGraph) — STAGED
+  - job_name: stephanie-backend
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["stephanie-backend:8000"]
+        labels: { component: stephanie, tier: staged }
+
+  # Temporal workflow workers
+  - job_name: temporal
+    static_configs:
+      - targets: ["temporal:9090"]
+        labels: { component: workflow, tier: live }
+
+  # Datastores
+  - job_name: postgres
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+        labels: { component: database }
+  - job_name: redis
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+        labels: { component: cache }
+
+  # Host metrics (CPU workers)
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels: { component: host }
+
+  # Synthetic probes for public endpoints + voice realtime (LiveKit)
+  - job_name: blackbox-http
+    metrics_path: /probe
+    params: { module: [http_2xx] }
+    static_configs:
+      - targets:
+          - https://nobleport.systems/health
+          - https://grafana.nobleport.systems/api/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

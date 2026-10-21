@@ -1,0 +1,62 @@
+# Alertmanager routing — component- and control-based.
+# Governance/compliance violations route to a dedicated, always-paged channel
+# separate from performance alerts. Webhook receivers are placeholders; wire
+# real Slack/PagerDuty/email endpoints via env-substituted secrets at deploy.
+
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: default
+  group_by: ["alertname", "component", "control"]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  routes:
+    # Compliance / hard-block / launch-gate violations — page, no grouping delay.
+    - matchers: ['control=~"hard_block|launch_gate|geo_block|human_gate|read_only|compliance"']
+      receiver: compliance-oncall
+      group_wait: 0s
+      repeat_interval: 30m
+      continue: true
+
+    - matchers: ['component="verification"']
+      receiver: verification-team
+    - matchers: ['component="construction"']
+      receiver: construction-team
+    - matchers: ['component="stephanie"']
+      receiver: stephanie-team
+    - matchers: ['component=~"database|cache"']
+      receiver: platform-team
+    - matchers: ['component="permitstream"']
+      receiver: permitstream-team
+
+inhibit_rules:
+  # If a whole target is down, suppress its noisier latency/SLO children.
+  - source_matchers: ['alertname="TargetDown"']
+    target_matchers: ['severity=~"warning|critical"']
+    equal: ["component", "instance"]
+
+receivers:
+  - name: default
+    webhook_configs:
+      - url: "http://alert-sink:9099/default"
+  - name: compliance-oncall
+    webhook_configs:
+      - url: "http://alert-sink:9099/compliance"
+        send_resolved: true
+  - name: verification-team
+    webhook_configs:
+      - url: "http://alert-sink:9099/verification"
+  - name: construction-team
+    webhook_configs:
+      - url: "http://alert-sink:9099/construction"
+  - name: stephanie-team
+    webhook_configs:
+      - url: "http://alert-sink:9099/stephanie"
+  - name: platform-team
+    webhook_configs:
+      - url: "http://alert-sink:9099/platform"
+  - name: permitstream-team
+    webhook_configs:
+      - url: "http://alert-sink:9099/permitstream"
