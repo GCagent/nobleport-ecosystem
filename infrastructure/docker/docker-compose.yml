@@ -1,0 +1,195 @@
+# ============================================================
+# NOBLEPORT SOVEREIGN STACK — Docker Compose
+# ============================================================
+# Deploy: docker compose -f docker-compose.yml up -d
+# Logs:   docker compose logs -f
+# Stop:   docker compose down
+# ============================================================
+
+services:
+
+  # ── Gateway Brain (API Layer) ──────────────────────────────
+  gateway-brain:
+    image: node:20-alpine
+    container_name: nobleport-gateway
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ../../:/app
+      - gateway_data:/app/data
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - ENS_REGISTRY=0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e
+      - ENS_NAME=nobleport.eth
+      - ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}
+      - IPFS_GATEWAY=http://ipfs-node:8081
+      - REDIS_URL=redis://redis:6379
+      - CORS_ORIGIN=https://app.nobleport.com
+    depends_on:
+      - redis
+      - ipfs-node
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - nobleport-internal
+
+  # ── Stephanie.ai Streaming Service ─────────────────────────
+  stephanie-stream:
+    image: node:20-alpine
+    container_name: nobleport-stream
+    restart: unless-stopped
+    working_dir: /app/services/stream
+    volumes:
+      - ../../:/app
+      - stream_data:/app/services/stream/data
+    ports:
+      - "8081:8081"
+    environment:
+      - NODE_ENV=production
+      - PORT=8081
+      - GATEWAY_URL=http://gateway-brain:8080
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - gateway-brain
+      - redis
+    networks:
+      - nobleport-internal
+
+  # ── WebSocket Service (Real-time) ──────────────────────────
+  websocket-service:
+    image: node:20-alpine
+    container_name: nobleport-ws
+    restart: unless-stopped
+    working_dir: /app/services/websocket
+    volumes:
+      - ../../:/app
+    ports:
+      - "8082:8082"
+    environment:
+      - NODE_ENV=production
+      - PORT=8082
+      - GATEWAY_URL=http://gateway-brain:8080
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - gateway-brain
+      - redis
+    networks:
+      - nobleport-internal
+
+  # ── IPFS Node (Kubo) ──────────────────────────────────────
+  ipfs-node:
+    image: ipfs/kubo:latest
+    container_name: nobleport-ipfs
+    restart: unless-stopped
+    ports:
+      - "4001:4001"      # Swarm
+      - "4001:4001/udp"  # Swarm UDP
+      - "5001:5001"      # API (bind to localhost only in prod)
+      - "8083:8080"      # Gateway
+    volumes:
+      - ipfs_data:/data/ipfs
+      - ipfs_staging:/export
+    environment:
+      - IPFS_PROFILE=server
+    networks:
+      - nobleport-internal
+
+  # ── Redis (Cache + Pub/Sub) ────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: nobleport-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:-nobleport_redis_change_me}
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - nobleport-internal
+
+  # ── Nginx Reverse Proxy ────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: nobleport-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../nginx/gateway-brain.conf:/etc/nginx/sites-available/nobleport:ro
+      - ../nginx/snippets:/etc/nginx/snippets:ro
+      - nginx_certs:/etc/letsencrypt
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - gateway-brain
+      - stephanie-stream
+      - websocket-service
+    networks:
+      - nobleport-internal
+      - nobleport-external
+
+  # ── Monitoring (Prometheus + Grafana) ──────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: nobleport-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    networks:
+      - nobleport-internal
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: nobleport-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-nobleport_grafana_change_me}
+      - GF_SERVER_ROOT_URL=https://monitor.nobleport.com
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - nobleport-internal
+
+# ── Volumes ──────────────────────────────────────────────────
+volumes:
+  gateway_data:
+  stream_data:
+  ipfs_data:
+  ipfs_staging:
+  redis_data:
+  nginx_certs:
+  nginx_logs:
+  prometheus_data:
+  grafana_data:
+
+# ── Networks ─────────────────────────────────────────────────
+networks:
+  nobleport-internal:
+    driver: bridge
+    internal: true
+  nobleport-external:
+    driver: bridge
