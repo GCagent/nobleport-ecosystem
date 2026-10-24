@@ -1,15 +1,12 @@
 # NoblePort Ecosystem
 
-AI-assisted construction and real estate workflow software with human-gated decision support.
+NoblePort Construction LLC is a licensed residential design-build contractor serving Greater Newburyport and the North Shore of Massachusetts. This repository holds the public website, AI-assisted workflow tools, and proposed token infrastructure developed under NoblePort Systems.
 
-NoblePort connects intake, estimating, authorized work orders (AWOs), billing,
-permit preparation, compliance review, and property due diligence. Stephanie.ai
-coordinates workflows with GCagent.ai, PermitStream.ai, and CyBorg.ai.
+Construction services are available through ordinary contracting channels at nobleport.net. Digital identity is nobleport.eth (ENS, registered). nobleport.io currently serves a read-only KUZO cross-chain verification dashboard. Workflow tools for intake, estimating, authorized work orders, permit preparation, and compliance routing are under development; high-risk steps require human approval. Municipal authorities determine permit outcomes.
 
-This repository contains the public website, platform services, demonstrations,
-and proposed token infrastructure. Implementation, catalog status, and deployment
-evidence are distinct: a module marked `LIVE` does not by itself establish that
-a production service or external integration is running.
+NBPT is proposed token infrastructure using an ERC-3643-style identity and compliance pattern. Source contracts exist in this repository. Mainnet deployment and any offering remain pending securities counsel review. NBPT is not used as a payment token. USD settlement, when on-chain, uses USDC. No tokens are offered for sale. Implementation status, catalog classifications, and deployment evidence are distinct: a module marked `LIVE` does not by itself establish that a production service or external integration is running.
+
+Stephanie.ai coordinates workflow steps with GCagent.ai, PermitStream.ai, and CyBorg.ai. All regulated activities remain subject to licensed human oversight and third-party review.
 
 ## Start here
 
