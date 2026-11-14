@@ -7,6 +7,11 @@ services:
     environment:
       STEPHANIE_API_TOKEN: ${STEPHANIE_API_TOKEN:?Set STEPHANIE_API_TOKEN}
       STEPHANIE_DB: /data/decisions.sqlite3
+      SMS_ENABLED: ${SMS_ENABLED:-false}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_FROM_NUMBER: ${TWILIO_FROM_NUMBER:-}
+      SMS_ALLOWED_RECIPIENTS: ${SMS_ALLOWED_RECIPIENTS:-}
     volumes:
       - decisions:/data
     cap_drop: [ALL]
