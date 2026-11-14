@@ -5,6 +5,7 @@ import os
 import sqlite3
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import sms
 
 TOKEN = os.environ.get('STEPHANIE_API_TOKEN', '')
 DB = os.environ.get('STEPHANIE_DB', '/data/decisions.sqlite3')
@@ -14,6 +15,8 @@ if len(TOKEN.encode()) < 32:
 os.makedirs(os.path.dirname(os.path.abspath(DB)), exist_ok=True)
 with sqlite3.connect(DB) as db:
     db.execute('CREATE TABLE IF NOT EXISTS decisions (id INTEGER PRIMARY KEY, project TEXT NOT NULL, decision_type TEXT NOT NULL, summary TEXT NOT NULL, created_at INTEGER NOT NULL, status TEXT NOT NULL)')
+
+sms.initialize(DB)
 
 class Handler(BaseHTTPRequestHandler):
     def reply(self, code, data):
@@ -45,13 +48,16 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self.authorized():
             return self.reply(401, {'error': 'unauthorized'})
-        if self.path != '/decisions':
+        if self.path not in ('/decisions', '/send-sms/'):
             return self.reply(404, {'error': 'not found'})
         try:
             n = int(self.headers.get('Content-Length', '-1'))
             if not 0 < n <= MAX_BODY:
                 raise ValueError('invalid length')
             payload = json.loads(self.rfile.read(n))
+            if self.path == '/send-sms/':
+                code, result = sms.send(DB, payload)
+                return self.reply(code, result)
             if not isinstance(payload, dict) or set(payload) != {'project', 'decision_type', 'summary'}:
                 raise ValueError('invalid fields')
             values = [payload[k].strip() if isinstance(payload[k], str) else '' for k in ('project', 'decision_type', 'summary')]
