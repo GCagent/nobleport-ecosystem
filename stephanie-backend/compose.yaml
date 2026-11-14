@@ -1,0 +1,15 @@
+services:
+  stephanie-api:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      STEPHANIE_API_TOKEN: ${STEPHANIE_API_TOKEN:?Set STEPHANIE_API_TOKEN}
+      STEPHANIE_DB: /data/decisions.sqlite3
+    volumes:
+      - decisions:/data
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+volumes:
+  decisions:
